@@ -14,7 +14,7 @@ CodeCraft is a high-performance, agentic CLI coding assistant that combines the 
 ```mermaid
 graph TD
     User[User Terminal] <--> CLI[Node.js Agent]
-    CLI <--> Rust[Rust Engine (NAPI)]
+    CLI <--> Rust["Rust Engine (NAPI)"]
     Rust <--> FS[File System]
     CLI -- "Gemini API" --> LLM[Google Gemini]
 ```
