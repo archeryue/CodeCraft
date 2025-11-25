@@ -3,7 +3,6 @@
 #[macro_use]
 extern crate napi_derive;
 
-use napi::bindgen_prelude::*;
 use std::fs;
 use walkdir::WalkDir;
 use tree_sitter::{Parser, Node};
