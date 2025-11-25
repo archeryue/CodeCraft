@@ -82,3 +82,8 @@ Follow these steps to set up the project locally:
 *   **Interactive UI**: Potentially add a terminal UI (TUI) for a richer interactive experience.
 *   **Error Handling**: Improve error handling and user feedback.
 *   **Testing**: Add comprehensive unit and integration tests.
+
+## Development Rules
+
+*   **TDD (Test-Driven Development)**: Always adopt TDD. Think about how to test the code *before* developing a new feature.
+*   **Verification**: Always run unit tests and end-to-end tests after developing or modifying code to ensure stability.
