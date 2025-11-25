@@ -1,0 +1,15 @@
+# Node.js
+node_modules
+npm-debug.log
+*.log
+
+# Rust
+target/
+Cargo.lock
+
+# NAPI-RS
+*.node
+
+# OS specific
+.DS_Store
+Thumbs.db
