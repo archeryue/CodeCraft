@@ -1844,7 +1844,307 @@ npm test project_overview.test.ts
 
 - Fixes BC-003: Project type detection missing purpose and architecture
 - Creates new comprehensive tool instead of just enhancing detect_project_type
-- Reads multiple sources: README, package.json, CLAUDE.md, entry files
+- Reads multiple sources: README, json, CLAUDE.md, entry files
 - Synthesizes holistic view of project
 - Helps onboarding and understanding project structure
 - Reduces back-and-forth questions about project
+
+---
+
+## BadCase Fix 4: BC-004 - Agent Loop Detection and Recovery
+
+**Issue:** Agent gets stuck in tool call loops, hits 10 iteration limit, fails to complete simple tasks, returns empty response.
+
+**Example:** User asked to use an unused function. Agent made 10 tool calls (repeated reads of same file), hit limit, failed task.
+
+**Root Causes:**
+1. No iteration limit warnings before hitting hard limit
+2. Repetitive tool calls (reading same file multiple times)
+3. No loop detection or alternative strategies
+4. Poor error messages when hitting limit
+5. No progress tracking or recovery mechanism
+
+**Goals:**
+1. Detect when agent is stuck in loops (same tool, similar params)
+2. Warn agent before hitting iteration limit
+3. Provide helpful error messages instead of empty response
+4. Suggest alternative strategies when stuck
+5. Add guardrails to prevent excessive repetition
+
+---
+
+### Test Plan (Written BEFORE Implementation)
+
+#### Module 1: Iteration Limit Warning System
+
+**Happy Path Tests:**
+1. ✅ Should track iteration count during tool execution loop
+2. ✅ Should NOT warn when iterations < 7
+3. ✅ Should warn agent at iteration 7 (internal warning)
+4. ✅ Should strongly warn agent at iteration 8 (suggest summarizing)
+5. ✅ Should provide helpful message at iteration 10 (not empty response)
+
+**Edge Cases:**
+6. ✅ Should reset iteration count when new user message arrives
+7. ✅ Should handle iteration count across model retries
+8. ✅ Warning should be injected into model context, not shown to user directly
+
+**Integration Tests:**
+9. ✅ Warnings should be visible in agent's system messages
+10. ✅ Agent should respond to warnings by summarizing or changing approach
+
+---
+
+#### Module 2: Loop Detection
+
+**Happy Path Tests:**
+1. ✅ Should detect when same tool is called 3+ times consecutively
+2. ✅ Should detect repetition loops (A-B-A-B-A-B pattern)
+3. ✅ Should detect when same file is read 3+ times
+4. ✅ Should allow legitimate repeated calls (different parameters)
+
+**Edge Cases:**
+5. ✅ Should NOT flag legitimate patterns (read → edit → verify flow)
+6. ✅ Should detect similar parameters (not just exact matches)
+   - Example: `read_file({path: "foo.ts", offset: 10})` vs `read_file({path: "foo.ts", offset: 20})`
+7. ✅ Should reset loop detection on user message
+
+**Detection Patterns:**
+8. ✅ Consecutive repetition: Same tool 3+ times in a row
+9. ✅ Alternating pattern: A-B-A-B-A (2+ cycles)
+10. ✅ Parameter similarity: Same tool, same file, different offset/limit
+
+**Output:**
+11. ✅ Return loop type: "consecutive" | "alternating" | "parameter_similarity"
+12. ✅ Return suggestion: Alternative approach to try
+
+---
+
+#### Module 3: Alternative Strategy Suggestions
+
+**Test Cases:**
+1. ✅ When stuck reading same file repeatedly → Suggest using grep/search instead
+2. ✅ When stuck with search tools → Suggest reading full file or asking user
+3. ✅ When stuck with edits failing → Suggest showing user the problem
+4. ✅ When stuck with grep → Suggest trying broader or narrower search
+5. ✅ Generic fallback → Suggest summarizing progress and asking user
+
+**Edge Cases:**
+6. ✅ Suggestions should be context-aware (based on tool types involved)
+7. ✅ Should not suggest already-tried approaches
+8. ✅ Should prioritize user communication over infinite tool attempts
+
+---
+
+#### Module 4: Better Error Messages
+
+**Test Cases:**
+1. ✅ When hitting 10 iteration limit, should return structured message with:
+   - What was attempted (summary of tool calls)
+   - Why it failed (loop detected, limit reached, etc.)
+   - What to try next (suggestions)
+   - NOT an empty response
+2. ✅ Should track and summarize tool calls made
+3. ✅ Should identify the specific blocker (file not found, string not found, etc.)
+
+**Message Format:**
+```
+I attempted to complete your request but encountered difficulties:
+
+**Attempted:**
+- Read src/agent.ts 5 times with different offsets
+- Tried to edit agent.ts 2 times
+
+**Issue:**
+Loop detected: Repeatedly reading the same file without making progress
+
+**Suggestion:**
+Let me try a different approach: [specific suggestion based on context]
+
+Would you like me to try that, or would you prefer to provide more guidance?
+```
+
+---
+
+#### Module 5: Guardrails
+
+**Test Cases:**
+1. ✅ Should limit consecutive reads of same file to 3
+2. ✅ Should detect when no progress is being made
+3. ✅ Should escalate to user before hitting hard limit
+4. ✅ Should prevent infinite loops between 2 tools
+
+**Edge Cases:**
+5. ✅ Should allow reading different files (not same file repeatedly)
+6. ✅ Should allow legitimate multi-step workflows
+7. ✅ Should NOT overly restrict valid agent behavior
+
+---
+
+### Implementation Checklist
+
+**Phase 1: RED (Write Failing Tests)**
+- [ ] Create `tests/iteration_limits.test.ts` (10 tests)
+- [ ] Create `tests/loop_detection.test.ts` (12 tests)
+- [ ] Create `tests/strategy_suggestions.test.ts` (8 tests)
+- [ ] Create `tests/error_messages.test.ts` (4 tests)
+- [ ] Create `tests/guardrails.test.ts` (7 tests)
+- [ ] Run `npm test` → Expect 41 tests failing
+
+**Phase 2: GREEN (Implement Features)**
+- [ ] Enhance `src/error_recovery.ts` with loop detection logic
+- [ ] Add iteration tracking to `src/agent.ts`
+- [ ] Inject warnings at iterations 7, 8, 10
+- [ ] Implement strategy suggestion system
+- [ ] Improve error messages at iteration limit
+- [ ] Add guardrails to agent loop
+- [ ] Run `npm test` → Expect all tests passing
+
+**Phase 3: REFACTOR**
+- [ ] Clean up loop detection code
+- [ ] Extract suggestion logic to separate function
+- [ ] Ensure code is readable and maintainable
+
+**Phase 4: E2E Verification**
+- [ ] Create test script: `test_bc004_e2e.js`
+- [ ] Test scenario: Ask agent to complete a task that triggers loops
+- [ ] Verify warnings appear in logs
+- [ ] Verify helpful error message (not empty response)
+- [ ] Verify agent tries alternative strategies
+- [ ] Run: `node test_bc004_e2e.js`
+
+**Phase 5: Documentation**
+- [ ] Update this test plan with results
+- [ ] Update BADCASES.md to mark BC-004 as fixed
+- [ ] Document new agent behaviors in CLAUDE.md
+
+---
+
+### Test Structure
+
+**Files to Create/Modify:**
+- `tests/iteration_limits.test.ts` - New file
+- `tests/loop_detection.test.ts` - New file
+- `tests/strategy_suggestions.test.ts` - New file
+- `tests/error_messages.test.ts` - New file
+- `tests/guardrails.test.ts` - New file
+- `src/agent.ts` - Modify (add iteration tracking and warnings)
+- `src/error_recovery.ts` - Modify (enhance loop detection)
+- `test_bc004_e2e.js` - New E2E test script
+
+---
+
+### Expected Tool Call Pattern (BEFORE Fix)
+
+**Problematic Pattern:**
+```
+1. search_code({"query":"greetUser"})
+2. list_directory({"path":"src"})
+3. read_file({"path":"src/agent.ts", "offset":70, "limit":30})
+4. read_file({"path":"src/agent.ts", "offset":40, "limit":10})   ⚠️ Same file again
+5. grep({"pattern":"start\\(\\)"})
+6. read_file({"path":"src/agent.ts", "offset":22, "limit":20})   ⚠️ Same file again
+7. read_file({"path":"src/agent.ts", "offset":34, "limit":15})   ⚠️ Loop detected!
+8. edit_file(...)  ← Attempt edit
+9. read_file({"path":"src/agent.ts", "offset":51, "limit":1})
+10. read_file({"path":"src/agent.ts"})  ← Full file (should've done this earlier)
+→ Hit limit, empty response ❌
+```
+
+### Expected Tool Call Pattern (AFTER Fix)
+
+**Improved Pattern:**
+```
+1. search_code({"query":"greetUser"})
+2. read_file({"path":"src/agent.ts"})  ← Read full file first
+3. grep({"pattern":"start\\(\\)"})
+4. read_file({"path":"src/agent.ts", "offset":70, "limit":30})  ← Targeted read
+5. read_file({"path":"src/agent.ts", "offset":40, "limit":10"})  ← Still same file
+6. read_file({"path":"src/agent.ts", "offset":22, "limit":20"})  ← Loop detected!
+   [Warning injected] "You've read src/agent.ts 3 times. Consider trying a different approach."
+7. Agent changes strategy → grep or asks user
+→ Task completes or provides useful message ✅
+```
+
+---
+
+### Acceptance Criteria
+
+**Must Have:**
+1. ✅ No empty responses when hitting iteration limit
+2. ✅ Helpful error message explaining what was attempted and why it failed
+3. ✅ Loop detection identifies repetitive patterns
+4. ✅ Warnings appear at iterations 7, 8
+5. ✅ Alternative strategy suggestions provided
+
+**Nice to Have:**
+1. ✅ Agent actually changes strategy when warned (behavior improvement)
+2. ✅ Progress tracking shows what was accomplished
+3. ✅ Guardrails prevent worst-case loops
+
+**Success Metrics:**
+- BC-004 E2E test passes (agent completes task or provides helpful message)
+- Unit tests: 41/41 passing
+- No empty responses in testing
+- Agent demonstrates ability to change strategy when stuck
+
+---
+
+### Testing Examples
+
+**Manual E2E Test:**
+```bash
+npx tsx index.ts
+
+# Test 1: Simple task that previously triggered loops
+> We have a greetUser() function but it's not used. Please use it in the code.
+Expected Behaviors:
+- Should NOT make 10 tool calls
+- Should NOT return empty response
+- Should either:
+  a) Complete the task successfully
+  b) Provide helpful message explaining blocker
+- Should NOT read same file 5+ times
+
+# Test 2: Intentionally difficult task
+> Find and fix all bugs in the codebase
+Expected:
+- Agent should recognize this is too broad
+- Should ask clarifying questions
+- Should NOT hit iteration limit
+- If approaching limit, should summarize progress
+
+# Test 3: Task with actual blocker
+> Delete the file that doesn't exist: nonexistent.txt
+Expected:
+- Should quickly identify file doesn't exist
+- Should report this to user
+- Should NOT loop trying to find it
+- Clear error message
+```
+
+**Unit Test:**
+```bash
+npm test iteration_limits.test.ts loop_detection.test.ts
+# Should see all tests passing
+```
+
+**Check Warnings:**
+```bash
+# Warnings should appear in agent logs but not user-facing output
+# At iteration 7: Internal system message to agent
+# At iteration 8: Strong warning to wrap up
+# At iteration 10: Helpful message to user (not empty)
+```
+
+---
+
+### Notes
+
+- Fixes BC-004: Agent stuck in tool call loops, empty responses
+- Multi-module fix: touches agent.ts and error_recovery.ts
+- Focuses on detection, prevention, and recovery
+- Improves user experience when agent encounters difficulties
+- Maintains agent autonomy while adding safety guardrails
+- Does NOT overly restrict legitimate multi-step workflows
+- Prioritizes communication with user over silent failures
