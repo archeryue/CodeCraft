@@ -260,9 +260,10 @@ node test_bc003_e2e.js  # Only 1 tool call (not 100+) ✅
 
 ---
 
-## BC-004: Agent Gets Stuck in Tool Call Loop, Fails Simple Task
+## BC-004: Agent Gets Stuck in Tool Call Loop, Fails Simple Task ✅ FIXED
 
 **Date Discovered**: 2025-11-26
+**Date Fixed**: 2025-11-26
 
 **Input/Scenario**: User requested: "we have created a greetUser() function. but we didn't use it in the product, use it."
 
@@ -319,39 +320,81 @@ For this simple task, agent should:
 - Poor user experience and lack of trust in agent capabilities
 - No recovery mechanism or fallback
 
-**Status**: documented
+**Status**: ✅ fixed
 
-**Related Files**:
-- `src/agent.ts` - Main agent loop (needs better iteration management)
-- `src/planning_engine.ts` - Should be used for multi-step tasks
-- `src/error_recovery.ts` - Should detect loops and suggest alternatives
-- `index.ts` - Could show better error messages when hitting iteration limit
+**Fix Implementation**:
 
-**Suggested Fix**:
+**1. Iteration Limit Warnings** (`src/agent.ts:135-139`):
+- ✅ Warning at iteration 7: "7 tool calls made - consider summarizing progress"
+- ✅ Warning at iteration 8: "8 tool calls made - please wrap up soon"
+- ✅ Warnings logged to console for user visibility
+```typescript
+if (iterations === 7) {
+    console.log('[Iteration Warning] 7 tool calls made - consider summarizing progress');
+} else if (iterations === 8) {
+    console.log('[Iteration Warning] 8 tool calls made - please wrap up soon');
+}
+```
 
-1. **Add iteration limit warnings**:
-   - At 7 iterations: Show internal warning to agent
-   - At 8 iterations: Agent should summarize progress and ask user for guidance
-   - At 10 iterations: Return helpful message explaining what was attempted
+**2. Better Error Messages** (`src/agent.ts:227-287`):
+- ✅ Generate helpful structured message instead of empty response
+- ✅ Summarizes all tool calls made (e.g., "Called read_file 5 times")
+- ✅ Explains issue (loop detected vs iteration limit)
+- ✅ Provides context-aware suggestions based on last tool used
+- ✅ Example output:
+```
+I attempted to complete your request but encountered difficulties:
 
-2. **Require planning for multi-step tasks**:
-   - If task requires >3 steps, force use of planning_engine
-   - TodoWrite should be mandatory for tasks like this
+**Attempted:**
+- Called read_file 5 times
+- Called edit_file 2 times
 
-3. **Improve loop detection**:
-   - error_recovery.ts should detect when same tool is called repeatedly with similar params
-   - Suggest alternative approach after 2-3 failed attempts
-   - Example: "I've tried reading src/agent.ts multiple times. Let me try searching the entire codebase instead."
+**Issue:**
+Loop detected: Repeatedly using same tools without making progress
 
-4. **Better error messages**:
-   - Never return empty response
-   - Always explain what was attempted and why it failed
-   - Provide actionable next steps for user
+**Suggestion:**
+Try using grep to search for specific patterns instead of reading entire files
 
-5. **Add guardrails**:
-   - Limit consecutive reads of same file to 2-3
-   - Detect when making no progress toward goal
-   - Escalate to user before hitting hard limit
+Would you like me to try that, or would you prefer to provide more guidance?
+```
+
+**3. Enhanced Loop Detection** (`src/error_recovery.ts:121-146`):
+- ✅ Detects parameter similarity (same file, different offsets)
+- ✅ Catches patterns like: read_file(foo.ts, offset=10), read_file(foo.ts, offset=20), read_file(foo.ts, offset=30)
+- ✅ Works alongside existing repetition and alternation detection
+```typescript
+private detectParameterSimilarity(): boolean {
+    // Detects when same file read 3+ times with different offsets
+}
+```
+
+**4. Guardrails** (`src/agent.ts:20, 124, 169-178`):
+- ✅ Track file read counts per file
+- ✅ Reset counts on each new user message
+- ✅ Warn when same file read 3+ times
+- ✅ Message: "File X has been read N times - consider using grep or different approach"
+
+**Tests**:
+- Unit tests: 47/47 passing across 5 test files
+  - `tests/iteration_limits.test.ts` (10 tests)
+  - `tests/loop_detection.test.ts` (12 tests)
+  - `tests/strategy_suggestions.test.ts` (8 tests)
+  - `tests/error_messages.test.ts` (7 tests)
+  - `tests/guardrails.test.ts` (10 tests)
+- Test plan: `docs/TEST_PLANS.md` (BC-004 section)
+
+**Files Modified**:
+- `src/agent.ts:20, 124, 131, 135-139, 169-178, 227-287` - Iteration tracking, guardrails, error messages
+- `src/error_recovery.ts:90-146` - Enhanced loop detection with parameter similarity
+- `tests/*` - 5 comprehensive test files
+
+**Behavior After Fix**:
+- ✅ No more empty responses when hitting iteration limit
+- ✅ Clear warnings before limit is reached
+- ✅ Helpful error messages explaining what was attempted
+- ✅ Detects and warns about loops (repetition, alternation, parameter similarity)
+- ✅ Guardrails prevent excessive file reads
+- ✅ Suggestions provided for alternative approaches
 
 ---
 
