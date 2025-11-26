@@ -69,13 +69,34 @@ The agent implements a ReAct-style loop:
 4. Results are sent back to Gemini
 5. Loop continues until Gemini produces a text response
 
-**Available Tools:**
+**Available Tools (18 total):**
+
+*File Operations:*
 - `read_file(path, offset?, limit?)` - Reads file content (supports partial reads)
 - `write_file(path, content)` - Writes to file (shows diff and prompts for confirmation if file exists)
 - `edit_file(path, old_string, new_string)` - Efficient string replacement editing
-- `run_command(command)` - Executes shell commands (shows first 1-3 lines of output to user immediately)
+- `delete_file(path)` - Deletes a file with safety checks
+
+*Search & Discovery:*
+- `glob(pattern, path?)` - File pattern matching (e.g., `**/*.ts`)
+- `grep(pattern, path?, options?)` - Content search with regex
+- `list_directory(path)` - Browse directory structure
 - `get_codebase_map(path)` - Generates AST-based skeleton via Rust engine
 - `search_code(query, path?)` - Fuzzy searches symbols via Rust engine
+
+*AST-Based Tools (Rust Engine):*
+- `get_symbol_info(symbol, file)` - Get symbol details (type, signature, location)
+- `get_imports_exports(file)` - Show what file imports/exports
+- `build_dependency_graph(path)` - Project-wide dependency graph
+- `resolve_symbol(symbol, file)` - Find where symbol is defined
+- `find_references(symbol, path)` - Find all usages of a symbol
+
+*Project Analysis:*
+- `detect_project_type(path)` - Detect node/rust/python, frameworks, linters
+- `extract_conventions(path)` - Extract naming, indent, style patterns
+
+*Execution:*
+- `run_command(command)` - Executes shell commands (shows first 1-3 lines of output to user immediately)
 - `todo_write(todos)` - Tracks multi-step tasks (required for 3+ step tasks)
 
 ### Confirmation Flow for File Writes
@@ -131,6 +152,28 @@ When the agent calls `write_file` on an existing file:
 - Extracts entities (mentioned files, classes, functions)
 - Provides confidence score
 - Used by agent to tailor response and choose appropriate workflow
+
+### Advanced Agent Loop (ReAct+)
+
+The agent uses three framework modules for intelligent behavior:
+
+**Planning Engine** (`src/planning_engine.ts`):
+- Creates execution plans for multi-step tasks
+- Extracts entities, constraints, and success criteria from messages
+- Estimates token usage per step
+- Shows `[Plan] Created X steps (est. Y tokens)` for complex tasks
+
+**Context Manager** (`src/context_manager.ts`):
+- Tracks file reads and token usage
+- Tiered context prioritization (HIGH/MEDIUM/LOW)
+- Budget enforcement (default 8000 tokens)
+- Shows `[Context] X files accessed, Y tokens used`
+
+**Error Recovery** (`src/error_recovery.ts`):
+- Records all tool calls for pattern detection
+- Detects loops (repetition and alternation patterns)
+- Suggests alternative strategies when stuck
+- Shows `[Loop Detected]` and `[Suggestion]` warnings
 
 ## Development Rules
 

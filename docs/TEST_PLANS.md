@@ -1011,12 +1011,46 @@ Update:
 
 ---
 
+## Week 5 Integration Tests ✅ COMPLETED
+
+After implementing the modules, they were integrated into `src/agent.ts` and E2E tested:
+
+### Integration E2E Tests Performed
+
+| Test Case | Expected | Result |
+|-----------|----------|--------|
+| Basic greeting | Shows `[Plan]` for whole_project scope | ✅ Pass |
+| Single file read | Shows `[Context] X files, Y tokens` | ✅ Pass |
+| Multi-file analysis (8 files) | Context tracks all reads | ✅ Pass |
+| Non-existent file | Error recorded, graceful message | ✅ Pass |
+
+### Integration Points in agent.ts
+
+1. **PlanningEngine Integration:**
+   - `understand()` called on every message
+   - `plan()` called for multi_file/whole_project scope
+   - Shows `[Plan] Created X steps (est. Y tokens)`
+
+2. **ContextManager Integration:**
+   - `addContext()` on successful file reads
+   - `markUsed()` tracks file access
+   - Shows `[Context] X files accessed, Y tokens used`
+
+3. **ErrorRecovery Integration:**
+   - `recordAction()` on every tool call
+   - `recordFailure()` on errors
+   - `detectLoop()` checked before execution
+   - Shows `[Loop Detected]` and `[Suggestion]` when stuck
+
+---
+
 ## Week 5 Summary ✅ COMPLETED
 
-| Feature | Unit Tests | Status |
-|---------|-----------|--------|
-| Context Manager | 20/20 ✅ | Complete |
-| Planning Engine | 17/17 ✅ | Complete |
-| Error Recovery | 20/20 ✅ | Complete |
+| Feature | Unit Tests | Integration | Status |
+|---------|-----------|-------------|--------|
+| Context Manager | 20/20 ✅ | ✅ E2E Verified | Complete |
+| Planning Engine | 17/17 ✅ | ✅ E2E Verified | Complete |
+| Error Recovery | 20/20 ✅ | ✅ E2E Verified | Complete |
 
 **Total: 57 new tests, 240 total tests passing**
+**Integration: All modules wired into agent.ts and E2E tested**
