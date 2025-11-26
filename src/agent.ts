@@ -5,6 +5,26 @@ import { ContextManager } from './context_manager.js';
 import { PlanningEngine } from './planning_engine.js';
 import { ErrorRecovery, ErrorType } from './error_recovery.js';
 
+// Agent iteration configuration
+interface IterationConfig {
+    maxIterations: number;
+    warningThresholds: {
+        first: number;
+        second: number;
+        final: number;
+    };
+}
+
+// Default iteration configuration
+const DEFAULT_ITERATION_CONFIG: IterationConfig = {
+    maxIterations: 16,
+    warningThresholds: {
+        first: 10,   // First warning at 10 iterations
+        second: 13,  // Second warning at 13 iterations
+        final: 15    // Final warning at 15 iterations (one before max)
+    }
+};
+
 export class Agent {
     private genAI: GoogleGenerativeAI;
     private model: GenerativeModel;
@@ -19,12 +39,25 @@ export class Agent {
     // BC-004: Guardrails to prevent excessive repetition
     private fileReadCounts: Map<string, number> = new Map();
 
-    constructor(apiKey: string) {
+    // Iteration configuration
+    private iterationConfig: IterationConfig;
+
+    constructor(apiKey: string, config?: Partial<IterationConfig>) {
         this.genAI = new GoogleGenerativeAI(apiKey);
         this.model = this.genAI.getGenerativeModel({
             model: 'gemini-2.5-flash',
             tools: TOOLS as any
         });
+
+        // Initialize iteration configuration
+        this.iterationConfig = {
+            maxIterations: config?.maxIterations ?? DEFAULT_ITERATION_CONFIG.maxIterations,
+            warningThresholds: {
+                first: config?.warningThresholds?.first ?? DEFAULT_ITERATION_CONFIG.warningThresholds.first,
+                second: config?.warningThresholds?.second ?? DEFAULT_ITERATION_CONFIG.warningThresholds.second,
+                final: config?.warningThresholds?.final ?? DEFAULT_ITERATION_CONFIG.warningThresholds.final
+            }
+        };
 
         // Initialize Week 5 components
         this.contextManager = new ContextManager();
@@ -127,7 +160,7 @@ Example workflow for "run function with params X and Y":
         let response = result.response;
 
         let iterations = 0;
-        const maxIterations = 16;
+        const maxIterations = this.iterationConfig.maxIterations;
         const toolCallHistory: Array<{tool: string, params: any}> = [];
 
         // Phase 3: Execute - Loop for tool calls with error recovery
@@ -138,12 +171,12 @@ Example workflow for "run function with params X and Y":
                 console.log(`\x1b[35m[Tool Calls] ${calls.length} tool(s) called\x1b[0m`);
 
                 // Iteration limit warnings
-                if (iterations === 10) {
-                    console.log(`\x1b[33m[Iteration Warning] 10 tool calls made - consider summarizing progress or changing approach\x1b[0m`);
-                } else if (iterations === 13) {
-                    console.log(`\x1b[33m[Iteration Warning] 13 tool calls made - please wrap up soon\x1b[0m`);
-                } else if (iterations === 15) {
-                    console.log(`\x1b[31m[Iteration Warning] 15 tool calls made - final iteration, must provide response\x1b[0m`);
+                if (iterations === this.iterationConfig.warningThresholds.first) {
+                    console.log(`\x1b[33m[Iteration Warning] ${this.iterationConfig.warningThresholds.first} tool calls made - consider summarizing progress or changing approach\x1b[0m`);
+                } else if (iterations === this.iterationConfig.warningThresholds.second) {
+                    console.log(`\x1b[33m[Iteration Warning] ${this.iterationConfig.warningThresholds.second} tool calls made - please wrap up soon\x1b[0m`);
+                } else if (iterations === this.iterationConfig.warningThresholds.final) {
+                    console.log(`\x1b[31m[Iteration Warning] ${this.iterationConfig.warningThresholds.final} tool calls made - final iteration, must provide response\x1b[0m`);
                 }
 
                 // Check for loops before executing
