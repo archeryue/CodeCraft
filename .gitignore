@@ -3,6 +3,10 @@ node_modules
 npm-debug.log
 *.log
 
+# TypeScript build outputs
+*.js
+!vitest.config.js
+
 # Rust
 target/
 Cargo.lock
@@ -13,3 +17,4 @@ Cargo.lock
 # OS specific
 .DS_Store
 Thumbs.db
+.claude/

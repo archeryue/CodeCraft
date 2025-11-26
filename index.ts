@@ -1,26 +1,21 @@
 import { Agent } from './src/agent';
 import { Renderer } from './src/ui/renderer';
 import * as readline from 'readline';
-import ora from 'ora';
-import inquirer from 'inquirer';
 
 const cli = new Agent(process.env.GEMINI_API_KEY || '');
 const renderer = new Renderer();
 
-// Confirmation callback to pass to executeTool
+let mainRl: readline.Interface;
+
 const confirmChange = async (diff: string): Promise<boolean> => {
     console.log('\n\x1b[33mProposed Changes:\x1b[0m');
     console.log(diff);
-    
-    const { confirm } = await inquirer.prompt([
-        {
-            type: 'confirm',
-            name: 'confirm',
-            message: 'Do you want to apply these changes?',
-            default: false
-        }
-    ]);
-    return confirm;
+
+    return new Promise((resolve) => {
+        mainRl.question('\x1b[33mApply these changes? (y/n): \x1b[0m', (answer) => {
+            resolve(answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+        });
+    });
 };
 
 async function main() {
@@ -32,42 +27,66 @@ async function main() {
     cli.start();
     console.log('\x1b[36mCodeCraft Agent Started. Type "exit" to quit.\x1b[0m');
 
-    const rl = readline.createInterface({
+    mainRl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
 
-    const ask = () => {
-        rl.question('\x1b[32m> \x1b[0m', async (msg) => {
+    // Keep stdin open to prevent process from exiting
+    process.stdin.resume();
+
+    let isClosing = false;
+
+    mainRl.on('close', () => {
+        isClosing = true;
+    });
+
+    const ask = async () => {
+        while (!isClosing) {
+            let msg: string;
+            try {
+                msg = await new Promise<string>((resolve, reject) => {
+                    if (mainRl.closed || isClosing) {
+                        reject(new Error('Interface closed'));
+                        return;
+                    }
+                    mainRl.question('\x1b[32m> \x1b[0m', (input) => {
+                        resolve(input);
+                    });
+                });
+            } catch (err) {
+                break;
+            }
+
             if (msg.toLowerCase() === 'exit') {
-                rl.close();
+                process.stdin.pause();
+                mainRl.close();
                 process.exit(0);
             }
 
-            const spinner = ora('Thinking...').start();
+            // Custom spinner that doesn't interfere with readline
+            const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+            let frameIndex = 0;
+            const spinnerInterval = setInterval(() => {
+                process.stdout.write(`\r${spinnerFrames[frameIndex]} Thinking...`);
+                frameIndex = (frameIndex + 1) % spinnerFrames.length;
+            }, 80);
+
             try {
-                // We need to pass the confirm callback to the chat method,
-                // which needs to pass it to executeTool.
-                // Since Agent.chat doesn't accept it yet, we need to update Agent.chat signature or property.
-                // For now, let's monkey-patch or update Agent class.
-                // Update: I'll update Agent class to accept a context/options object in chat().
-                
-                // Wait, Agent.chat calls executeTool directly. 
-                // I should update Agent.chat to accept a callback.
                 const response = await cli.chat(msg, confirmChange);
-                
-                spinner.stop();
+                clearInterval(spinnerInterval);
+                process.stdout.write('\r\x1b[K'); // Clear the spinner line
                 console.log(renderer.render(response));
+                console.log();
             } catch (error: any) {
-                spinner.fail('Error');
+                clearInterval(spinnerInterval);
+                process.stdout.write('\r\x1b[K'); // Clear the spinner line
                 console.error('\x1b[31mError:\x1b[0m', error.message);
             }
-
-            ask();
-        });
+        }
     };
 
-    ask();
+    await ask();
 }
 
 // Only run if main module

@@ -57,14 +57,12 @@ Start the interactive session:
 npx tsx index.ts
 ```
 
-### Commands
+### Slash Commands
 
-*   `codecraft chat`: Enters the interactive REPL.
-    *   **Slash Commands**:
-        *   `/clear`: Clear context memory.
-        *   `/save`: Dump chat history to JSON.
-        *   `/help`: Show help.
-        *   `exit`: Quit.
+*   `/clear` - Clear context memory
+*   `/save` - Dump chat history to JSON
+*   `/help` - Show help
+*   `exit` - Quit
 
 ### Examples
 
@@ -82,8 +80,13 @@ npx tsx index.ts
 
 ## Development
 
-*   **Testing**: Run `npm test` (uses Vitest).
-*   **TDD**: We strictly follow Test-Driven Development. See `GEMINI.md` for rules.
+*   **Testing**: Run `npm test` (uses Vitest)
+*   **TDD**: We strictly follow Test-Driven Development. See `CLAUDE.md` for development rules
+*   **Documentation**: See `docs/` folder for development plans, testing guides, and workflow documentation
+    - `docs/MASTER_PLAN.md` - 6-week development roadmap
+    - `docs/TEST_PLANS.md` - Test plans and TDD tracking
+    - `docs/TESTING.md` - Testing guidelines
+    - `docs/WORKFLOW.md` - Agent workflow documentation
 
 ## License
 MIT

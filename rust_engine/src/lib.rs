@@ -112,10 +112,10 @@ fn extract_skeleton(source_code: &str, lang_type: &str) -> String {
 
 fn walk_tree(node: &Node, source: &str, output: &mut String, depth: usize) {
     let kind = node.kind();
-    
+
     let is_relevant = match kind {
         "function_declaration" | "class_declaration" | "interface_declaration" | "method_definition" |
-        "function_item" | "struct_item" | "trait_item" | "impl_item" => true,
+        "function_item" | "struct_item" | "trait_item" | "impl_item" | "field_declaration" => true,
         _ => false,
     };
 
@@ -131,7 +131,8 @@ fn walk_tree(node: &Node, source: &str, output: &mut String, depth: usize) {
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {
         let should_recurse = match kind {
-            "program" | "source_file" | "class_declaration" | "impl_item" | "class_body" | "declaration_list" | "export_statement" | "mod_item" => true,
+            "program" | "source_file" | "class_declaration" | "impl_item" | "class_body" |
+            "declaration_list" | "export_statement" | "mod_item" | "struct_item" | "field_declaration_list" => true,
             _ => false
         };
 
@@ -164,10 +165,10 @@ fn find_matches(source: &str, lang_type: &str, file_path: &str, query: &str, mat
 
 fn walk_and_match(node: &Node, source: &str, file_path: &str, query: &str, matcher: &SkimMatcherV2, results: &mut Vec<SearchResult>) {
     let kind = node.kind();
-    
+
     let is_relevant = match kind {
         "function_declaration" | "class_declaration" | "interface_declaration" | "method_definition" |
-        "function_item" | "struct_item" | "trait_item" | "impl_item" => true,
+        "function_item" | "struct_item" | "trait_item" | "impl_item" | "field_declaration" => true,
         _ => false,
     };
 
@@ -192,7 +193,8 @@ fn walk_and_match(node: &Node, source: &str, file_path: &str, query: &str, match
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {
         let should_recurse = match kind {
-            "program" | "source_file" | "class_declaration" | "impl_item" | "class_body" | "declaration_list" | "export_statement" | "mod_item" => true,
+            "program" | "source_file" | "class_declaration" | "impl_item" | "class_body" |
+            "declaration_list" | "export_statement" | "mod_item" | "struct_item" | "field_declaration_list" => true,
             _ => false
         };
 
