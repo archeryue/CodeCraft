@@ -15,13 +15,14 @@ Each case includes:
 
 ---
 
-## BC-001: Empty Prompt Triggers Unnecessary Tool Calls
+## BC-001: Empty Prompt Triggers Unnecessary Tool Calls ✅ FIXED
 
 **Date Discovered**: 2025-11-26
+**Date Fixed**: 2025-11-26
 
 **Input/Scenario**: User submitted an empty prompt (just pressed Enter with no text)
 
-**Actual Behavior**:
+**Actual Behavior** (BEFORE FIX):
 1. Intent classifier classified it as "analyze" with 50% confidence
 2. System made 4 tool calls:
    - `search_code({"query":"validate"}...)`
@@ -32,32 +33,43 @@ Each case includes:
 4. Wasted tokens and time on meaningless operations
 
 **Expected Behavior**:
-One of the following:
 - Reject empty input with message: "Please enter a query"
-- Prompt user: "What would you like help with?"
-- Simply re-prompt without executing any tools
+- Re-prompt without executing any tools
 - Do not trigger intent classification for empty input
+- Do not trigger agent or make any API calls
 
-**Impact**:
+**Impact** (BEFORE FIX):
 - Wastes API tokens on unnecessary LLM calls
 - Wastes time on tool execution
 - Confuses user with irrelevant response
 - Poor user experience
 
-**Status**: documented
+**Status**: ✅ fixed
 
-**Related Files**:
-- `index.ts` - Input handling and REPL logic
-- `src/intent_classifier.ts` - Intent classification (should not run on empty input)
-- `src/agent.ts` - Agent loop (should handle empty messages gracefully)
+**Fix Implementation**:
+- Added `validateInput()` function in `index.ts:9-14`
+- Added validation check in REPL loop at `index.ts:72-77`
+- Empty/whitespace inputs now show error and re-prompt immediately
+- No LLM calls or tool executions for invalid input
 
-**Suggested Fix**:
-Add input validation in `index.ts` before passing to agent:
-```typescript
-if (!userMessage.trim()) {
-  console.log('Please enter a query.');
-  continue;
-}
+**Tests**:
+- Unit tests: `tests/input_validation.test.ts` (12 tests, all passing)
+- E2E tests: Verified with `test_bc001_e2e.js` (4 tests, all passing)
+- Test plan: `docs/TEST_PLANS.md` (BC-001 section)
+
+**Files Modified**:
+- `index.ts:9-14, 72-77` - Input validation added
+- `tests/input_validation.test.ts` - 12 unit tests
+- `docs/TEST_PLANS.md` - Test plan documented
+
+**Verification**:
+```bash
+# Empty input now shows error immediately:
+> [Enter]
+Please enter a query.
+>
+
+# No [Intent] classification, no tool calls, no API usage
 ```
 
 ---

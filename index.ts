@@ -2,6 +2,17 @@ import { Agent } from './src/agent';
 import { Renderer } from './src/ui/renderer';
 import * as readline from 'readline';
 
+/**
+ * Validates user input before sending to agent.
+ * Returns null if valid, error message if invalid.
+ */
+function validateInput(input: string): string | null {
+    if (!input.trim()) {
+        return 'Please enter a query.';
+    }
+    return null;
+}
+
 const cli = new Agent(process.env.GEMINI_API_KEY || '');
 const renderer = new Renderer();
 
@@ -56,6 +67,13 @@ async function main() {
                 });
             } catch (err) {
                 break;
+            }
+
+            // Validate input before processing
+            const validationError = validateInput(msg);
+            if (validationError) {
+                console.log(validationError);
+                continue;
             }
 
             if (msg.toLowerCase() === 'exit') {
