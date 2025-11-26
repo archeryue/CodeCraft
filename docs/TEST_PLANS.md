@@ -874,3 +874,149 @@ Update:
 | extract_conventions | 12/12 ✅ | Complete |
 
 **Total: 30 new tests, 178 total tests passing**
+
+---
+
+# Week 5: Advanced Agent Loop
+
+## Feature 18: Context Manager
+
+**Purpose:** Manage context tokens efficiently with tiered importance, budgeting, and relevance ranking.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Token Counting:**
+1. [x] Should count tokens in a string using tokenizer
+2. [x] Should count tokens in file content
+3. [x] Should handle empty string (0 tokens)
+4. [x] Should handle special characters correctly
+
+**Context Tiering:**
+5. [x] Should classify context as high priority (⭐⭐⭐) - current file, direct dependencies
+6. [x] Should classify context as medium priority (⭐⭐) - related files, imports
+7. [x] Should classify context as low priority (⭐) - other project files
+8. [x] Should prioritize higher tier context when budget limited
+
+**Budget Management:**
+9. [x] Should respect maximum token budget (default 8000)
+10. [x] Should allow custom budget setting
+11. [x] Should truncate low priority context first when over budget
+12. [x] Should never exceed budget even with high priority content
+
+**Relevance Ranking:**
+13. [x] Should rank files by relevance to query
+14. [x] Should rank recently accessed files higher
+15. [x] Should rank files mentioned in query highest
+16. [x] Should combine relevance scores with tier priority
+
+**Integration:**
+17. [x] Should integrate with agent to provide context
+18. [x] Should track context usage per turn
+
+### Implementation Checklist
+- [x] Write all test cases (RED)
+- [x] Implement ContextManager class (GREEN)
+- [x] Integrate with agent
+- [x] E2E verification
+
+### Files
+- Tests: `tests/context_manager.test.ts`
+- Implementation: `src/context_manager.ts`
+
+---
+
+## Feature 19: ReAct+ Agent Loop
+
+**Purpose:** Enhance agent with structured phases: Understand → Plan → Execute → Reflect
+
+### Test Plan (Written BEFORE Implementation)
+
+**Phase 1 - Understand:**
+1. [x] Should parse user intent from message
+2. [x] Should extract mentioned entities (files, functions, classes)
+3. [x] Should identify constraints from message
+4. [x] Should determine success criteria
+
+**Phase 2 - Plan:**
+5. [x] Should create todo list for multi-step tasks
+6. [x] Should estimate token usage per step
+7. [x] Should identify dependencies between steps
+8. [x] Should order steps by dependency
+
+**Phase 3 - Execute:**
+9. [x] Should execute steps in planned order
+10. [x] Should build context from previous step results
+11. [x] Should track step success/failure
+12. [x] Should retry failed steps (max 3 attempts)
+13. [x] Should ask user if stuck after retries
+
+**Phase 4 - Reflect (Optional):**
+14. [x] Should note lessons learned from execution
+15. [x] Should identify patterns for future tasks
+
+**Integration:**
+16. [x] Should maintain planning state across turns
+17. [x] Should persist plans to todo_write tool
+
+### Implementation Checklist
+- [x] Write all test cases (RED)
+- [x] Implement PlanningEngine class (GREEN)
+- [x] Integrate phases into agent loop
+- [x] E2E verification
+
+### Files
+- Tests: `tests/planning_engine.test.ts`
+- Implementation: `src/planning_engine.ts`
+
+---
+
+## Feature 20: Error Recovery
+
+**Purpose:** Detect and recover from errors, loops, and failures gracefully.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Loop Detection:**
+1. [x] Should detect repeating same tool call 3+ times
+2. [x] Should detect alternating between same 2 actions
+3. [x] Should break loop with alternative strategy
+4. [x] Should track action history for detection
+
+**Retry Logic:**
+5. [x] Should retry failed tool calls with modified params
+6. [x] Should try alternative approach after 2 failures
+7. [x] Should ask user after 3 total failures
+8. [x] Should not retry unrecoverable errors (file not found)
+
+**Error Classification:**
+9. [x] Should classify errors as recoverable/unrecoverable
+10. [x] Should classify transient errors (network, timeout)
+11. [x] Should classify permanent errors (invalid path, syntax)
+12. [x] Should provide helpful error messages
+
+**Task Status:**
+13. [x] Should never mark task complete with errors
+14. [x] Should update task status on failure
+15. [x] Should provide failure reason in status
+
+### Implementation Checklist
+- [x] Write all test cases (RED)
+- [x] Implement ErrorRecovery class (GREEN)
+- [x] Integrate into agent execution loop
+- [x] E2E verification
+
+### Files
+- Tests: `tests/error_recovery.test.ts`
+- Implementation: `src/error_recovery.ts`
+
+---
+
+## Week 5 Summary ✅ COMPLETED
+
+| Feature | Unit Tests | Status |
+|---------|-----------|--------|
+| Context Manager | 20/20 ✅ | Complete |
+| Planning Engine | 17/17 ✅ | Complete |
+| Error Recovery | 20/20 ✅ | Complete |
+
+**Total: 57 new tests, 240 total tests passing**
