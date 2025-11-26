@@ -122,6 +122,7 @@ Example workflow for "run function with params X and Y":
 
         let iterations = 0;
         const maxIterations = 10;
+        const toolCallHistory: Array<{tool: string, params: any}> = [];
 
         // Phase 3: Execute - Loop for tool calls with error recovery
         while (iterations < maxIterations) {
@@ -129,6 +130,13 @@ Example workflow for "run function with params X and Y":
 
             if (calls && calls.length > 0) {
                 console.log(`\x1b[35m[Tool Calls] ${calls.length} tool(s) called\x1b[0m`);
+
+                // Iteration limit warnings
+                if (iterations === 7) {
+                    console.log(`\x1b[33m[Iteration Warning] 7 tool calls made - consider summarizing progress\x1b[0m`);
+                } else if (iterations === 8) {
+                    console.log(`\x1b[33m[Iteration Warning] 8 tool calls made - please wrap up soon\x1b[0m`);
+                }
 
                 // Check for loops before executing
                 if (this.errorRecovery.detectLoop()) {
@@ -140,6 +148,9 @@ Example workflow for "run function with params X and Y":
 
                 const toolParts = [];
                 for (const call of calls) {
+                    // Track for error message generation
+                    toolCallHistory.push({ tool: call.name, params: call.args });
+
                     // Record action for loop detection
                     this.errorRecovery.recordAction({ tool: call.name, params: call.args as Record<string, any> });
 
@@ -202,10 +213,76 @@ Example workflow for "run function with params X and Y":
         const finalText = response.text();
         if (!finalText || finalText.trim().length === 0) {
             console.log('\x1b[31m[Warning] Empty response from model after', iterations, 'tool iterations\x1b[0m');
+
             if (iterations === 0) {
                 return "I apologize, but I encountered an issue generating a response. Could you please rephrase your request or try again?";
             }
+
+            // Generate helpful error message when hitting iteration limit
+            return this.generateIterationLimitMessage(toolCallHistory, this.errorRecovery.detectLoop());
         }
         return finalText;
+    }
+
+    private generateIterationLimitMessage(toolCalls: Array<{tool: string, params: any}>, loopDetected: boolean): string {
+        const summary = this.summarizeToolCalls(toolCalls);
+        const issue = loopDetected
+            ? "Loop detected: Repeatedly using same tools without making progress"
+            : "Iteration limit reached without completing task";
+
+        const suggestion = this.getSuggestion(toolCalls);
+
+        return `I attempted to complete your request but encountered difficulties:
+
+**Attempted:**
+${summary}
+
+**Issue:**
+${issue}
+
+**Suggestion:**
+${suggestion}
+
+Would you like me to try that, or would you prefer to provide more guidance?`;
+    }
+
+    private summarizeToolCalls(toolCalls: Array<{tool: string, params: any}>): string {
+        const summary: Record<string, number> = {};
+
+        for (const call of toolCalls) {
+            const key = call.tool;
+            summary[key] = (summary[key] || 0) + 1;
+        }
+
+        const lines: string[] = [];
+        for (const [tool, count] of Object.entries(summary)) {
+            if (count === 1) {
+                lines.push(`- Called ${tool}`);
+            } else {
+                lines.push(`- Called ${tool} ${count} times`);
+            }
+        }
+
+        return lines.length > 0 ? lines.join('\n') : "- No tool calls were made";
+    }
+
+    private getSuggestion(toolCalls: Array<{tool: string, params: any}>): string {
+        if (toolCalls.length === 0) {
+            return "Try a different approach or ask for clarification";
+        }
+
+        const lastCall = toolCalls[toolCalls.length - 1];
+
+        switch (lastCall.tool) {
+            case 'read_file':
+                return "Try using grep to search for specific patterns instead of reading entire files";
+            case 'grep':
+            case 'search_code':
+                return "Try reading the full file or asking for clarification about what to search for";
+            case 'edit_file':
+                return "Re-read the file to verify the exact content before attempting to edit";
+            default:
+                return "Let me know what you'd like me to focus on, or try a different approach";
+        }
     }
 }
