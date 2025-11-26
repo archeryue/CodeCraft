@@ -127,7 +127,7 @@ Example workflow for "run function with params X and Y":
         let response = result.response;
 
         let iterations = 0;
-        const maxIterations = 10;
+        const maxIterations = 16;
         const toolCallHistory: Array<{tool: string, params: any}> = [];
 
         // Phase 3: Execute - Loop for tool calls with error recovery
@@ -138,10 +138,12 @@ Example workflow for "run function with params X and Y":
                 console.log(`\x1b[35m[Tool Calls] ${calls.length} tool(s) called\x1b[0m`);
 
                 // Iteration limit warnings
-                if (iterations === 7) {
-                    console.log(`\x1b[33m[Iteration Warning] 7 tool calls made - consider summarizing progress\x1b[0m`);
-                } else if (iterations === 8) {
-                    console.log(`\x1b[33m[Iteration Warning] 8 tool calls made - please wrap up soon\x1b[0m`);
+                if (iterations === 10) {
+                    console.log(`\x1b[33m[Iteration Warning] 10 tool calls made - consider summarizing progress or changing approach\x1b[0m`);
+                } else if (iterations === 13) {
+                    console.log(`\x1b[33m[Iteration Warning] 13 tool calls made - please wrap up soon\x1b[0m`);
+                } else if (iterations === 15) {
+                    console.log(`\x1b[31m[Iteration Warning] 15 tool calls made - final iteration, must provide response\x1b[0m`);
                 }
 
                 // Check for loops before executing
