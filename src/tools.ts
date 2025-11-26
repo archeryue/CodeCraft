@@ -134,14 +134,17 @@ export const TOOLS = [
       },
       {
         name: "grep",
-        description: "Search file contents using regex patterns. Returns file paths, line numbers, and matching lines. Ignores node_modules by default.",
+        description: "Search file contents using regex patterns. Returns file paths, line numbers, matching lines, and optional context. Ignores node_modules by default.",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {
             pattern: { type: SchemaType.STRING, description: "Regex pattern to search for" },
             path: { type: SchemaType.STRING, description: "Directory to search in (default '.')" },
             include: { type: SchemaType.STRING, description: "File pattern to include (e.g., '*.ts')" },
-            ignoreCase: { type: SchemaType.BOOLEAN, description: "Case-insensitive search (default false)" }
+            ignoreCase: { type: SchemaType.BOOLEAN, description: "Case-insensitive search (default false)" },
+            contextLines: { type: SchemaType.NUMBER, description: "Number of lines to show before and after each match (like grep -C)" },
+            beforeContext: { type: SchemaType.NUMBER, description: "Number of lines to show before each match (like grep -B)" },
+            afterContext: { type: SchemaType.NUMBER, description: "Number of lines to show after each match (like grep -A)" }
           },
           required: ["pattern"]
         }
@@ -405,7 +408,17 @@ export async function executeTool(
             onlyFiles: true
           });
 
-          const matches: Array<{ file: string; line: number; content: string }> = [];
+          // Determine context settings
+          const contextBefore = args.contextLines ?? args.beforeContext ?? 0;
+          const contextAfter = args.contextLines ?? args.afterContext ?? 0;
+
+          const matches: Array<{
+            file: string;
+            line: number;
+            content: string;
+            contextBefore?: Array<{ line: number; content: string }>;
+            contextAfter?: Array<{ line: number; content: string }>;
+          }> = [];
 
           for (const file of filesToSearch) {
             const fullPath = path.join(grepPath, file);
@@ -415,11 +428,40 @@ export async function executeTool(
 
               lines.forEach((lineContent, index) => {
                 if (regex.test(lineContent)) {
-                  matches.push({
+                  const match: any = {
                     file: file,
                     line: index + 1,
                     content: lineContent.trim()
-                  });
+                  };
+
+                  // Add context lines if requested
+                  if (contextBefore > 0 || contextAfter > 0) {
+                    // Before context
+                    if (contextBefore > 0) {
+                      match.contextBefore = [];
+                      const startLine = Math.max(0, index - contextBefore);
+                      for (let i = startLine; i < index; i++) {
+                        match.contextBefore.push({
+                          line: i + 1,
+                          content: lines[i]
+                        });
+                      }
+                    }
+
+                    // After context
+                    if (contextAfter > 0) {
+                      match.contextAfter = [];
+                      const endLine = Math.min(lines.length, index + contextAfter + 1);
+                      for (let i = index + 1; i < endLine; i++) {
+                        match.contextAfter.push({
+                          line: i + 1,
+                          content: lines[i]
+                        });
+                      }
+                    }
+                  }
+
+                  matches.push(match);
                 }
               });
             } catch (readErr) {
