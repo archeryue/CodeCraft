@@ -752,3 +752,125 @@ Update:
 | find_references | 13/13 ✅ | Complete |
 
 **Total: 37 new tests, 148 total tests passing**
+
+---
+
+# Week 4: Verification & Quality
+
+## Feature 15: delete_file Tool ✅
+
+**Purpose:** Delete a file with safety confirmation. Prevent accidental deletions.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. [x] Should delete an existing file
+2. [x] Should return success message after deletion
+3. [x] Should work with relative paths
+4. [x] Should work with absolute paths
+
+**Safety Tests:**
+5. [x] Should return error when file does not exist
+6. [x] Should return error when path is a directory
+7. [x] Should not delete files with dangerous paths (path traversal)
+
+**Output Format:**
+8. [x] Should return confirmation message with file path
+
+### Implementation Status
+- [x] Tests written (RED) - 8 tests
+- [x] Implementation complete (GREEN)
+- [x] Integrated into agent
+- [x] E2E verified
+
+### Files
+- Tests: `tests/delete_file.test.ts`
+- Implementation: `src/tools.ts:557-579`
+
+---
+
+## Feature 16: detect_project_type Tool ✅
+
+**Purpose:** Detect project type (Node, Rust, Python, etc.) and tooling configuration.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. [x] Should detect Node.js project (package.json exists)
+2. [x] Should detect Rust project (Cargo.toml exists)
+3. [x] Should detect TypeScript usage
+4. [x] Should detect mixed projects (multiple indicators)
+
+**Framework Detection:**
+5. [x] Should detect test framework (vitest, jest, pytest, cargo test)
+6. [x] Should detect linter (eslint, prettier, rustfmt, pylint)
+7. [x] Should detect package manager (npm, yarn, pnpm)
+
+**Edge Cases:**
+8. [x] Should return unknown for directory without project files
+9. [x] Should return error for non-existent path
+
+**Output Format:**
+10. [x] Should return JSON with type, testFramework, linter fields
+
+### Implementation Status
+- [x] Tests written (RED) - 10 tests
+- [x] Implementation complete (GREEN)
+- [x] Integrated into agent
+- [x] E2E verified
+
+### Files
+- Tests: `tests/detect_project_type.test.ts`
+- Implementation: `src/tools.ts:580-656`
+
+---
+
+## Feature 17: extract_conventions Tool ✅
+
+**Purpose:** Extract coding conventions from existing codebase (naming, style, patterns).
+
+### Test Plan (Written BEFORE Implementation)
+
+**Naming Convention Tests:**
+1. [x] Should detect camelCase naming for functions
+2. [x] Should detect PascalCase for classes
+3. [x] Should detect constant naming style
+
+**Style Detection:**
+4. [x] Should detect indentation style (spaces vs tabs)
+5. [x] Should detect indent size (2 or 4 spaces)
+6. [x] Should detect quote style (single vs double)
+7. [x] Should detect semicolon usage
+
+**Pattern Detection:**
+8. [x] Should detect test file location (tests/, __tests__, *.test.ts)
+9. [x] Should detect test naming pattern
+
+**Edge Cases:**
+10. [x] Should handle directory with few files
+11. [x] Should return error for non-existent path
+
+**Output Format:**
+12. [x] Should return JSON with naming and style fields
+
+### Implementation Status
+- [x] Tests written (RED) - 12 tests
+- [x] Implementation complete (GREEN)
+- [x] Integrated into agent
+- [x] E2E verified
+
+### Files
+- Tests: `tests/extract_conventions.test.ts`
+- Implementation: `src/tools.ts:657-770`
+
+---
+
+## Week 4 Summary ✅ COMPLETED
+
+| Tool | Unit Tests | Status |
+|------|-----------|--------|
+| delete_file | 8/8 ✅ | Complete |
+| detect_project_type | 10/10 ✅ | Complete |
+| extract_conventions | 12/12 ✅ | Complete |
+
+**Total: 30 new tests, 178 total tests passing**
