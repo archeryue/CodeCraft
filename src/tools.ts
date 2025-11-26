@@ -250,6 +250,17 @@ export const TOOLS = [
           },
           required: ["path"]
         }
+      },
+      {
+        name: "get_project_overview",
+        description: "Get comprehensive project overview by reading README, package.json, architecture docs, and analyzing codebase. Returns purpose, architecture, tech stack, usage instructions, and entry points.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            path: { type: SchemaType.STRING, description: "Project directory to analyze (default '.')" }
+          },
+          required: ["path"]
+        }
       }
     ]
   }
@@ -809,6 +820,125 @@ export async function executeTool(
           return JSON.stringify(conventions);
         } catch (err: any) {
           return `Error extracting conventions: ${err.message}`;
+        }
+      case "get_project_overview":
+        const projPath = args.path || '.';
+
+        if (!fs.existsSync(projPath)) {
+          return `Error: Directory not found: ${projPath}`;
+        }
+
+        try {
+          const overview: any = {
+            sources: []
+          };
+
+          // 1. Read package.json for metadata
+          const packageJsonPath = path.join(projPath, 'package.json');
+          if (fs.existsSync(packageJsonPath)) {
+            const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+            overview.techStack = {
+              name: pkg.name,
+              version: pkg.version,
+              description: pkg.description,
+              languages: []
+            };
+            overview.purpose = pkg.description || '';
+            overview.sources.push('package.json');
+
+            // Detect languages from dependencies
+            const allDeps = {
+              ...pkg.dependencies,
+              ...pkg.devDependencies
+            };
+            if (allDeps.typescript || pkg.devDependencies?.typescript) {
+              overview.techStack.languages.push('TypeScript');
+            }
+            if (allDeps['@types/node']) {
+              overview.techStack.languages.push('Node.js');
+            }
+          }
+
+          // 2. Read README.md for project overview
+          const readmePath = path.join(projPath, 'README.md');
+          if (fs.existsSync(readmePath)) {
+            const readme = fs.readFileSync(readmePath, 'utf-8');
+            const lines = readme.split('\n').slice(0, 50); // First 50 lines
+
+            // Extract first paragraph as purpose if not already set
+            if (!overview.purpose || overview.purpose.length < 20) {
+              const firstPara = lines.find(line => line.trim().length > 20 && !line.startsWith('#'));
+              if (firstPara) {
+                overview.purpose = firstPara.trim();
+              }
+            }
+
+            overview.sources.push('README.md');
+          }
+
+          // 3. Read CLAUDE.md for architecture details
+          const claudeMdPath = path.join(projPath, 'CLAUDE.md');
+          if (fs.existsSync(claudeMdPath)) {
+            const claudeMd = fs.readFileSync(claudeMdPath, 'utf-8');
+
+            // Extract architecture section
+            overview.architecture = {
+              details: 'See CLAUDE.md for comprehensive architecture documentation'
+            };
+
+            // Look for key architecture terms
+            if (claudeMd.toLowerCase().includes('hybrid')) {
+              overview.architecture.type = 'Hybrid';
+            }
+            if (claudeMd.toLowerCase().includes('rust')) {
+              if (!overview.techStack.languages.includes('Rust')) {
+                overview.techStack.languages.push('Rust');
+              }
+              if (claudeMd.toLowerCase().includes('napi')) {
+                overview.architecture.notes = 'Uses Rust engine via NAPI-RS bindings';
+              }
+            }
+
+            overview.sources.push('CLAUDE.md');
+          }
+
+          // 4. Detect entry points
+          overview.entryPoints = [];
+          const commonEntryPoints = ['index.ts', 'index.js', 'main.ts', 'main.js', 'src/index.ts', 'src/main.ts'];
+          for (const entry of commonEntryPoints) {
+            if (fs.existsSync(path.join(projPath, entry))) {
+              overview.entryPoints.push(entry);
+            }
+          }
+
+          // 5. Check for usage instructions
+          if (fs.existsSync(readmePath)) {
+            const readme = fs.readFileSync(readmePath, 'utf-8');
+            const usageMatch = readme.match(/##\s*Usage[\s\S]{0,500}/i) ||
+                              readme.match(/##\s*Getting Started[\s\S]{0,500}/i) ||
+                              readme.match(/##\s*Quick Start[\s\S]{0,500}/i);
+            if (usageMatch) {
+              overview.usage = {
+                instructions: usageMatch[0].split('\n').slice(0, 10).join('\n')
+              };
+            }
+          }
+
+          // 6. Detect package manager
+          if (fs.existsSync(path.join(projPath, 'package-lock.json'))) {
+            if (!overview.techStack) overview.techStack = {};
+            overview.techStack.packageManager = 'npm';
+          } else if (fs.existsSync(path.join(projPath, 'yarn.lock'))) {
+            if (!overview.techStack) overview.techStack = {};
+            overview.techStack.packageManager = 'yarn';
+          } else if (fs.existsSync(path.join(projPath, 'pnpm-lock.yaml'))) {
+            if (!overview.techStack) overview.techStack = {};
+            overview.techStack.packageManager = 'pnpm';
+          }
+
+          return JSON.stringify(overview);
+        } catch (err: any) {
+          return `Error getting project overview: ${err.message}`;
         }
       default:
         return `Unknown tool: ${name}`;

@@ -1619,3 +1619,232 @@ npm test grep.test.ts
 - Backward compatible: existing grep calls work without changes
 - Improves code exploration and understanding
 - Reduces need for follow-up queries to understand matches
+
+---
+
+## BC-003: Project Overview Tool ⚠️
+
+**Purpose:** Create comprehensive project overview tool that reads multiple sources to understand purpose, architecture, and usage.
+
+**Related Issue:** BADCASES.md BC-003
+
+---
+
+### Test Plan (Written BEFORE Implementation)
+
+#### Happy Path Tests
+1. [ ] **Should read README.md for project description**
+   - **Input:** `get_project_overview({path: "."})`
+   - **Expected:** Returns README content with project description
+
+2. [ ] **Should read package.json for metadata**
+   - **Input:** `get_project_overview({path: "."})`
+   - **Expected:** Includes name, description, version, dependencies
+
+3. [ ] **Should detect and read architecture docs**
+   - **Input:** `get_project_overview({path: "."})`
+   - **Expected:** Finds and includes CLAUDE.md, ARCHITECTURE.md if present
+
+4. [ ] **Should include tech stack from detect_project_type**
+   - **Input:** `get_project_overview({path: "."})`
+   - **Expected:** Includes languages, frameworks, tools detected
+
+5. [ ] **Should identify entry points**
+   - **Input:** `get_project_overview({path: "."})`
+   - **Expected:** Finds index.ts, main.ts, or similar entry files
+
+#### Content Detection Tests
+6. [ ] **Should extract project purpose**
+   - **Expected:** Returns purpose/goal from README or package.json description
+
+7. [ ] **Should identify architecture patterns**
+   - **Expected:** Detects patterns like "hybrid", "microservices", "monolith", etc.
+
+8. [ ] **Should find usage instructions**
+   - **Expected:** Extracts how to run, build, test from README
+
+9. [ ] **Should detect key technologies**
+   - **Expected:** Identifies major deps like React, Rust, TypeScript, etc.
+
+#### Edge Cases
+10. [ ] **Should work with minimal documentation**
+    - **Input:** Project with only package.json
+    - **Expected:** Returns available info, doesn't fail
+
+11. [ ] **Should handle missing README**
+    - **Input:** Project without README.md
+    - **Expected:** Gathers info from other sources
+
+12. [ ] **Should work with non-standard structure**
+    - **Input:** Project with different layout
+    - **Expected:** Adapts to find available documentation
+
+13. [ ] **Should handle large README files**
+    - **Input:** Very long README.md
+    - **Expected:** Extracts key sections, doesn't overflow
+
+#### Output Format Tests
+14. [ ] **Should return structured JSON**
+    - **Expected:** `{purpose, architecture, techStack, usage, entryPoints}`
+
+15. [ ] **Should include source attribution**
+    - **Expected:** Shows where each piece of info came from
+
+#### Integration Tests
+16. [ ] **Should work on CodeCraft project itself**
+    - **Expected:** Correctly identifies it as agentic CLI with Rust engine
+
+17. [ ] **Should work on other project types**
+    - **Expected:** Adapts to React apps, Python projects, etc.
+
+#### End-to-End Tests
+18. [ ] **E2E Test 1: "What type of project is this?"**
+    - **User Action:** Ask about project type
+    - **Expected Result:** Comprehensive answer with purpose, architecture, tech stack
+    - **Verification:** Mentions CodeCraft, Rust engine, REPL, Gemini
+
+19. [ ] **E2E Test 2: "How do I run this project?"**
+    - **User Action:** Ask about usage
+    - **Expected Result:** Clear instructions from README
+    - **Verification:** Shows npx tsx index.ts and GEMINI_API_KEY requirement
+
+20. [ ] **E2E Test 3: "What is the architecture?"**
+    - **User Action:** Ask about architecture
+    - **Expected Result:** Explains hybrid Node.js + Rust design
+    - **Verification:** Mentions NAPI-RS, tree-sitter, agent loop
+
+---
+
+### Implementation Checklist
+
+#### Phase 1: Plan (BEFORE coding)
+- [x] Test plan written and reviewed
+- [x] All test cases documented above
+- [x] Edge cases identified (missing docs, large files)
+- [x] Error scenarios planned
+
+#### Phase 2: Red (Write failing tests)
+- [ ] All unit tests written in `tests/project_overview.test.ts`
+- [ ] Run `npm test` - verify tests FAIL
+- [ ] Tests are clear and well-named
+
+#### Phase 3: Green (Make tests pass)
+- [ ] Create get_project_overview tool in tools.ts
+- [ ] Implement multi-source information gathering
+- [ ] Implement synthesis logic
+- [ ] Run `npm test` - verify tests PASS
+
+#### Phase 4: Refactor (Clean up)
+- [ ] Code reviewed for clarity
+- [ ] Removed duplication
+- [ ] Run `npm test` - still passes
+
+#### Phase 5: Verify (E2E testing)
+- [ ] Manual testing with `npx tsx index.ts`
+- [ ] All E2E scenarios tested
+- [ ] Comprehensive answers provided
+- [ ] No information gaps
+
+#### Phase 6: Document
+- [ ] Update `BADCASES.md` BC-003 status to "fixed"
+- [ ] Update `TEST_PLANS.md` with implementation status
+- [ ] Mark all checkboxes ✅
+
+---
+
+### Implementation Status
+
+**Status:** Not Started
+
+**Test Results:**
+- Unit Tests: 0/17 passing
+- Integration Tests: 0/2 passing
+- E2E Tests: 0/3 verified
+
+**Known Issues:**
+- None yet
+
+---
+
+### Files
+
+**Tests:**
+- `tests/project_overview.test.ts` - Unit tests for new tool
+
+**Implementation:**
+- `src/tools.ts` - New get_project_overview tool
+
+**Documentation:**
+- `BADCASES.md:BC-003` - Original bug report
+
+---
+
+### Example Usage
+
+```typescript
+// Get comprehensive project overview
+const overview = await get_project_overview({path: "."});
+
+// Returns:
+{
+  purpose: "CodeCraft is a high-performance agentic CLI coding assistant",
+  architecture: {
+    type: "Hybrid Node.js + Rust",
+    components: [
+      "Node.js REPL and agent logic",
+      "Rust engine for code parsing (tree-sitter)",
+      "NAPI-RS bindings between layers"
+    ]
+  },
+  techStack: {
+    languages: ["TypeScript", "Rust"],
+    frameworks: ["Gemini AI", "tree-sitter"],
+    tools: ["Vitest", "npm", "cargo"]
+  },
+  usage: {
+    run: "npx tsx index.ts",
+    requirements: ["GEMINI_API_KEY environment variable"],
+    commands: ["/clear", "/help", "/save"]
+  },
+  entryPoints: ["index.ts"],
+  sources: ["README.md", "package.json", "CLAUDE.md"]
+}
+```
+
+---
+
+### Testing Examples
+
+**Manual E2E Test:**
+```bash
+npx tsx index.ts
+
+# Test 1: Comprehensive project info
+> What type of project is this?
+Expected: Mentions CodeCraft, agentic CLI, Rust engine, purpose
+
+# Test 2: Usage instructions
+> How do I run this?
+Expected: Shows npx tsx index.ts and requirements
+
+# Test 3: Architecture details
+> Explain the architecture
+Expected: Hybrid Node.js + Rust, NAPI-RS, tree-sitter
+```
+
+**Unit Test:**
+```bash
+npm test project_overview.test.ts
+# Should see: 17 tests passing
+```
+
+---
+
+### Notes
+
+- Fixes BC-003: Project type detection missing purpose and architecture
+- Creates new comprehensive tool instead of just enhancing detect_project_type
+- Reads multiple sources: README, package.json, CLAUDE.md, entry files
+- Synthesizes holistic view of project
+- Helps onboarding and understanding project structure
+- Reduces back-and-forth questions about project

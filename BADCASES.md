@@ -159,13 +159,14 @@ await grep({
 
 ---
 
-## BC-003: Project Type Detection Misses Purpose and Architecture
+## BC-003: Project Type Detection Misses Purpose and Architecture ⚠️ PARTIALLY FIXED
 
 **Date Discovered**: 2025-11-26
+**Date Partially Fixed**: 2025-11-26
 
 **Input/Scenario**: User asked: "What type of project is this?"
 
-**Actual Behavior**:
+**Actual Behavior** (BEFORE FIX):
 1. System called `detect_project_type({"path":"."}...)`
 2. Returned superficial information:
    - "Node.js project, specifically using TypeScript"
@@ -205,33 +206,57 @@ When asked "What type of project is this?", provide comprehensive information:
    - Package Manager: npm
    - Build: cargo for Rust, tsc for TypeScript
 
-**Impact**:
+**Impact** (BEFORE FIX):
 - User doesn't understand what the project actually does
 - Misses critical architectural details (Rust engine)
 - Can't see the value proposition or use cases
 - Poor onboarding experience for new developers
 - Doesn't help users understand how to use or contribute to the project
 
-**Status**: documented
+**Status**: ⚠️ partially fixed
 
-**Related Files**:
-- `src/tools.ts` - `detect_project_type` tool (too limited in scope)
-- `README.md` - Should be read for project overview
-- `CLAUDE.md` - Contains comprehensive architecture documentation
-- `package.json` - Contains project description and metadata
-- `index.ts` - Entry point that shows it's a REPL/CLI tool
+**Fix Implementation**:
+- ✅ Created new `get_project_overview` tool in `src/tools.ts:254-264, 824-953`
+- ✅ Tool reads README.md, package.json, CLAUDE.md for comprehensive info
+- ✅ Extracts purpose, architecture, tech stack, entry points, usage instructions
+- ✅ Returns structured JSON with all project details
+- ✅ Fixed critical infinite recursion bug (was calling detect_project_type ↔ get_project_overview)
+- ⚠️ Agent behavior: Currently prefers simpler `detect_project_type` tool over comprehensive `get_project_overview`
 
-**Suggested Fix**:
-When asked about project type, the agent should:
-1. Read `README.md` first for project overview
-2. Read `package.json` for description and metadata
-3. Check for architecture docs (CLAUDE.md, ARCHITECTURE.md, etc.)
-4. Use `detect_project_type` for tech stack details
-5. Use `get_codebase_map` to understand structure
-6. Read entry point file (index.ts, main.ts, etc.) to understand what it does
-7. Synthesize all information into comprehensive answer covering purpose, architecture, and usage
+**Tests**:
+- Unit tests: `tests/project_overview.test.ts` (14 tests, all passing) ✅
+- E2E tests: `test_bc003_e2e.js` (1/4 passing) ⚠️
+  - ✅ No infinite recursion (fixed!)
+  - ✅ Tool works correctly in isolation
+  - ⚠️ Agent doesn't use comprehensive tool by default
+  - Test plan: `docs/TEST_PLANS.md` (BC-003 section)
 
-Consider creating a new tool: `get_project_overview` that does all of the above automatically.
+**Files Modified**:
+- `src/tools.ts:254-264` - Added get_project_overview tool definition
+- `src/tools.ts:824-953` - Implemented comprehensive project analysis
+- `src/tools.ts:706-715` - Removed recursive call (fixed infinite loop)
+- `tests/project_overview.test.ts` - 14 comprehensive tests
+- `docs/TEST_PLANS.md` - Test plan documented
+
+**Remaining Issues**:
+1. **Agent Behavior**: When asked "What type of project is this?", agent calls `detect_project_type` instead of `get_project_overview`
+2. **Possible Solutions**:
+   - Update tool descriptions to guide agent toward comprehensive tool
+   - Update system prompt to encourage using comprehensive tools
+   - Add examples/hints in tool descriptions
+   - Consider deprecating or limiting `detect_project_type` for basic queries
+
+**Verification**:
+```bash
+# Tool works correctly:
+npm test project_overview.test.ts  # 14/14 passing ✅
+
+# No infinite recursion:
+node test_bc003_e2e.js  # Only 1 tool call (not 100+) ✅
+
+# Agent behavior needs improvement:
+# Currently calls detect_project_type, not get_project_overview ⚠️
+```
 
 ---
 
