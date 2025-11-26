@@ -112,6 +112,36 @@ export class ErrorRecovery {
         );
         if (sameActions.length >= 3) return true;
 
+        // Check for parameter similarity (same file, different offsets)
+        if (this.detectParameterSimilarity()) return true;
+
+        return false;
+    }
+
+    private detectParameterSimilarity(): boolean {
+        if (this.history.length < 3) return false;
+
+        const recent3 = this.history.slice(-3).map(h => h.action);
+        const tool = recent3[0].tool;
+
+        // Check if same tool used 3 times
+        if (!recent3.every(a => a.tool === tool)) return false;
+
+        // For read_file, check if same file with different offsets
+        if (tool === 'read_file') {
+            const paths = recent3.map(a => a.params.path);
+            const uniquePaths = new Set(paths);
+
+            // Same file read 3 times
+            if (uniquePaths.size === 1) {
+                // Check if offsets/limits are different
+                const hasOffset = recent3.some(a => a.params.offset !== undefined);
+                if (hasOffset) {
+                    return true; // Reading same file with different offsets = loop
+                }
+            }
+        }
+
         return false;
     }
 

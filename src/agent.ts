@@ -16,6 +16,9 @@ export class Agent {
     private planningEngine: PlanningEngine;
     private errorRecovery: ErrorRecovery;
 
+    // BC-004: Guardrails to prevent excessive repetition
+    private fileReadCounts: Map<string, number> = new Map();
+
     constructor(apiKey: string) {
         this.genAI = new GoogleGenerativeAI(apiKey);
         this.model = this.genAI.getGenerativeModel({
@@ -117,6 +120,9 @@ Example workflow for "run function with params X and Y":
         // Reset error recovery for new conversation turn
         this.errorRecovery.clearHistory();
 
+        // Reset guardrails for new conversation turn
+        this.fileReadCounts.clear();
+
         let result = await this.chatSession.sendMessage(message);
         let response = result.response;
 
@@ -154,11 +160,20 @@ Example workflow for "run function with params X and Y":
                     // Record action for loop detection
                     this.errorRecovery.recordAction({ tool: call.name, params: call.args as Record<string, any> });
 
-                    // Track context for file reads
+                    // Track context for file reads and apply guardrails
                     if (call.name === 'read_file' && call.args) {
                         const args = call.args as { path?: string };
                         if (args.path) {
                             this.contextManager.markUsed(args.path);
+
+                            // Guardrail: Track file read count
+                            const count = this.fileReadCounts.get(args.path) || 0;
+                            this.fileReadCounts.set(args.path, count + 1);
+
+                            // Warn if same file read 3+ times
+                            if (count + 1 >= 3) {
+                                console.log(`\x1b[33m[Guardrail Warning] File ${args.path} has been read ${count + 1} times - consider using grep or a different approach\x1b[0m`);
+                            }
                         }
                     }
 
