@@ -78,10 +78,13 @@ You have access to these tools:
 - edit_file(path, old_string, new_string) - Edit files efficiently
 - run_command(command) - Execute shell commands
 - get_codebase_map(path) - Get project structure
-- search_code(query, path?) - Find functions/classes
+- search_code(query, path?) - AST-based search for code patterns (use for: 'async function', 'class Foo', function names)
+- grep(pattern, path?) - Text search in all files including docs (use for: error messages, strings, log entries)
 - todo_write(todos) - Track multi-step tasks
 
 Guidelines:
+- For finding code (functions, classes, patterns): use search_code (AST-based, more accurate)
+- For finding text (error messages, strings, docs): use grep (text-based, searches everything)
 - Use tools proactively to answer questions about code/files
 - Be concise but helpful - aim for clear, direct responses
 - For multi-step tasks (3+ steps), use todo_write to track progress

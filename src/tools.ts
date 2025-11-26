@@ -74,11 +74,11 @@ export const TOOLS = [
       },
       {
         name: "search_code",
-        description: "Fuzzy searches for symbols (functions, classes) in the codebase.",
+        description: "AST-based semantic search for code patterns and symbols. Searches function signatures, class definitions, method declarations using tree-sitter. Use for: 'async function', 'class Foo', 'interface Bar', 'function handleSubmit', etc. Only searches code files (.ts, .tsx, .rs), automatically excludes documentation. Returns top 10 matches with file, line, and signature.",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {
-            query: { type: SchemaType.STRING, description: "The symbol name to search for" },
+            query: { type: SchemaType.STRING, description: "Pattern or symbol to search for (e.g., 'async function', 'executeTool', 'class Agent')" },
             path: { type: SchemaType.STRING, description: "The directory to search (default '.')"}
           },
           required: ["query"]
@@ -134,7 +134,7 @@ export const TOOLS = [
       },
       {
         name: "grep",
-        description: "Search file contents using regex patterns. Returns file paths, line numbers, matching lines, and optional context. Ignores node_modules by default.",
+        description: "Text-based regex search across all files including documentation, config, and code. Returns file paths, line numbers, matching lines, and optional context. Use for: error messages, specific strings, log entries, documentation text. For finding functions/classes/code patterns, use search_code instead (it's AST-based and more accurate). Ignores node_modules by default.",
         parameters: {
           type: SchemaType.OBJECT,
           properties: {
