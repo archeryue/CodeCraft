@@ -91,7 +91,8 @@ describe('build_dependency_graph tool', () => {
         it('should handle missing files gracefully', async () => {
             // Should not throw even if imported file doesn't exist
             const result = await executeTool('build_dependency_graph', { path: 'src' });
-            expect(result).not.toContain('Error');
+            // Check for actual error message, not just "Error" (which matches error_recovery.ts filename)
+            expect(result).not.toMatch(/^Error:/);
         });
 
         it('should return error for non-existent directory', async () => {

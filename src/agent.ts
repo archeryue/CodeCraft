@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI, GenerativeModel, ChatSession } from '@google/generative-ai';
 import { TOOLS, executeTool } from './tools.js';
 import { classifyIntent, Intent } from './intent_classifier.js';
+import { ContextManager } from './context_manager.js';
+import { PlanningEngine } from './planning_engine.js';
+import { ErrorRecovery, ErrorType } from './error_recovery.js';
 
 export class Agent {
     private genAI: GoogleGenerativeAI;
@@ -8,12 +11,22 @@ export class Agent {
     private chatSession: ChatSession | null = null;
     private currentIntent: Intent | null = null;
 
+    // Week 5: Advanced Agent Loop components
+    private contextManager: ContextManager;
+    private planningEngine: PlanningEngine;
+    private errorRecovery: ErrorRecovery;
+
     constructor(apiKey: string) {
         this.genAI = new GoogleGenerativeAI(apiKey);
         this.model = this.genAI.getGenerativeModel({
             model: 'gemini-2.5-flash',
             tools: TOOLS as any
         });
+
+        // Initialize Week 5 components
+        this.contextManager = new ContextManager();
+        this.planningEngine = new PlanningEngine();
+        this.errorRecovery = new ErrorRecovery();
     }
 
     start() {
@@ -88,8 +101,21 @@ Example workflow for "run function with params X and Y":
 
         if (!this.chatSession) throw new Error("Chat session not started");
 
+        // Phase 1: Understand - Parse intent and extract entities
         this.currentIntent = classifyIntent(message);
+        const understanding = this.planningEngine.understand(message);
         console.log(`\x1b[36m[Intent] ${this.currentIntent.intent} (scope: ${this.currentIntent.scope}, confidence: ${this.currentIntent.confidence.toFixed(2)})\x1b[0m`);
+
+        // Phase 2: Plan - Create execution plan for complex tasks
+        if (this.currentIntent.scope === 'multi_file' || this.currentIntent.scope === 'whole_project') {
+            const plan = this.planningEngine.plan(understanding, message);
+            if (plan.steps.length > 2) {
+                console.log(`\x1b[33m[Plan] Created ${plan.steps.length} steps (est. ${plan.totalEstimatedTokens} tokens)\x1b[0m`);
+            }
+        }
+
+        // Reset error recovery for new conversation turn
+        this.errorRecovery.clearHistory();
 
         let result = await this.chatSession.sendMessage(message);
         let response = result.response;
@@ -97,15 +123,61 @@ Example workflow for "run function with params X and Y":
         let iterations = 0;
         const maxIterations = 10;
 
-        // Loop for tool calls
+        // Phase 3: Execute - Loop for tool calls with error recovery
         while (iterations < maxIterations) {
             const calls = response.functionCalls();
 
             if (calls && calls.length > 0) {
                 console.log(`\x1b[35m[Tool Calls] ${calls.length} tool(s) called\x1b[0m`);
+
+                // Check for loops before executing
+                if (this.errorRecovery.detectLoop()) {
+                    const loopType = this.errorRecovery.getLoopType();
+                    console.log(`\x1b[31m[Loop Detected] ${loopType} pattern - suggesting alternative\x1b[0m`);
+                    const alternative = this.errorRecovery.suggestAlternative();
+                    console.log(`\x1b[33m[Suggestion] Try ${alternative.tool}: ${alternative.reason}\x1b[0m`);
+                }
+
                 const toolParts = [];
                 for (const call of calls) {
+                    // Record action for loop detection
+                    this.errorRecovery.recordAction({ tool: call.name, params: call.args as Record<string, any> });
+
+                    // Track context for file reads
+                    if (call.name === 'read_file' && call.args) {
+                        const args = call.args as { path?: string };
+                        if (args.path) {
+                            this.contextManager.markUsed(args.path);
+                        }
+                    }
+
                     const toolResult = await executeTool(call.name, call.args, confirm);
+
+                    // Check for errors and record failures
+                    if (toolResult.startsWith('Error:')) {
+                        this.errorRecovery.recordFailure(
+                            { tool: call.name, params: call.args as Record<string, any> },
+                            { type: ErrorType.UNKNOWN, message: toolResult }
+                        );
+
+                        // Check if we should ask user for help
+                        if (this.errorRecovery.shouldAskUser()) {
+                            console.log(`\x1b[31m[Error Recovery] Multiple failures detected - may need user guidance\x1b[0m`);
+                        }
+                    } else {
+                        // Track successful file reads in context
+                        if (call.name === 'read_file' && call.args) {
+                            const args = call.args as { path?: string };
+                            if (args.path) {
+                                this.contextManager.addContext({
+                                    content: toolResult.slice(0, 500), // First 500 chars
+                                    source: args.path,
+                                    type: 'current_file'
+                                });
+                            }
+                        }
+                    }
+
                     toolParts.push({
                         functionResponse: {
                             name: call.name,
@@ -119,6 +191,12 @@ Example workflow for "run function with params X and Y":
             } else {
                 break;
             }
+        }
+
+        // Log context usage stats
+        const stats = this.contextManager.getUsageStats();
+        if (stats.filesUsed.length > 0) {
+            console.log(`\x1b[36m[Context] ${stats.filesUsed.length} files accessed, ${this.contextManager.getTotalTokens()} tokens used\x1b[0m`);
         }
 
         const finalText = response.text();
