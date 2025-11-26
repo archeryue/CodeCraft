@@ -196,7 +196,7 @@ Complex task: "Rename function foo to bar across the codebase"
 
 ---
 
-## Week 3: Smart Context Selection + AST Power (PARTIALLY COMPLETED)
+## Week 3: Smart Context Selection + AST Power ✅ COMPLETED
 
 **Focus:** Token efficiency, relevance, leverage tree-sitter strength
 
@@ -206,78 +206,39 @@ These tools leverage our Rust+tree-sitter engine - capabilities that basic grep/
 
 #### 12. `get_symbol_info(symbol: string, file: string) -> SymbolInfo` ✅
 **Why:** Deep understanding of symbols beyond grep
-**Returns:**
-```typescript
-{
-  name: string;
-  kind: 'function' | 'class' | 'interface' | 'type' | 'variable';
-  signature: string;      // full signature with types
-  line: number;
-  file: string;
-}
-```
-**Use case:** "What does this function do? What are its parameters?"
 **Rust implementation:** ✅ Parse AST, extract all metadata (8 tests)
 
 #### 13. `get_imports_exports(file: string) -> ImportExportInfo` ✅
 **Why:** Understand file dependencies (grep can't reliably parse imports)
-**Returns:**
-```typescript
-{
-  imports: {
-    source: string;        // '@google/generative-ai'
-    symbols: string[];     // ['GoogleGenerativeAI', 'GenerativeModel']
-    isDefault: boolean;
-    isNamespace: boolean;
-  }[];
-  exports: {
-    name: string;
-    kind: 'function' | 'class' | 'type' | 'const';
-    isDefault: boolean;
-  }[];
-}
-```
-**Use case:** "What does this file depend on? What does it provide?"
 **Rust implementation:** ✅ Parse import/export statements from AST (12 tests)
 
-### Rust Engine (Major Enhancement) - PENDING
-- [ ] Build import/export graph
-  - Parse import statements
-  - Track what imports what
-  - Bi-directional graph (file → imports, file → imported by)
-- [ ] Implement resolve_symbol(symbol, file) → Location
-  - Find where symbol is defined
-  - Return file, line, column
-- [ ] Implement find_references(symbol) → Reference[]
-  - Find all usages of symbol
-  - Critical for refactoring
+#### 14. `build_dependency_graph(path: string) -> DependencyGraph` ✅
+**Why:** Project-wide understanding of file relationships
+**Rust implementation:** ✅ Build nodes/edges graph with import resolution (13 tests)
 
-### Context Manager (New) - PENDING
+#### 15. `resolve_symbol(symbol: string, file: string) -> SymbolLocation` ✅
+**Why:** Find where symbols are defined, follow imports
+**Rust implementation:** ✅ Local + import resolution (11 tests)
+
+#### 16. `find_references(symbol: string, path: string) -> Reference[]` ✅
+**Why:** Find all usages across codebase, critical for refactoring
+**Rust implementation:** ✅ AST-based identifier matching (13 tests)
+
+### Tests ✅
+- [x] Test get_symbol_info (8 tests)
+- [x] Test get_imports_exports (12 tests)
+- [x] Test build_dependency_graph (13 tests)
+- [x] Test resolve_symbol (11 tests)
+- [x] Test find_references (13 tests)
+
+### Context Manager - MOVED TO WEEK 4
 - [ ] Implement tiered context structure (⭐⭐⭐ / ⭐⭐ / ⭐)
-  - Tier 1: Directly relevant (60% of budget)
-  - Tier 2: Related symbols/files (30% of budget)
-  - Tier 3: Background context (10% of budget)
 - [ ] Token counting (use tiktoken or similar)
 - [ ] Budget management (default 8000 tokens max)
 - [ ] Relevance ranking algorithm
-  - Exact match > fuzzy match > related > peripheral
 
-### System Prompt Enhancement - PENDING
-- [ ] Dynamic context injection
-- [ ] Show token usage ("Budget: 8000, Used: 2500, Remaining: 5500")
-- [ ] Show relevance indicators (⭐⭐⭐ high, ⭐⭐ medium, ⭐ low)
-
-### Tests
-- [x] Test get_symbol_info (8 tests)
-- [x] Test get_imports_exports (12 tests)
-- [ ] Test dependency graph building
-- [ ] Test symbol resolution
-- [ ] Test reference finding
-- [ ] Test context selection (stays within budget)
-- [ ] Test relevance ranking
-
-**Deliverable:** ✅ AST tools for symbol info and imports/exports
-**Remaining:** Context manager, dependency graph, symbol resolution
+**Deliverable:** ✅ Complete AST toolset for code intelligence
+**Total:** 57 tests for Week 3 features
 
 ---
 
@@ -414,7 +375,7 @@ These tools leverage our Rust+tree-sitter engine - capabilities that basic grep/
 
 ## Tool Inventory (Final)
 
-### Implemented (12 tools - 111 tests)
+### Implemented (15 tools - 148 tests)
 
 #### Original (5)
 1. ✅ `read_file` - Read file contents (with offset/limit) - 9 tests
@@ -432,20 +393,23 @@ These tools leverage our Rust+tree-sitter engine - capabilities that basic grep/
 9. ✅ `grep` - Content search with regex - 10 tests
 10. ✅ `list_directory` - Browse structure - 8 tests
 
-#### Week 3 (2)
+#### Week 3 (5)
 11. ✅ `get_symbol_info` - Get symbol details (type, signature, location) - 8 tests
 12. ✅ `get_imports_exports` - Show what file imports/exports - 12 tests
+13. ✅ `build_dependency_graph` - Project-wide dependency graph - 13 tests
+14. ✅ `resolve_symbol` - Find where symbol is defined - 11 tests
+15. ✅ `find_references` - Find all usages of a symbol - 13 tests
 
 ### Pending
 
 #### Week 4 (1)
-13. 🆕 `delete_file` - Delete with confirmation
+16. 🆕 `delete_file` - Delete with confirmation
 
 #### Optional (2) - Week 5+
-14. 🆕 `web_fetch` - Fetch web content (optional)
-15. 🆕 `web_search` - Search web (optional)
+17. 🆕 `web_fetch` - Fetch web content (optional)
+18. 🆕 `web_search` - Search web (optional)
 
-**Total: 12 implemented, 1-3 remaining**
+**Total: 15 implemented, 1-3 remaining**
 
 ---
 
@@ -606,11 +570,10 @@ These tools leverage our Rust+tree-sitter engine - capabilities that basic grep/
 
 **Week 3 (AST Tools):** ✅ DONE
 - ✅ get_symbol_info + get_imports_exports
+- ✅ build_dependency_graph + resolve_symbol + find_references
 
-**Week 3 Remaining (Context):** 🔄 NEXT
-- Dependency graph + resolve_symbol + find_references + tiered context
-
-**Week 4 (Quality):**
+**Week 4 (Quality):** 🔄 NEXT
+- Context manager (tiered context, token budgeting)
 - detect_project_type + extract_conventions + auto verify (test/lint) + delete_file
 
 **Week 5 (Intelligence):**

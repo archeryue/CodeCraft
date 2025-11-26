@@ -179,6 +179,41 @@ export const TOOLS = [
           },
           required: ["file"]
         }
+      },
+      {
+        name: "build_dependency_graph",
+        description: "Build a project-wide dependency graph showing imports/exports between files. Returns nodes (files with exports) and edges (import relationships).",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            path: { type: SchemaType.STRING, description: "Directory to analyze (default '.')" }
+          },
+          required: ["path"]
+        }
+      },
+      {
+        name: "resolve_symbol",
+        description: "Find where a symbol is defined. Resolves local definitions and follows imports to source files.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            symbol: { type: SchemaType.STRING, description: "Name of the symbol to resolve" },
+            file: { type: SchemaType.STRING, description: "File where the symbol is used" }
+          },
+          required: ["symbol", "file"]
+        }
+      },
+      {
+        name: "find_references",
+        description: "Find all usages of a symbol across the codebase. Returns file, line, and context for each reference.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            symbol: { type: SchemaType.STRING, description: "Name of the symbol to find" },
+            path: { type: SchemaType.STRING, description: "Directory to search in (default '.')" }
+          },
+          required: ["symbol", "path"]
+        }
       }
     ]
   }
@@ -422,6 +457,66 @@ export async function executeTool(
             }
           } else {
             return "Error: get_imports_exports not implemented in this version of rust_engine.";
+          }
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
+      case "build_dependency_graph":
+        const graphPath = args.path || '.';
+
+        if (!fs.existsSync(graphPath)) {
+          return `Error: Directory not found: ${graphPath}`;
+        }
+
+        try {
+          const engine = require(enginePath);
+          if (engine.buildDependencyGraph) {
+            const graph = engine.buildDependencyGraph(graphPath);
+            if (graph) {
+              return JSON.stringify(graph);
+            } else {
+              return `Error: Could not build dependency graph for ${graphPath}`;
+            }
+          } else {
+            return "Error: build_dependency_graph not implemented in this version of rust_engine.";
+          }
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
+      case "resolve_symbol":
+        if (!fs.existsSync(args.file)) {
+          return `Error: File not found: ${args.file}`;
+        }
+
+        try {
+          const engine = require(enginePath);
+          if (engine.resolveSymbol) {
+            const location = engine.resolveSymbol(args.symbol, args.file);
+            if (location) {
+              return JSON.stringify(location);
+            } else {
+              return `Error: Symbol "${args.symbol}" not found in ${args.file}`;
+            }
+          } else {
+            return "Error: resolve_symbol not implemented in this version of rust_engine.";
+          }
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
+      case "find_references":
+        const refsPath = args.path || '.';
+
+        if (!fs.existsSync(refsPath)) {
+          return `Error: Directory not found: ${refsPath}`;
+        }
+
+        try {
+          const engine = require(enginePath);
+          if (engine.findReferences) {
+            const refs = engine.findReferences(args.symbol, refsPath);
+            return JSON.stringify(refs || []);
+          } else {
+            return "Error: find_references not implemented in this version of rust_engine.";
           }
         } catch (err: any) {
           return `Error: ${err.message}`;

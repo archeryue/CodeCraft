@@ -617,7 +617,7 @@ Update:
 
 ---
 
-## Week 3 Summary
+## Week 3 Summary (AST Tools)
 
 | Tool | Unit Tests | Status |
 |------|-----------|--------|
@@ -625,3 +625,130 @@ Update:
 | get_imports_exports | 12/12 ✅ | Complete |
 
 **Total: 20 new tests, 111 total tests passing**
+
+---
+
+## Feature 12: build_dependency_graph Tool ✅
+
+**Purpose:** Build a project-wide import/export dependency graph. Track which files import which.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. [x] Should return dependency graph for a directory
+2. [x] Should identify all imports for each file
+3. [x] Should identify all exports for each file
+4. [x] Should resolve relative imports to full paths
+
+**Graph Structure Tests:**
+5. [x] Should support forward lookup (file → what it imports)
+6. [x] Should support reverse lookup (file → what imports it)
+7. [x] Should handle circular dependencies gracefully
+
+**Edge Cases:**
+8. [x] Should mark node_modules imports as external
+9. [x] Should handle missing files gracefully
+10. [x] Should return error for non-existent directory
+
+**Output Format:**
+11. [x] Should return JSON with nodes (files) and edges (imports)
+12. [x] Should include file path and exports in each node
+13. [x] Each edge should have: from, to, symbols
+
+### Implementation Status
+- [x] Tests written (RED) - 13 tests
+- [x] Implementation complete (GREEN)
+- [x] Integrated into agent
+
+### Files
+- Tests: `tests/dependency_graph.test.ts`
+- Rust: `rust_engine/src/lib.rs:596-670`
+- Node: `src/tools.ts:464-485`
+
+---
+
+## Feature 13: resolve_symbol Tool ✅
+
+**Purpose:** Find where a symbol is defined, given its usage location.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. [x] Should resolve locally defined function
+2. [x] Should resolve imported symbol to source file
+3. [x] Should resolve class/interface definitions
+4. [x] Should return file path and line number
+
+**Import Resolution Tests:**
+5. [x] Should resolve named imports `{ foo }`
+6. [x] Should resolve default imports
+7. [x] Should resolve namespace imports `* as lib`
+
+**Edge Cases:**
+8. [x] Should return error when symbol not found
+9. [x] Should handle file not found
+10. [x] Should handle external packages (return package name)
+
+**Output Format:**
+11. [x] Should return structured JSON with file, line, kind
+
+### Implementation Status
+- [x] Tests written (RED) - 11 tests
+- [x] Implementation complete (GREEN)
+- [x] Integrated into agent
+
+### Files
+- Tests: `tests/resolve_symbol.test.ts`
+- Rust: `rust_engine/src/lib.rs:698-785`
+- Node: `src/tools.ts:486-505`
+
+---
+
+## Feature 14: find_references Tool ✅
+
+**Purpose:** Find all usages of a symbol across the codebase.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. [x] Should find all usages of a function
+2. [x] Should find all usages of a class
+3. [x] Should find all usages of a variable/constant
+4. [x] Should return file, line, column for each reference
+
+**Search Scope Tests:**
+5. [x] Should search entire project by default
+6. [x] Should support limiting to specific directory
+7. [x] Should find both definitions and usages
+
+**Edge Cases:**
+8. [x] Should return empty array when no references found
+9. [x] Should handle symbols with same name in different scopes
+10. [x] Should exclude node_modules
+11. [x] Should return error for non-existent path
+
+**Output Format:**
+12. [x] Should return array of references
+13. [x] Context should show the line of code
+
+### Implementation Status
+- [x] Tests written (RED) - 13 tests
+- [x] Implementation complete (GREEN)
+- [x] Integrated into agent
+
+### Files
+- Tests: `tests/find_references.test.ts`
+- Rust: `rust_engine/src/lib.rs:787-905`
+- Node: `src/tools.ts:506-523`
+
+---
+
+## Week 3 Remaining Summary ✅ COMPLETED
+
+| Tool | Unit Tests | Status |
+|------|-----------|--------|
+| build_dependency_graph | 13/13 ✅ | Complete |
+| resolve_symbol | 11/11 ✅ | Complete |
+| find_references | 13/13 ✅ | Complete |
+
+**Total: 37 new tests, 148 total tests passing**

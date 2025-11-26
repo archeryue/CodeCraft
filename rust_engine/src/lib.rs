@@ -47,6 +47,45 @@ pub struct ImportsExports {
   pub exports: Vec<ExportInfo>,
 }
 
+#[napi(object)]
+pub struct DependencyNode {
+  pub file: String,
+  pub exports: Vec<String>,
+}
+
+#[napi(object)]
+pub struct DependencyEdge {
+  pub from: String,
+  pub to: String,
+  pub symbols: Vec<String>,
+  pub external: bool,
+}
+
+#[napi(object)]
+pub struct DependencyGraph {
+  pub nodes: Vec<DependencyNode>,
+  pub edges: Vec<DependencyEdge>,
+}
+
+#[napi(object)]
+pub struct SymbolLocation {
+  pub file: String,
+  pub line: u32,
+  pub column: u32,
+  pub kind: String,
+  pub external: bool,
+  pub package: Option<String>,
+}
+
+#[napi(object)]
+pub struct Reference {
+  pub file: String,
+  pub line: u32,
+  pub column: u32,
+  pub context: String,
+  pub is_definition: bool,
+}
+
 #[napi] pub fn search(path: String, query: String) -> Vec<SearchResult> {
     let matcher = SkimMatcherV2::default();
     let mut results = Vec::new();
@@ -523,7 +562,7 @@ fn walk_and_match(node: &Node, source: &str, file_path: &str, query: &str, match
         let end_byte = node.end_byte();
         let node_text = &source[start_byte..end_byte];
         let signature = node_text.split('{').next().unwrap_or(node_text).trim();
-        
+
         if let Some(score) = matcher.fuzzy_match(signature, query) {
             if score > 60 { // Threshold
                 results.push(SearchResult {
@@ -548,4 +587,319 @@ fn walk_and_match(node: &Node, source: &str, file_path: &str, query: &str, match
              walk_and_match(&child, source, file_path, query, matcher, results);
         }
     }
+}
+
+// ============================================================================
+// Week 3: Dependency Graph, Resolve Symbol, Find References
+// ============================================================================
+
+#[napi]
+pub fn build_dependency_graph(path: String) -> Option<DependencyGraph> {
+    use std::path::Path;
+    use std::collections::HashMap;
+
+    let base_path = Path::new(&path);
+    if !base_path.exists() {
+        return None;
+    }
+
+    let mut nodes: Vec<DependencyNode> = Vec::new();
+    let mut edges: Vec<DependencyEdge> = Vec::new();
+    let mut file_exports: HashMap<String, Vec<String>> = HashMap::new();
+
+    // First pass: collect all files and their exports
+    for entry in WalkDir::new(&path)
+        .into_iter()
+        .filter_entry(|e| !is_hidden(e))
+        .filter_map(|e| e.ok())
+    {
+        if entry.file_type().is_file() {
+            let file_path = entry.path().to_string_lossy().to_string();
+
+            if !file_path.ends_with(".ts") && !file_path.ends_with(".tsx") {
+                continue;
+            }
+
+            if let Ok(content) = fs::read_to_string(entry.path()) {
+                let mut parser = Parser::new();
+                let language = tree_sitter_typescript::language_typescript();
+                if parser.set_language(language).is_err() {
+                    continue;
+                }
+
+                if let Some(tree) = parser.parse(&content, None) {
+                    let root_node = tree.root_node();
+                    let mut imports = Vec::new();
+                    let mut exports = Vec::new();
+
+                    extract_imports_exports(&root_node, &content, &mut imports, &mut exports);
+
+                    let export_names: Vec<String> = exports.iter().map(|e| e.name.clone()).collect();
+                    file_exports.insert(file_path.clone(), export_names.clone());
+
+                    nodes.push(DependencyNode {
+                        file: file_path.clone(),
+                        exports: export_names,
+                    });
+
+                    // Create edges for imports
+                    for import in imports {
+                        let is_external = !import.source.starts_with('.')
+                            && !import.source.starts_with('/');
+
+                        let resolved_path = if is_external {
+                            import.source.clone()
+                        } else {
+                            // Resolve relative path
+                            resolve_import_path(&file_path, &import.source)
+                        };
+
+                        edges.push(DependencyEdge {
+                            from: file_path.clone(),
+                            to: resolved_path,
+                            symbols: import.symbols,
+                            external: is_external,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    Some(DependencyGraph { nodes, edges })
+}
+
+fn resolve_import_path(from_file: &str, import_source: &str) -> String {
+    use std::path::Path;
+
+    let from_dir = Path::new(from_file).parent().unwrap_or(Path::new("."));
+    let import_path = Path::new(import_source);
+
+    // Handle relative paths
+    let mut resolved = from_dir.join(import_path);
+
+    // Try adding .ts extension if not present
+    if !resolved.exists() {
+        let with_ts = resolved.with_extension("ts");
+        if with_ts.exists() {
+            resolved = with_ts;
+        } else {
+            // Try index.ts
+            let index_path = resolved.join("index.ts");
+            if index_path.exists() {
+                resolved = index_path;
+            }
+        }
+    }
+
+    resolved.to_string_lossy().to_string()
+}
+
+#[napi]
+pub fn resolve_symbol(symbol: String, file: String) -> Option<SymbolLocation> {
+    let content = match fs::read_to_string(&file) {
+        Ok(c) => c,
+        Err(_) => return None,
+    };
+
+    if !file.ends_with(".ts") && !file.ends_with(".tsx") {
+        return None;
+    }
+
+    let mut parser = Parser::new();
+    let language = tree_sitter_typescript::language_typescript();
+    if parser.set_language(language).is_err() {
+        return None;
+    }
+
+    let tree = parser.parse(&content, None)?;
+    let root_node = tree.root_node();
+
+    // First check if symbol is defined locally
+    if let Some(info) = find_symbol(&root_node, &content, &symbol, &file) {
+        return Some(SymbolLocation {
+            file: info.file,
+            line: info.line,
+            column: 0,
+            kind: info.kind,
+            external: false,
+            package: None,
+        });
+    }
+
+    // Check if symbol is imported
+    let mut imports = Vec::new();
+    let mut exports = Vec::new();
+    extract_imports_exports(&root_node, &content, &mut imports, &mut exports);
+
+    for import in imports {
+        if import.symbols.contains(&symbol) || (import.is_namespace && import.symbols.first() == Some(&symbol)) {
+            let is_external = !import.source.starts_with('.')
+                && !import.source.starts_with('/');
+
+            if is_external {
+                return Some(SymbolLocation {
+                    file: String::new(),
+                    line: 0,
+                    column: 0,
+                    kind: "import".to_string(),
+                    external: true,
+                    package: Some(import.source),
+                });
+            } else {
+                // Resolve to local file
+                let resolved_path = resolve_import_path(&file, &import.source);
+
+                // Try to find the actual definition
+                if let Ok(imported_content) = fs::read_to_string(&resolved_path) {
+                    let mut import_parser = Parser::new();
+                    if import_parser.set_language(language).is_ok() {
+                        if let Some(import_tree) = import_parser.parse(&imported_content, None) {
+                            if let Some(info) = find_symbol(&import_tree.root_node(), &imported_content, &symbol, &resolved_path) {
+                                return Some(SymbolLocation {
+                                    file: info.file,
+                                    line: info.line,
+                                    column: 0,
+                                    kind: info.kind,
+                                    external: false,
+                                    package: None,
+                                });
+                            }
+                        }
+                    }
+                }
+
+                return Some(SymbolLocation {
+                    file: resolved_path,
+                    line: 0,
+                    column: 0,
+                    kind: "import".to_string(),
+                    external: false,
+                    package: None,
+                });
+            }
+        }
+    }
+
+    None
+}
+
+#[napi]
+pub fn find_references(symbol: String, path: String) -> Vec<Reference> {
+    use std::path::Path;
+
+    let mut references: Vec<Reference> = Vec::new();
+    let base_path = Path::new(&path);
+
+    if !base_path.exists() {
+        return references;
+    }
+
+    for entry in WalkDir::new(&path)
+        .into_iter()
+        .filter_entry(|e| !is_hidden(e))
+        .filter_map(|e| e.ok())
+    {
+        if entry.file_type().is_file() {
+            let file_path = entry.path().to_string_lossy().to_string();
+
+            if !file_path.ends_with(".ts") && !file_path.ends_with(".tsx") {
+                continue;
+            }
+
+            if let Ok(content) = fs::read_to_string(entry.path()) {
+                find_symbol_references(&content, &file_path, &symbol, &mut references);
+            }
+        }
+    }
+
+    references
+}
+
+fn find_symbol_references(content: &str, file_path: &str, symbol: &str, references: &mut Vec<Reference>) {
+    let mut parser = Parser::new();
+    let language = tree_sitter_typescript::language_typescript();
+
+    if parser.set_language(language).is_err() {
+        return;
+    }
+
+    let tree = match parser.parse(content, None) {
+        Some(t) => t,
+        None => return,
+    };
+
+    let root_node = tree.root_node();
+    let lines: Vec<&str> = content.lines().collect();
+
+    walk_for_references(&root_node, content, file_path, symbol, references, &lines);
+}
+
+fn walk_for_references(
+    node: &Node,
+    source: &str,
+    file_path: &str,
+    target_symbol: &str,
+    references: &mut Vec<Reference>,
+    lines: &[&str],
+) {
+    let kind = node.kind();
+
+    // Check if this is an identifier matching our symbol
+    if kind == "identifier" || kind == "type_identifier" || kind == "property_identifier" {
+        let start = node.start_byte();
+        let end = node.end_byte();
+        let text = &source[start..end];
+
+        if text == target_symbol {
+            let line_num = node.start_position().row;
+            let col = node.start_position().column;
+
+            // Check if this is a definition
+            let is_definition = is_definition_context(node);
+
+            let context = if line_num < lines.len() {
+                lines[line_num].trim().to_string()
+            } else {
+                String::new()
+            };
+
+            references.push(Reference {
+                file: file_path.to_string(),
+                line: line_num as u32 + 1,
+                column: col as u32,
+                context,
+                is_definition,
+            });
+        }
+    }
+
+    // Recurse into children
+    let mut cursor = node.walk();
+    for child in node.children(&mut cursor) {
+        walk_for_references(&child, source, file_path, target_symbol, references, lines);
+    }
+}
+
+fn is_definition_context(node: &Node) -> bool {
+    // Check if the parent is a declaration
+    if let Some(parent) = node.parent() {
+        let parent_kind = parent.kind();
+        match parent_kind {
+            "function_declaration" | "class_declaration" | "interface_declaration"
+            | "variable_declarator" | "method_definition" | "property_signature"
+            | "import_specifier" | "export_specifier" => {
+                // Check if this identifier is the "name" of the declaration
+                // Usually it's the first identifier child
+                let mut cursor = parent.walk();
+                for child in parent.children(&mut cursor) {
+                    if child.kind() == "identifier" || child.kind() == "type_identifier" {
+                        return child.id() == node.id();
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    false
 }
