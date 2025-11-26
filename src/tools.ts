@@ -4,6 +4,7 @@ import path from 'path';
 import { createRequire } from 'module';
 import { SchemaType } from '@google/generative-ai';
 import { createTwoFilesPatch } from 'diff';
+import fg from 'fast-glob';
 
 const require = createRequire(import.meta.url);
 
@@ -118,6 +119,66 @@ export const TOOLS = [
           },
           required: ["todos"]
         }
+      },
+      {
+        name: "glob",
+        description: "Find files matching a glob pattern. Use to discover files before reading. Ignores node_modules and hidden files by default.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            pattern: { type: SchemaType.STRING, description: "Glob pattern (e.g., '**/*.ts', 'src/*.tsx', '**/*.{ts,js}')" },
+            path: { type: SchemaType.STRING, description: "Directory to search in (default '.')" }
+          },
+          required: ["pattern"]
+        }
+      },
+      {
+        name: "grep",
+        description: "Search file contents using regex patterns. Returns file paths, line numbers, and matching lines. Ignores node_modules by default.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            pattern: { type: SchemaType.STRING, description: "Regex pattern to search for" },
+            path: { type: SchemaType.STRING, description: "Directory to search in (default '.')" },
+            include: { type: SchemaType.STRING, description: "File pattern to include (e.g., '*.ts')" },
+            ignoreCase: { type: SchemaType.BOOLEAN, description: "Case-insensitive search (default false)" }
+          },
+          required: ["pattern"]
+        }
+      },
+      {
+        name: "list_directory",
+        description: "List contents of a directory. Returns files and subdirectories with type indicators. Does not recurse.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            path: { type: SchemaType.STRING, description: "Directory path to list (default '.')" }
+          },
+          required: ["path"]
+        }
+      },
+      {
+        name: "get_symbol_info",
+        description: "Get detailed information about a symbol (function, class, interface) using AST parsing. Returns name, kind, signature, and location.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            file: { type: SchemaType.STRING, description: "Path to the file containing the symbol" },
+            symbol: { type: SchemaType.STRING, description: "Name of the symbol to look up" }
+          },
+          required: ["file", "symbol"]
+        }
+      },
+      {
+        name: "get_imports_exports",
+        description: "Analyze a file's imports and exports using AST. Returns detailed import sources and exported symbols.",
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            file: { type: SchemaType.STRING, description: "Path to the TypeScript file to analyze" }
+          },
+          required: ["file"]
+        }
       }
     ]
   }
@@ -231,6 +292,140 @@ export async function executeTool(
         }
 
         return result;
+      case "glob":
+        const searchPath = args.path || '.';
+
+        // Check if directory exists
+        if (!fs.existsSync(searchPath)) {
+          return `Error: Directory not found: ${searchPath}`;
+        }
+
+        try {
+          const files = await fg(args.pattern, {
+            cwd: searchPath,
+            ignore: ['**/node_modules/**', '**/.*/**', '**/.git/**'],
+            dot: false,
+            onlyFiles: true
+          });
+          return JSON.stringify(files);
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
+      case "grep":
+        const grepPath = args.path || '.';
+
+        // Check if directory exists
+        if (!fs.existsSync(grepPath)) {
+          return `Error: Directory not found: ${grepPath}`;
+        }
+
+        try {
+          // Build regex
+          let regex: RegExp;
+          try {
+            regex = new RegExp(args.pattern, args.ignoreCase ? 'i' : '');
+          } catch (regexErr: any) {
+            return `Error: Invalid regex pattern: ${regexErr.message}`;
+          }
+
+          // Find files to search
+          const filePattern = args.include || '**/*';
+          const filesToSearch = await fg(filePattern, {
+            cwd: grepPath,
+            ignore: ['**/node_modules/**', '**/.*/**', '**/.git/**', '**/dist/**', '**/target/**'],
+            dot: false,
+            onlyFiles: true
+          });
+
+          const matches: Array<{ file: string; line: number; content: string }> = [];
+
+          for (const file of filesToSearch) {
+            const fullPath = path.join(grepPath, file);
+            try {
+              const content = fs.readFileSync(fullPath, 'utf-8');
+              const lines = content.split('\n');
+
+              lines.forEach((lineContent, index) => {
+                if (regex.test(lineContent)) {
+                  matches.push({
+                    file: file,
+                    line: index + 1,
+                    content: lineContent.trim()
+                  });
+                }
+              });
+            } catch (readErr) {
+              // Skip binary files or files we can't read
+            }
+          }
+
+          return JSON.stringify(matches);
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
+      case "list_directory":
+        const dirPath = args.path || '.';
+
+        // Check if directory exists
+        if (!fs.existsSync(dirPath)) {
+          return `Error: Directory not found: ${dirPath}`;
+        }
+
+        try {
+          const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+          const result = entries
+            .filter(entry => !entry.name.startsWith('.')) // Ignore hidden files
+            .map(entry => ({
+              name: entry.name,
+              type: entry.isDirectory() ? 'directory' : 'file'
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+          return JSON.stringify(result);
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
+      case "get_symbol_info":
+        if (!fs.existsSync(args.file)) {
+          return `Error: File not found: ${args.file}`;
+        }
+
+        try {
+          const engine = require(enginePath);
+          if (engine.getSymbolInfo) {
+            const symbolInfo = engine.getSymbolInfo(args.file, args.symbol);
+            if (symbolInfo) {
+              return JSON.stringify(symbolInfo);
+            } else {
+              return `Error: Symbol "${args.symbol}" not found in ${args.file}`;
+            }
+          } else {
+            return "Error: get_symbol_info not implemented in this version of rust_engine.";
+          }
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
+      case "get_imports_exports":
+        if (!fs.existsSync(args.file)) {
+          return `Error: File not found: ${args.file}`;
+        }
+
+        try {
+          const engine = require(enginePath);
+          if (engine.getImportsExports) {
+            const importsExports = engine.getImportsExports(args.file);
+            if (importsExports) {
+              return JSON.stringify(importsExports);
+            } else {
+              return `Error: Could not analyze imports/exports in ${args.file}`;
+            }
+          } else {
+            return "Error: get_imports_exports not implemented in this version of rust_engine.";
+          }
+        } catch (err: any) {
+          return `Error: ${err.message}`;
+        }
       default:
         return `Unknown tool: ${name}`;
     }

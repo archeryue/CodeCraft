@@ -390,3 +390,238 @@ Update:
 - Missing todo_write validation for "one in_progress" rule
 
 **Next:** Week 2 - Search & Discovery (glob, grep, list_directory)
+
+---
+
+## Week 2: Search & Discovery
+
+---
+
+## Feature 7: glob Tool
+
+**Purpose:** Find files matching glob patterns (e.g., `**/*.ts`, `src/**/*.tsx`) for efficient file discovery.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. ✅ Should find all TypeScript files with `**/*.ts`
+2. ✅ Should find files in specific directory with `src/*.ts`
+3. ✅ Should find files with multiple extensions `**/*.{ts,tsx}`
+4. ✅ Should return empty array when no matches
+
+**Edge Cases:**
+5. ✅ Should ignore node_modules by default
+6. ✅ Should ignore hidden files (starting with `.`) by default
+7. ✅ Should handle non-existent directory gracefully
+8. ✅ Should work with relative paths
+
+**Pattern Tests:**
+9. ✅ Should support `*` wildcard (single level)
+10. ✅ Should support `**` wildcard (recursive)
+11. ✅ Should support `?` wildcard (single character)
+12. ✅ Should support brace expansion `{ts,js}`
+
+**Integration Tests:**
+13. ✅ Should work with real filesystem (not just mocks)
+14. ⚠️ Agent should use glob to find files before reading (needs E2E)
+
+**End-to-End Tests:**
+15. ⚠️ Ask agent "find all test files" → should use glob (needs E2E)
+16. ✅ Verify tool call appears in logs: `[Tool Call] glob(...)`
+
+### Implementation Status
+- ✅ All 12 unit tests passing
+- ✅ Tool integrated into agent
+- ⚠️ E2E verification pending
+
+### Files
+- Tests: `tests/glob.test.ts`
+- Implementation: `src/tools.ts:124-133, 269-279`
+
+---
+
+## Feature 8: grep Tool
+
+**Purpose:** Search file contents using regex patterns (ripgrep-style).
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. ✅ Should find lines matching a simple string
+2. ✅ Should find lines matching a regex pattern
+3. ✅ Should return file path and line number with matches
+4. ✅ Should search recursively by default
+
+**Options Tests:**
+5. ✅ Should support case-insensitive search (`-i`)
+6. ⚠️ Should support showing context lines (`-C`) - NOT IMPLEMENTED
+7. ✅ Should support file pattern filtering (`--include`)
+8. ✅ Should return empty array when no matches
+
+**Edge Cases:**
+9. ✅ Should ignore node_modules by default
+10. ✅ Should ignore binary files (skipped automatically)
+11. ✅ Should handle non-existent directory gracefully
+12. ✅ Should handle invalid regex gracefully
+
+**Integration Tests:**
+13. ✅ Should work with real filesystem
+14. ⚠️ Agent should use grep before edit_file (needs E2E)
+
+**End-to-End Tests:**
+15. ⚠️ Ask agent "find where executeTool is defined" → should use grep (needs E2E)
+16. ✅ Verify matches are accurate and useful
+
+### Implementation Status
+- ✅ All 10 unit tests passing
+- ✅ Tool integrated into agent
+- ⚠️ E2E verification pending
+- ⚠️ Context lines (-C) not implemented
+
+### Files
+- Tests: `tests/grep.test.ts`
+- Implementation: `src/tools.ts:135-148, 280-341`
+
+---
+
+## Feature 9: list_directory Tool
+
+**Purpose:** List contents of a directory with metadata (type, size).
+
+### Test Plan (Written BEFORE Implementation)
+
+**Happy Path Tests:**
+1. ✅ Should list files in a directory
+2. ✅ Should list subdirectories
+3. ✅ Should include file/directory type indicator
+4. ✅ Should work with current directory (`.`)
+
+**Edge Cases:**
+5. ✅ Should handle non-existent directory
+6. ⚠️ Should handle empty directory - NOT TESTED
+7. ⚠️ Should handle permission errors gracefully - NOT TESTED
+8. ✅ Should not recurse by default (single level only)
+
+**Output Format:**
+9. ✅ Should clearly distinguish files from directories
+10. ✅ Should sort entries alphabetically
+
+**Integration Tests:**
+11. ✅ Should work with real filesystem
+12. ⚠️ Agent should use list_directory to explore structure (needs E2E)
+
+**End-to-End Tests:**
+13. ⚠️ Ask agent "what's in src folder" → should use list_directory (needs E2E)
+14. ⚠️ Verify output is clear and useful (needs E2E)
+
+### Implementation Status
+- ✅ All 8 unit tests passing
+- ✅ Tool integrated into agent
+- ⚠️ E2E verification pending
+
+### Files
+- Tests: `tests/list_directory.test.ts`
+- Implementation: `src/tools.ts:149-159, 343-365`
+
+---
+
+## Week 2 Summary
+
+| Tool | Unit Tests | Status |
+|------|-----------|--------|
+| glob | 12/12 ✅ | Complete |
+| grep | 10/10 ✅ | Complete |
+| list_directory | 8/8 ✅ | Complete |
+
+**Total: 30 new tests, 91 total tests passing**
+
+---
+
+## Week 3: Smart Context Selection + AST Power
+
+---
+
+## Feature 10: get_symbol_info Tool
+
+**Purpose:** Get detailed information about a symbol (function, class, interface) using AST parsing. Returns type info, parameters, return type, and location.
+
+### Test Plan
+
+**Happy Path Tests:**
+1. ✅ Should return info for a function (name, kind, signature, line)
+2. ✅ Should return info for a class
+3. ✅ Should return info for an interface
+4. ✅ Should return parameters for functions (in signature)
+5. ⚠️ Should return return type when available - IN SIGNATURE
+
+**Edge Cases:**
+6. ✅ Should return error when symbol not found
+7. ✅ Should return error when file not found
+8. ⚠️ Should handle multiple symbols with same name - RETURNS FIRST
+9. ✅ Should work with TypeScript files
+10. ⚠️ Should work with Rust files - IMPLEMENTED BUT NOT TESTED
+
+**Output Format:**
+11. ✅ Should return structured JSON with: name, kind, signature, line, file
+12. ⚠️ Should include parameters array - IN SIGNATURE STRING
+
+### Implementation Status
+- ✅ All 8 unit tests passing
+- ✅ Rust AST parsing implemented
+- ✅ Tool integrated into agent
+
+### Files
+- Tests: `tests/get_symbol_info.test.ts`
+- Rust: `rust_engine/src/lib.rs`
+- Node: `src/tools.ts`
+
+---
+
+## Feature 11: get_imports_exports Tool
+
+**Purpose:** Analyze a file's imports and exports using AST. Understand dependencies without grep.
+
+### Test Plan
+
+**Happy Path Tests:**
+1. ✅ Should return imports from a TypeScript file
+2. ✅ Should return exports from a TypeScript file
+3. ✅ Should identify named imports `{ foo, bar }`
+4. ✅ Should identify default imports
+5. ✅ Should identify namespace imports `* as foo`
+
+**Export Tests:**
+6. ✅ Should identify named exports
+7. ⚠️ Should identify default exports - IMPLEMENTED
+8. ⚠️ Should identify re-exports - NOT IMPLEMENTED
+
+**Edge Cases:**
+9. ✅ Should return empty arrays when no imports/exports
+10. ✅ Should return error when file not found
+11. ✅ Should handle relative imports `./foo`
+12. ✅ Should handle package imports `lodash`
+
+**Output Format:**
+13. ✅ Imports: `[{ source, symbols, isDefault, isNamespace }]`
+14. ✅ Exports: `[{ name, kind, isDefault }]`
+
+### Implementation Status
+- ✅ All 12 unit tests passing
+- ✅ Rust AST parsing implemented
+- ✅ Tool integrated into agent
+
+### Files
+- Tests: `tests/get_imports_exports.test.ts`
+- Rust: `rust_engine/src/lib.rs`
+- Node: `src/tools.ts`
+
+---
+
+## Week 3 Summary
+
+| Tool | Unit Tests | Status |
+|------|-----------|--------|
+| get_symbol_info | 8/8 ✅ | Complete |
+| get_imports_exports | 12/12 ✅ | Complete |
+
+**Total: 20 new tests, 111 total tests passing**
