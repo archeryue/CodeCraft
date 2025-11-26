@@ -1,8 +1,8 @@
-# Manual Testing Guide - Week 1 Features
+# Manual Testing Guide
 
-This guide provides step-by-step instructions to test all Week 1 features interactively.
+A step-by-step guide for users to test all CodeCraft features interactively.
 
-## Setup
+## Quick Start
 
 ```bash
 export GEMINI_API_KEY=your_api_key_here
@@ -15,265 +15,362 @@ CodeCraft Agent Started. Type "exit" to quit.
 >
 ```
 
----
-
-## Feature 1: Intent Classification
-
-**What it does:** Classifies your query into intent types (explain/implement/refactor/debug/test/analyze)
-
-### Test 1.1: Explain Intent
-```
-> What is the Agent class?
-```
-
-**Expected:**
-- See: `[Intent] explain (scope: single_file, confidence: X.XX)`
-- Tool called: `read_file` for src/agent.ts
-- Response: Explanation of what Agent class does
-
-### Test 1.2: Implement Intent
-```
-> Add a function to greet users
-```
-
-**Expected:**
-- See: `[Intent] implement (scope: whole_project, confidence: X.XX)`
-- Should ask clarifying questions OR create todos for implementation
-
-### Test 1.3: Analyze Intent
-```
-> Tell me about this project
-```
-
-**Expected:**
-- See: `[Intent] analyze (scope: whole_project, confidence: X.XX)`
-- Tool called: `run_command` or `get_codebase_map`
-- Response: Overview of the project
-
-### Test 1.4: Debug Intent
-```
-> Fix any issues in the code
-```
-
-**Expected:**
-- See: `[Intent] debug`
-- Should search for issues or ask what to fix
+**Important:** Type queries manually and wait for each response. The REPL should show `>` after every response.
 
 ---
 
-## Feature 2: read_file with offset/limit
+## Part 1: Basic Features
 
-**What it does:** Reads specific line ranges from files
-
-### Test 2.1: Read First 5 Lines
-```
-> Show me the first 5 lines of package.json
-```
-
-**Expected:**
-- Tool called: `read_file({"path":"package.json","offset":0,"limit":5})`
-- Response: Shows only first 5 lines of package.json
-
-### Test 2.2: Read Specific Line Range
-```
-> Show me lines 10-20 of src/agent.ts
-```
-
-**Expected:**
-- Tool called: `read_file` with offset=9, limit=11 (or similar)
-- Response: Shows only that line range
-
-### Test 2.3: Read Whole File
-```
-> Show me the entire README.md file
-```
-
-**Expected:**
-- Tool called: `read_file({"path":"README.md"})` (no offset/limit)
-- Response: Shows full README content
-
----
-
-## Feature 3: edit_file Tool
-
-**What it does:** Efficiently edits files using string replacement
-
-### Test 3.1: Create a Test File First
-```
-> Create a file called test_edit.txt with content "Hello World"
-```
-
-**Expected:**
-- Tool called: `write_file({"path":"test_edit.txt","content":"Hello World"})`
-- File created successfully
-
-### Test 3.2: Edit the File
-```
-> Change "Hello" to "Goodbye" in test_edit.txt
-```
-
-**Expected:**
-- Tool called: `edit_file({"path":"test_edit.txt","old_string":"Hello","new_string":"Goodbye"})`
-- Response: Confirms edit was made
-
-### Test 3.3: Verify the Edit
-```
-> Show me test_edit.txt
-```
-
-**Expected:**
-- Content should now be "Goodbye World"
-
-### Test 3.4: Clean Up
-```
-> Delete test_edit.txt
-```
-
-Or manually: `rm test_edit.txt`
-
----
-
-## Feature 4: todo_write Tool (Multi-step Task Tracking)
-
-**What it does:** Tracks tasks for multi-step operations
-
-### Test 4.1: Simple Multi-Step Task
-```
-> Create a new file hello.ts with a function that returns "hello", write a test for it, and run the tests
-```
-
-**Expected:**
-- Tool called: `todo_write` with multiple tasks
-- See todos created (e.g., "Create hello.ts", "Write tests", "Run tests")
-- Agent executes each step
-- Todos marked as completed progressively
-- Final response confirms all steps done
-
-### Test 4.2: Verify Todos are Used
-Watch for these tool calls in sequence:
-1. `todo_write` - Creates task list
-2. `write_file` - Creates hello.ts
-3. `todo_write` - Marks first task complete
-4. `write_file` - Creates test file
-5. `todo_write` - Marks second task complete
-6. `run_command` - Runs tests
-7. `todo_write` - Marks final task complete
-
-### Test 4.3: Clean Up
-```
-> Delete hello.ts and the test file
-```
-
-Or manually: `rm hello.ts hello.test.ts`
-
----
-
-## Feature 5: Production System Prompt
-
-**What it does:** Makes agent concise, proactive with tools, and helpful
-
-### Test 5.1: Concise Responses
-```
-> What is 2+2?
-```
-
-**Expected:**
-- Short, direct answer: "4" or "2 + 2 = 4"
-- No lengthy explanation unless you ask
-
-### Test 5.2: Proactive Tool Usage
-```
-> What files are in the src directory?
-```
-
-**Expected:**
-- Immediately uses `run_command("ls src")` or similar
-- Doesn't refuse or ask for permission
-- Shows the file list
-
-### Test 5.3: Following Conventions
-```
-> Add a new tool to tools.ts
-```
-
-**Expected:**
-- Should read tools.ts first to understand the pattern
-- Tool called: `read_file({"path":"src/tools.ts"})`
-- Then implements following existing patterns
-
----
-
-## Feature 6: REPL Continuation
-
-**What it does:** REPL continues after each response (doesn't exit)
-
-### Test 6.1: Multiple Queries in One Session
+### 1.1 Simple Conversation
 ```
 > hello
 ```
-Wait for response.
-
-**Verify:** See `>` prompt again (CRITICAL!)
+**Expected:** Friendly greeting, REPL continues with `>`
 
 ```
-> what files are in src?
+> what is 2+2?
 ```
-Wait for response.
+**Expected:** "4" - short, direct answer
 
-**Verify:** See `>` prompt again
-
-```
-> show me package.json
-```
-Wait for response.
-
-**Verify:** See `>` prompt again
-
-```
-> exit
-```
-
-**Expected:** Clean exit
-
-**If REPL exits after first query, the REPL is BROKEN!**
-
----
-
-## Feature 7: Built-in Commands
-
-### Test 7.1: Help Command
+### 1.2 Built-in Commands
 ```
 > /help
 ```
+**Expected:** Shows available commands (/clear, /help, /save, exit)
 
-**Expected:**
-- Shows available commands
-- Lists /clear, /help, /save, exit
-
-### Test 7.2: Clear Command
 ```
 > /clear
 ```
+**Expected:** "Context cleared." - chat history reset
 
-**Expected:**
-- Response: "Context cleared."
-- Chat history is reset
-- Next query starts fresh
-
-### Test 7.3: Save Command
 ```
 > /save
 ```
-
-**Expected:**
-- Shows JSON of conversation history
-- Contains previous messages and tool calls
+**Expected:** JSON dump of conversation history
 
 ---
 
-## Complete Test Session Example
+## Part 2: File Operations (18 Tools)
 
-Here's a full session testing everything:
+### 2.1 Reading Files
+```
+> Show me package.json
+```
+**Expected:**
+- See `[Tool Call] read_file({"path":"package.json"}...)`
+- File contents displayed
+
+```
+> Show me the first 10 lines of src/agent.ts
+```
+**Expected:**
+- See `read_file` with `offset` and `limit` parameters
+- Only 10 lines shown
+
+### 2.2 Creating Files
+```
+> Create a file test_demo.txt with content "Hello World"
+```
+**Expected:**
+- See `[Tool Call] write_file(...)`
+- "File created successfully"
+
+### 2.3 Editing Files
+```
+> Change "Hello" to "Goodbye" in test_demo.txt
+```
+**Expected:**
+- See `[Tool Call] edit_file(...)`
+- "Edit successful"
+
+```
+> Show me test_demo.txt
+```
+**Expected:** Content now shows "Goodbye World"
+
+### 2.4 Deleting Files
+```
+> Delete test_demo.txt
+```
+**Expected:**
+- See `[Tool Call] delete_file(...)`
+- "File deleted successfully"
+
+### 2.5 Listing Directories
+```
+> List files in the src directory
+```
+**Expected:**
+- See `[Tool Call] list_directory({"path":"src"}...)`
+- Shows files and subdirectories with type indicators
+
+---
+
+## Part 3: Search Tools
+
+### 3.1 Glob (Find Files by Pattern)
+```
+> Find all TypeScript files in src/
+```
+**Expected:**
+- See `[Tool Call] glob({"pattern":"**/*.ts","path":"src"}...)`
+- List of .ts files
+
+```
+> Find all test files
+```
+**Expected:** Files matching `*.test.ts` pattern
+
+### 3.2 Grep (Search File Contents)
+```
+> Search for "async function" in the codebase
+```
+**Expected:**
+- See `[Tool Call] grep({"pattern":"async function"...})`
+- File paths and line numbers with matches
+
+```
+> Find all imports of GoogleGenerativeAI
+```
+**Expected:** Shows files importing that module
+
+---
+
+## Part 4: Code Understanding Tools
+
+### 4.1 Get Symbol Info
+```
+> What does the executeTool function do?
+```
+**Expected:**
+- See `[Tool Call] get_symbol_info(...)`
+- Shows function signature, parameters, return type
+
+### 4.2 Resolve Symbol
+```
+> Where is the Agent class defined?
+```
+**Expected:**
+- See `[Tool Call] resolve_symbol(...)`
+- Shows file path and line number
+
+### 4.3 Imports/Exports
+```
+> What does src/agent.ts import and export?
+```
+**Expected:**
+- See `[Tool Call] get_imports_exports(...)`
+- Lists all imports with sources
+- Lists all exports
+
+### 4.4 Find References
+```
+> Find all usages of the TOOLS constant
+```
+**Expected:**
+- See `[Tool Call] find_references(...)`
+- List of files and line numbers where TOOLS is used
+
+### 4.5 Dependency Graph
+```
+> Show the dependency graph for src/
+```
+**Expected:**
+- See `[Tool Call] build_dependency_graph(...)`
+- Shows nodes (files) and edges (import relationships)
+
+### 4.6 Codebase Map
+```
+> Generate a map of the codebase
+```
+**Expected:**
+- See `[Tool Call] get_codebase_map(...)`
+- Structural overview with functions, classes, interfaces
+
+---
+
+## Part 5: Project Understanding Tools
+
+### 5.1 Detect Project Type
+```
+> What type of project is this?
+```
+**Expected:**
+- See `[Tool Call] detect_project_type(...)`
+- Shows: Node.js, TypeScript, test framework (vitest), etc.
+
+### 5.2 Extract Conventions
+```
+> What coding conventions does this project use?
+```
+**Expected:**
+- See `[Tool Call] extract_conventions(...)`
+- Shows: naming (camelCase), indentation (spaces), quotes (single), etc.
+
+---
+
+## Part 6: Intent Classification
+
+Watch for `[Intent]` logs showing how your query is classified:
+
+### 6.1 Explain Intent
+```
+> How does the edit_file tool work?
+```
+**Expected:** `[Intent] explain (scope: single_file, confidence: X.XX)`
+
+### 6.2 Implement Intent
+```
+> Add a function to greet users
+```
+**Expected:** `[Intent] implement (scope: ...)`
+
+### 6.3 Analyze Intent
+```
+> Tell me about this project structure
+```
+**Expected:** `[Intent] analyze (scope: whole_project, ...)`
+
+### 6.4 Debug Intent
+```
+> Why might the tests be failing?
+```
+**Expected:** `[Intent] debug (...)`
+
+### 6.5 Refactor Intent
+```
+> Clean up the error handling in tools.ts
+```
+**Expected:** `[Intent] refactor (...)`
+
+### 6.6 Test Intent
+```
+> Write tests for the Agent class
+```
+**Expected:** `[Intent] test (...)`
+
+---
+
+## Part 7: Advanced Agent Features (Week 5)
+
+### 7.1 Planning Engine
+
+For complex tasks, the agent creates execution plans:
+
+```
+> Refactor all error messages to use a consistent format
+```
+**Expected:**
+- See `[Plan] Created X steps (est. Y tokens)` in **yellow**
+- Agent breaks down task into multiple steps
+- Multiple tool calls in sequence
+
+```
+> Add a new feature to log all tool calls to a file
+```
+**Expected:**
+- Planning kicks in for multi-file tasks
+- See estimated token usage
+
+### 7.2 Context Manager
+
+The agent tracks files accessed and manages context:
+
+```
+> Read src/agent.ts and src/tools.ts and explain how they work together
+```
+**Expected:**
+- See `[Context] X files accessed, Y tokens used` in **cyan**
+- Agent maintains context across file reads
+
+```
+> Now also read src/intent_classifier.ts
+```
+**Expected:**
+- Context accumulates
+- Token count increases
+
+### 7.3 Error Recovery
+
+The agent handles errors gracefully:
+
+```
+> Edit the file nonexistent.ts to add a comment
+```
+**Expected:**
+- Rich error message in **red**
+- Suggestion: "Use glob() to search for files"
+
+### 7.4 Task Management (todo_write)
+```
+> Create a new file hello.ts with a greeting function, write tests for it, then run the tests
+```
+**Expected:**
+- See `[Tool Call] todo_write(...)` creating task list
+- Tasks executed in order
+- Each task marked complete as it finishes
+
+---
+
+## Part 8: Polish Features (Week 6)
+
+### 8.1 Colorized Output
+
+All output should be colorized:
+
+| Element | Color |
+|---------|-------|
+| `[Intent]` | Cyan |
+| `[Tool Call]` | Yellow |
+| `[Plan]` | Yellow |
+| `[Context]` | Cyan |
+| `[Tool Calls]` | Magenta |
+| Errors | Red |
+| Success | Green |
+
+### 8.2 NO_COLOR Mode
+```bash
+NO_COLOR=1 npx tsx index.ts
+```
+Then run any query - output should have **no color codes**.
+
+### 8.3 Error Formatting
+
+Test various error scenarios:
+
+```
+> Read /nonexistent/path/file.ts
+```
+**Expected:**
+- `Error: File not found: /nonexistent/path/file.ts` (red)
+- `Suggestion: Use glob() to search for files` (yellow)
+
+```
+> Edit src/agent.ts and replace "xyz123nonexistent" with "abc"
+```
+**Expected:**
+- `Error: Edit failed - string not found in src/agent.ts` (red)
+- `Suggestion: Use read_file(...) to see current content` (yellow)
+
+### 8.4 LRU Cache (Performance)
+
+```
+> Search for "executeTool" in the codebase
+```
+(Note the response time)
+
+```
+> Search for "executeTool" again
+```
+**Expected:**
+- Second search should be faster (cached)
+- Results identical
+
+---
+
+## Part 9: Complete Test Session
+
+Run through this full session to verify everything works:
 
 ```bash
 npx tsx index.ts
@@ -281,102 +378,92 @@ npx tsx index.ts
 
 ```
 > hello
-# Verify: Gets response, REPL continues
-
-> what files are in src?
-# Verify: Shows [Intent] analyze, uses run_command, lists files, REPL continues
-
-> show me the first 10 lines of package.json
-# Verify: Uses read_file with offset/limit, shows 10 lines, REPL continues
-
-> create a file demo.txt with content "test"
-# Verify: Uses write_file, file created, REPL continues
-
-> change "test" to "demo" in demo.txt
-# Verify: Uses edit_file, content changed, REPL continues
-
-> show me demo.txt
-# Verify: Shows "demo", REPL continues
-
-> create a function add(a, b) in math.ts, write tests, and run them
-# Verify: See todo_write calls, files created, tests run, REPL continues
+# Verify: Response, REPL continues
 
 > /help
-# Verify: Shows commands, REPL continues
+# Verify: Shows commands
+
+> what files are in src?
+# Verify: [Intent] analyze, [Tool Call] list_directory or run_command
+
+> show me the first 5 lines of package.json
+# Verify: [Tool Call] read_file with limit
+
+> create a file test_session.txt with content "testing 123"
+# Verify: [Tool Call] write_file
+
+> change "123" to "456" in test_session.txt
+# Verify: [Tool Call] edit_file
+
+> show me test_session.txt
+# Verify: Content is "testing 456"
+
+> delete test_session.txt
+# Verify: [Tool Call] delete_file
+
+> find all TypeScript files
+# Verify: [Tool Call] glob
+
+> search for "import" in src/
+# Verify: [Tool Call] grep
+
+> where is the Agent class defined?
+# Verify: [Tool Call] resolve_symbol or get_symbol_info
+
+> what type of project is this?
+# Verify: [Tool Call] detect_project_type
+
+> read src/agent.ts and src/tools.ts and summarize them
+# Verify: [Context] tracking, multiple read_file calls
+
+> /clear
+# Verify: Context cleared
 
 > exit
 # Verify: Clean exit
-```
-
-Then verify files were created:
-```bash
-ls demo.txt math.ts math.test.ts
-cat demo.txt  # Should show "demo"
-```
-
-Clean up:
-```bash
-rm demo.txt math.ts math.test.ts
 ```
 
 ---
 
 ## Success Criteria
 
-For Week 1 features to be working correctly:
+All these should work correctly:
 
-✅ Intent classification logs appear for each query
-✅ read_file works with and without offset/limit
-✅ edit_file changes file content correctly
-✅ todo_write creates and tracks multi-step tasks
-✅ Responses are concise and helpful
-✅ Tools are used proactively
-✅ **REPL continues after each response (doesn't exit)**
-✅ Built-in commands work (/help, /clear, /save)
-✅ Can handle multiple queries in one session
-✅ Clean exit with "exit" command
-
----
-
-## Common Issues and Fixes
-
-### Issue: REPL exits after first query
-**Fix:** The async loop is broken. Check index.ts
-
-### Issue: Intent not showing
-**Fix:** Check src/agent.ts line 114-115 for intent logging
-
-### Issue: Tools not called
-**Fix:** System prompt may be too restrictive, check src/agent.ts:24-49
-
-### Issue: edit_file not working
-**Fix:** Check old_string matches exactly (including whitespace)
-
-### Issue: Responses are empty
-**Fix:** System prompt may be confusing the model
-
----
-
-## Testing Checklist
-
-Before marking Week 1 as complete, verify:
-
-- [ ] Run `npm test` - all 60 tests pass
-- [ ] Test intent classification for all 6 types
-- [ ] Test read_file with offset/limit
-- [ ] Test edit_file creates and modifies files
-- [ ] Test multi-step task creates todos
-- [ ] Test REPL continues for at least 3 queries
-- [ ] Test /help, /clear, /save commands
-- [ ] No crashes or errors during session
+- [ ] REPL continues after each response (shows `>`)
+- [ ] Intent classification appears for queries
+- [ ] All 18 tools work when appropriate
+- [ ] Planning appears for complex tasks
+- [ ] Context tracking shows file/token counts
+- [ ] Errors are formatted with suggestions
+- [ ] Colors display correctly
+- [ ] NO_COLOR mode disables colors
+- [ ] Multi-step tasks use todo_write
 - [ ] Clean exit with "exit" command
 
 ---
 
-## Notes
+## Troubleshooting
 
-- Always test interactively, not with scripts!
-- Type queries manually and wait for responses
-- Watch for tool call logs: `[Tool Call] tool_name(...)`
-- Watch for intent logs: `[Intent] type (scope: ...)`
-- REPL continuation is CRITICAL - if it exits after 1 query, stop and fix it!
+### REPL exits after first query
+The async loop is broken. This is critical - report immediately.
+
+### "GEMINI_API_KEY not set"
+```bash
+export GEMINI_API_KEY=your_key_here
+```
+
+### No colors showing
+- Check terminal supports ANSI colors
+- Make sure `NO_COLOR` is not set
+
+### Tools not being called
+- Check query phrasing
+- Some queries may not need tools
+
+### Empty or strange responses
+- Try `/clear` to reset context
+- Check API key is valid
+
+### Cache not working
+- Only applies to search operations
+- First search populates, second uses cache
