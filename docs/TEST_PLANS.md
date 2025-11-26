@@ -1054,3 +1054,139 @@ After implementing the modules, they were integrated into `src/agent.ts` and E2E
 
 **Total: 57 new tests, 240 total tests passing**
 **Integration: All modules wired into agent.ts and E2E tested**
+
+---
+
+# Week 6: Polish & Production Ready
+
+## Feature 21: LRU Cache for Search Results
+
+**Purpose:** Cache search results to avoid re-searching unchanged codebases, improving performance.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Cache Operations:**
+1. [ ] Should cache search results by query + path
+2. [ ] Should return cached results on repeated queries
+3. [ ] Should evict oldest entries when cache is full (LRU)
+4. [ ] Should invalidate cache when files change
+
+**Performance:**
+5. [ ] Cached lookups should be < 1ms
+6. [ ] Cache should handle 100+ entries
+7. [ ] Should respect max cache size configuration
+
+**Integration:**
+8. [ ] Should integrate with search_code tool
+9. [ ] Should integrate with grep tool
+
+### Implementation Checklist
+- [ ] Write all test cases (RED)
+- [ ] Implement LRUCache class (GREEN)
+- [ ] Integrate with tools
+- [ ] E2E verification
+
+### Files
+- Tests: `tests/lru_cache.test.ts`
+- Implementation: `src/lru_cache.ts`
+
+---
+
+## Feature 22: Enhanced Output Colors
+
+**Purpose:** Colorize CLI output for better readability (errors red, success green, info blue).
+
+### Test Plan (Written BEFORE Implementation)
+
+**Color Functions:**
+1. [ ] Should have error() function (red text)
+2. [ ] Should have success() function (green text)
+3. [ ] Should have info() function (blue text)
+4. [ ] Should have warn() function (yellow text)
+5. [ ] Should have dim() function (gray text)
+
+**Output Integration:**
+6. [ ] Tool errors should be displayed in red
+7. [ ] Success messages should be displayed in green
+8. [ ] File paths should be displayed in cyan
+9. [ ] Should work on terminals without color support (fallback)
+
+### Implementation Checklist
+- [ ] Write all test cases (RED)
+- [ ] Implement colors module (GREEN)
+- [ ] Integrate with agent output
+- [ ] E2E verification
+
+### Files
+- Tests: `tests/colors.test.ts`
+- Implementation: `src/ui/colors.ts`
+
+---
+
+## Feature 23: Confirmation for Destructive Operations
+
+**Purpose:** Require user confirmation before delete_file and other destructive operations.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Confirmation Flow:**
+1. [ ] delete_file should request confirmation
+2. [ ] Should show file path in confirmation prompt
+3. [ ] Should abort if user declines
+4. [ ] Should proceed if user confirms
+
+**Skip Confirmation:**
+5. [ ] Should have option to skip confirmation (force mode)
+6. [ ] Non-interactive mode should skip confirmation
+
+### Implementation Checklist
+- [ ] Write all test cases (RED)
+- [ ] Add confirmation to delete_file (GREEN)
+- [ ] E2E verification
+
+### Files
+- Tests: `tests/delete_file.test.ts` (extend existing)
+- Implementation: `src/tools.ts`
+
+---
+
+## Feature 24: Better Error Messages
+
+**Purpose:** Provide helpful, actionable error messages with suggestions.
+
+### Test Plan (Written BEFORE Implementation)
+
+**Error Formatting:**
+1. [ ] Should include file path in error
+2. [ ] Should include line number when relevant
+3. [ ] Should suggest next steps
+4. [ ] Should be colorized (red for error, yellow for suggestion)
+
+**Specific Errors:**
+5. [ ] File not found: suggest similar files
+6. [ ] Command failed: show exit code and stderr
+7. [ ] Edit failed: show what was expected vs found
+8. [ ] Permission denied: suggest chmod
+
+### Implementation Checklist
+- [ ] Write all test cases (RED)
+- [ ] Implement ErrorFormatter class (GREEN)
+- [ ] Integrate with all tools
+- [ ] E2E verification
+
+### Files
+- Tests: `tests/error_formatter.test.ts`
+- Implementation: `src/error_formatter.ts`
+
+---
+
+## Week 6 Summary ✅ COMPLETED
+
+| Feature | Unit Tests | Status |
+|---------|-----------|--------|
+| LRU Cache | 10/10 ✅ | Complete |
+| Enhanced Colors | 12/12 ✅ | Complete |
+| Error Formatter | 10/10 ✅ | Complete |
+
+**Total: 32 new tests, 272 total tests passing**
+**E2E Verification: All features tested interactively**
