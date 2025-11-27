@@ -59,6 +59,7 @@ npx tsx index.ts
 
 ### Slash Commands
 
+*   `/init` - Generate CRAFT.md with comprehensive project analysis
 *   `/clear` - Clear context memory
 *   `/save` - Dump chat history to JSON
 *   `/help` - Show help

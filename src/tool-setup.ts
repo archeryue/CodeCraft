@@ -18,17 +18,17 @@ import {
   globTool,
   grepTool,
   todoWriteTool,
-  runCommandTool,
+  bashTool,
+  bashOutputTool,
+  killBashTool,
   searchCodeTool,
   getCodebaseMapTool,
-  getSymbolInfoTool,
+  inspectSymbolTool,
   getImportsExportsTool,
   buildDependencyGraphTool,
-  resolveSymbolTool,
-  findReferencesTool,
-  detectProjectTypeTool,
-  extractConventionsTool,
-  getProjectOverviewTool
+  findReferencesTool
+  // Note: Analysis tools (detect_project_type, extract_conventions, get_project_overview)
+  // are imported directly in agent.ts for /init command only, not registered here
 } from './tools/index';
 
 const require = createRequire(import.meta.url);
@@ -48,7 +48,7 @@ try {
 // Create and configure the registry
 const registry = new DefaultToolRegistry();
 
-// Register all tools
+// Register all tools (17 total - analysis tools moved to /init only)
 registry.register(readFileTool);
 registry.register(writeFileTool);
 registry.register(deleteFileTool);
@@ -57,17 +57,15 @@ registry.register(listDirectoryTool);
 registry.register(globTool);
 registry.register(grepTool);
 registry.register(todoWriteTool);
-registry.register(runCommandTool);
+registry.register(bashTool);
+registry.register(bashOutputTool);
+registry.register(killBashTool);
 registry.register(searchCodeTool);
 registry.register(getCodebaseMapTool);
-registry.register(getSymbolInfoTool);
+registry.register(inspectSymbolTool);
 registry.register(getImportsExportsTool);
 registry.register(buildDependencyGraphTool);
-registry.register(resolveSymbolTool);
 registry.register(findReferencesTool);
-registry.register(detectProjectTypeTool);
-registry.register(extractConventionsTool);
-registry.register(getProjectOverviewTool);
 
 // Create executor
 const executor = new DefaultToolExecutor(registry);

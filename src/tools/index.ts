@@ -8,19 +8,20 @@ export { deleteFileTool } from './delete_file';
 export { editFileTool } from './edit_file';
 export { listDirectoryTool } from './list_directory';
 
-// Batch 2: Utility tools (4 tools)
+// Batch 2: Utility tools (6 tools)
 export { globTool } from './glob';
 export { grepTool } from './grep';
 export { todoWriteTool } from './todo_write';
-export { runCommandTool } from './run_command';
+export { bashTool } from './bash';
+export { bashOutputTool } from './bash_output';
+export { killBashTool } from './kill_bash';
 
-// Batch 3: Rust engine tools (7 tools)
+// Batch 3: Rust engine tools (6 tools)
 export { searchCodeTool } from './search_code';
 export { getCodebaseMapTool } from './get_codebase_map';
-export { getSymbolInfoTool } from './get_symbol_info';
+export { inspectSymbolTool } from './inspect_symbol';
 export { getImportsExportsTool } from './get_imports_exports';
 export { buildDependencyGraphTool } from './build_dependency_graph';
-export { resolveSymbolTool } from './resolve_symbol';
 export { findReferencesTool } from './find_references';
 
 // Batch 4: Analysis tools (3 tools)
