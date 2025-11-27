@@ -281,3 +281,19 @@ See `TEST_PLANS.md` for all feature test plans and the TDD process.
   - `*.log` files
 - Source TypeScript is in `src/`, entry point is `index.ts`
 - Documentation is in `docs/` directory (see README.md for full list)
+
+## Documentation Organization
+
+**IMPORTANT RULE:** All documentation files (*.md) must be placed in the `docs/` directory, with only two exceptions:
+- `README.md` - Project overview and quick start (stays in root)
+- `CLAUDE.md` - This file, instructions for Claude Code (stays in root)
+
+All other documentation including:
+- Architecture documents
+- Testing guides
+- Migration summaries
+- Design documents
+- Implementation plans
+- API documentation
+
+Must be created in or moved to the `docs/` directory to keep the repository root clean and organized.
