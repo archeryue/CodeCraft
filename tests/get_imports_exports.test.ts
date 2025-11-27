@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tools.js';
+import { executeTool } from '../src/tool-setup.js';
 
 describe('get_imports_exports tool', () => {
     describe('Import Tests', () => {
         it('should return imports from a TypeScript file', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -16,18 +16,18 @@ describe('get_imports_exports tool', () => {
 
         it('should identify named imports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
-            // tools.ts imports { exec } from 'child_process'
-            const childProcessImport = data.imports.find((i: any) => i.source.includes('child_process'));
-            expect(childProcessImport).toBeDefined();
+            // tool-setup.ts imports { createRequire } from 'module'
+            const moduleImport = data.imports.find((i: any) => i.source.includes('module'));
+            expect(moduleImport).toBeDefined();
         });
 
         it('should identify default imports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -36,25 +36,22 @@ describe('get_imports_exports tool', () => {
             expect(pathImport).toBeDefined();
         });
 
-        it('should identify namespace imports', async () => {
+        it('should identify type imports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
-            // tools.ts imports * as fs from 'fs'
-            const fsImport = data.imports.find((i: any) => i.source === 'fs');
-            expect(fsImport).toBeDefined();
-            if (fsImport) {
-                expect(fsImport.isNamespace).toBe(true);
-            }
+            // tool-setup.ts has type imports like ToolContext
+            const typeImport = data.imports.find((i: any) => i.source.includes('./types/tool'));
+            expect(typeImport).toBeDefined();
         });
     });
 
     describe('Export Tests', () => {
         it('should return exports from a TypeScript file', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -64,7 +61,7 @@ describe('get_imports_exports tool', () => {
 
         it('should identify named exports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -80,7 +77,7 @@ describe('get_imports_exports tool', () => {
         it('should return empty arrays when no imports/exports', async () => {
             // Create a test that might return empty results
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -110,11 +107,11 @@ describe('get_imports_exports tool', () => {
 
         it('should handle package imports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/agent.ts'
             });
             const data = JSON.parse(result);
 
-            // tools.ts imports from '@google/generative-ai'
+            // agent.ts imports from '@google/generative-ai'
             const packageImport = data.imports.find((i: any) => i.source.includes('@google'));
             expect(packageImport).toBeDefined();
         });
@@ -123,7 +120,7 @@ describe('get_imports_exports tool', () => {
     describe('Output Format', () => {
         it('should return imports with source property', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -133,7 +130,7 @@ describe('get_imports_exports tool', () => {
 
         it('should return exports with name property', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tools.ts'
+                file: 'src/tool-setup.ts'
             });
             const data = JSON.parse(result);
 

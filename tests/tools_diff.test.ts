@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { executeTool } from '../src/tools';
+import { executeTool } from '../src/tool-setup';
 import * as fs from 'fs';
 import * as path from 'path';
 

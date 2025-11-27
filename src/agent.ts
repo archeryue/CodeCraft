@@ -1,9 +1,10 @@
 import { GoogleGenerativeAI, GenerativeModel, ChatSession } from '@google/generative-ai';
-import { TOOLS, executeTool } from './tools.js';
+import { TOOLS, executor, createToolContext } from './tool-setup.js';
 import { classifyIntent, Intent } from './intent_classifier.js';
 import { ContextManager } from './context_manager.js';
 import { PlanningEngine } from './planning_engine.js';
 import { ErrorRecovery, ErrorType } from './error_recovery.js';
+import type { ToolResult } from './types/tool.js';
 
 // Agent iteration configuration
 interface IterationConfig {
@@ -63,6 +64,41 @@ export class Agent {
         this.contextManager = new ContextManager();
         this.planningEngine = new PlanningEngine();
         this.errorRecovery = new ErrorRecovery();
+    }
+
+    /**
+     * Format ToolResult to string for backward compatibility
+     */
+    private formatToolResult(result: ToolResult): string {
+        if (!result.success) {
+            // Special case: USER_CANCELLED doesn't need "Error:" prefix
+            if (result.error?.code === 'USER_CANCELLED') {
+                return result.error.message;
+            }
+
+            // Include validation error details if available
+            if (result.error?.code === 'VALIDATION_ERROR' && result.error?.details) {
+                const errors = Array.isArray(result.error.details) ? result.error.details : [result.error.details];
+                return `Error: ${result.error.message}: ${errors.join(', ')}`;
+            }
+
+            return `Error: ${result.error?.message || 'Unknown error'}`;
+        }
+
+        // Handle different data types
+        if (typeof result.data === 'string') {
+            return result.data;
+        }
+
+        if (typeof result.data === 'object') {
+            return JSON.stringify(result.data, null, 2);
+        }
+
+        if (result.data === undefined || result.data === null) {
+            return JSON.stringify(null);
+        }
+
+        return String(result.data);
     }
 
     start() {
@@ -192,6 +228,9 @@ Example workflow for "run function with params X and Y":
 
                 const toolParts = [];
                 for (const call of calls) {
+                    // Log individual tool call
+                    console.log(`\x1b[33m[Tool Call] ${call.name}\x1b[0m`);
+
                     // Track for error message generation
                     toolCallHistory.push({ tool: call.name, params: call.args });
 
@@ -215,7 +254,10 @@ Example workflow for "run function with params X and Y":
                         }
                     }
 
-                    const toolResult = await executeTool(call.name, call.args, confirm);
+                    // Execute tool using new architecture
+                    const context = createToolContext(confirm);
+                    const result = await executor.executeWithContext(call.name, call.args, context);
+                    const toolResult = this.formatToolResult(result);
 
                     // Check for errors and record failures
                     if (toolResult.startsWith('Error:')) {

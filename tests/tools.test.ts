@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TOOLS } from '../src/tools';
+import { TOOLS } from '../src/tool-setup';
 
 describe('Tools Registry', () => {
   it('should have the expected tools registered', () => {

@@ -90,13 +90,13 @@ describe('E2E Tests', () => {
 
     describe('grep tool', () => {
         it('should search file contents', async () => {
-            const output = await runCLI('use the grep tool to search for "SchemaType" in src/tools.ts');
+            const output = await runCLI('use the grep tool to search for "SchemaType" in src/tool-setup.ts');
 
             // Verify grep tool was called
             expect(output).toContain('[Tool Call] grep');
 
             // Verify results mention the pattern
-            expect(output).toMatch(/SchemaType|tools\.ts/i);
+            expect(output).toMatch(/SchemaType|tool-setup\.ts/i);
         }, 90000);
     });
 
@@ -108,19 +108,19 @@ describe('E2E Tests', () => {
             expect(output).toContain('[Tool Call] list_directory');
 
             // Verify actual files are mentioned
-            expect(output).toMatch(/agent\.ts|tools\.ts|intent_classifier\.ts/);
+            expect(output).toMatch(/agent\.ts|tool-setup\.ts|intent_classifier\.ts/);
         }, 90000);
     });
 
     describe('get_symbol_info tool', () => {
         it('should return symbol information', async () => {
-            const output = await runCLI('use get_symbol_info to look up the TOOLS constant in src/tools.ts');
+            const output = await runCLI('use get_symbol_info to look up the TOOLS constant in src/tool-setup.ts');
 
             // Verify tool was called
             expect(output).toContain('[Tool Call] get_symbol_info');
 
             // Verify response contains relevant info
-            expect(output).toMatch(/TOOLS|variable|tools\.ts/i);
+            expect(output).toMatch(/TOOLS|variable|tool-setup\.ts/i);
         }, 90000);
     });
 
@@ -132,7 +132,7 @@ describe('E2E Tests', () => {
             expect(output).toContain('[Tool Call] get_imports_exports');
 
             // Verify response mentions actual imports
-            expect(output).toMatch(/import|export|@google|GoogleGenerativeAI/i);
+            expect(output).toMatch(/import|export|tool-setup|executor/i);
         }, 90000);
     });
 });

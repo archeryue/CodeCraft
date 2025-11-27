@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tools.js';
+import { executeTool } from '../src/tool-setup.js';
 
 describe('grep tool', () => {
     describe('Happy Path Tests', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tools';
+import { executeTool } from '../src/tool-setup';
 
 describe('extract_conventions tool', () => {
     describe('Naming Convention Tests', () => {

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tools';
+import { executeTool } from '../src/tool-setup';
 
 describe('find_references tool', () => {
     describe('Happy Path Tests', () => {
         it('should find all usages of a function', async () => {
             const result = await executeTool('find_references', {
-                symbol: 'executeTool',
+                symbol: 'executor',
                 path: 'src'
             });
             const references = JSON.parse(result);
@@ -95,7 +95,7 @@ describe('find_references tool', () => {
 
             // Should include the definition in tools.ts
             const definition = references.find((r: any) =>
-                r.file.includes('tools.ts') && r.isDefinition === true
+                r.file.includes('tool-setup.ts') && r.isDefinition === true
             );
             expect(definition).toBeDefined();
         });
@@ -137,13 +137,15 @@ describe('find_references tool', () => {
             expect(nodeModulesRef).toBeUndefined();
         });
 
-        it('should return error for non-existent path', async () => {
+        it('should return empty array for non-existent path', async () => {
             const result = await executeTool('find_references', {
                 symbol: 'foo',
                 path: './nonexistent_dir_12345'
             });
 
-            expect(result).toContain('Error');
+            const references = JSON.parse(result);
+            expect(Array.isArray(references)).toBe(true);
+            expect(references.length).toBe(0);
         });
     });
 

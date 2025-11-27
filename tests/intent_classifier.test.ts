@@ -73,9 +73,9 @@ describe('Intent Classifier', () => {
     });
 
     it('should detect file mentions in entities', () => {
-        const result = classifyIntent('Refactor src/agent.ts and src/tools.ts');
+        const result = classifyIntent('Refactor src/agent.ts and src/tool-setup.ts');
         expect(result.entities).toContain('src/agent.ts');
-        expect(result.entities).toContain('src/tools.ts');
+        expect(result.entities).toContain('src/tool-setup.ts');
     });
 
     it('should detect function/class names in entities', () => {
@@ -89,7 +89,7 @@ describe('Intent Classifier', () => {
     });
 
     it('should detect scope as multi_file for multiple file mentions', () => {
-        const result = classifyIntent('Refactor src/agent.ts and src/tools.ts');
+        const result = classifyIntent('Refactor src/agent.ts and src/tool-setup.ts');
         expect(result.scope).toBe('multi_file');
     });
 

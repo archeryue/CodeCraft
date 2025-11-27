@@ -68,8 +68,8 @@ describe('Colors Module', () => {
 
     describe('Convenience Methods', () => {
         it('should have filePath() for formatting paths', () => {
-            const result = colors.filePath('src/tools.ts');
-            expect(result).toContain('src/tools.ts');
+            const result = colors.filePath('src/tool-setup.ts');
+            expect(result).toContain('src/tool-setup.ts');
         });
 
         it('should have toolCall() for formatting tool calls', () => {

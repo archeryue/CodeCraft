@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tools';
+import { executeTool } from '../src/tool-setup';
 
 describe('detect_project_type tool', () => {
     describe('Happy Path Tests', () => {

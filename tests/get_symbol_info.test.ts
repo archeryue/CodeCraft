@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tools.js';
+import { executeTool } from '../src/tool-setup.js';
 
 describe('get_symbol_info tool', () => {
     describe('Happy Path Tests', () => {
         it('should return info for a function', async () => {
             const result = await executeTool('get_symbol_info', {
-                file: 'src/tools.ts',
+                file: 'src/tool-setup.ts',
                 symbol: 'executeTool'
             });
             const info = JSON.parse(result);
@@ -40,7 +40,7 @@ describe('get_symbol_info tool', () => {
 
         it('should return parameters for functions', async () => {
             const result = await executeTool('get_symbol_info', {
-                file: 'src/tools.ts',
+                file: 'src/tool-setup.ts',
                 symbol: 'executeTool'
             });
             const info = JSON.parse(result);
@@ -53,7 +53,7 @@ describe('get_symbol_info tool', () => {
     describe('Edge Cases', () => {
         it('should return error when symbol not found', async () => {
             const result = await executeTool('get_symbol_info', {
-                file: 'src/tools.ts',
+                file: 'src/tool-setup.ts',
                 symbol: 'nonExistentSymbol12345'
             });
 
@@ -72,7 +72,7 @@ describe('get_symbol_info tool', () => {
 
         it('should work with TypeScript files', async () => {
             const result = await executeTool('get_symbol_info', {
-                file: 'src/tools.ts',
+                file: 'src/tool-setup.ts',
                 symbol: 'TOOLS'
             });
             const info = JSON.parse(result);
@@ -84,7 +84,7 @@ describe('get_symbol_info tool', () => {
     describe('Output Format', () => {
         it('should return structured JSON with required fields', async () => {
             const result = await executeTool('get_symbol_info', {
-                file: 'src/tools.ts',
+                file: 'src/tool-setup.ts',
                 symbol: 'executeTool'
             });
             const info = JSON.parse(result);

@@ -110,7 +110,7 @@ describe('Alternative Strategy Suggestions', () => {
         });
 
         it('When stuck with edits failing → Suggest showing user the problem', () => {
-            const suggestion = suggester.suggestForFailedEdits('src/tools.ts');
+            const suggestion = suggester.suggestForFailedEdits('src/tool-setup.ts');
 
             expect(suggestion.tool).toBe('show_user');
             expect(suggestion.reason).toContain('failed');
