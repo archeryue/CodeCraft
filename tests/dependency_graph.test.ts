@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tool-setup';
+import { executeTool } from '../src/tool_setup';
 
 describe('build_dependency_graph tool', () => {
     describe('Happy Path Tests', () => {
@@ -27,7 +27,7 @@ describe('build_dependency_graph tool', () => {
             const graph = JSON.parse(result);
 
             // tools.ts should be in nodes and have exports
-            const toolsNode = graph.nodes.find((n: any) => n.file.includes('tool-setup.ts'));
+            const toolsNode = graph.nodes.find((n: any) => n.file.includes('tool_setup.ts'));
             expect(toolsNode).toBeDefined();
             expect(toolsNode.exports).toBeDefined();
         });
@@ -61,7 +61,7 @@ describe('build_dependency_graph tool', () => {
 
             // Should be able to find what imports tools.ts
             const toolsImportedBy = graph.edges
-                .filter((e: any) => e.to.includes('tool-setup.ts'))
+                .filter((e: any) => e.to.includes('tool_setup.ts'))
                 .map((e: any) => e.from);
 
             // agent.ts imports tools.ts

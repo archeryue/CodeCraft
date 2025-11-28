@@ -2,12 +2,17 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Agent } from '../src/agent';
 import * as path from 'path';
 
-// Mock fs module
-vi.mock('fs', () => ({
-  writeFileSync: vi.fn(),
-  existsSync: vi.fn(),
-  readFileSync: vi.fn()
-}));
+// Mock fs module - use importOriginal to get all the real methods,
+// then override only the ones we need to control
+vi.mock('fs', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as any),
+    writeFileSync: vi.fn(),
+    existsSync: vi.fn().mockReturnValue(false),
+    readFileSync: vi.fn()
+  };
+});
 
 // Mock analysis tools
 vi.mock('../src/tools/detect_project_type', () => ({
@@ -176,21 +181,27 @@ describe('Agent /init Command', () => {
   });
 
   it('should handle /init with extra arguments (ignore them)', async () => {
-    const mockExecuteTool = vi.spyOn(agent as any, 'executeTool');
-    mockExecuteTool.mockResolvedValue('test data');
-
     const response = await agent.chat('/init some extra args');
 
     // Should execute normally, ignoring extra args
     expect(response).toContain('Project analysis complete');
-    expect(mockExecuteTool).toHaveBeenCalledTimes(3);
+    expect(response).toContain('CRAFT.md');
+    // Verify all three analysis tools were called
+    expect(mockDetectProjectType).toHaveBeenCalled();
+    expect(mockExtractConventions).toHaveBeenCalled();
+    expect(mockGetProjectOverview).toHaveBeenCalled();
   });
 
   // Error Handling
   it('should handle tool execution failure gracefully', async () => {
     const fs = await import('fs');
-    const mockExecuteTool = vi.spyOn(agent as any, 'executeTool');
-    mockExecuteTool.mockRejectedValue(new Error('Tool execution failed'));
+    vi.mocked(fs.writeFileSync).mockClear();
+
+    // Mock one of the tools to return an error
+    mockDetectProjectType.mockResolvedValue({
+      success: false,
+      error: { code: 'TOOL_ERROR', message: 'Tool execution failed' }
+    });
 
     const response = await agent.chat('/init');
 
@@ -201,8 +212,6 @@ describe('Agent /init Command', () => {
 
   it('should handle filesystem write error gracefully', async () => {
     const fs = await import('fs');
-    const mockExecuteTool = vi.spyOn(agent as any, 'executeTool');
-    mockExecuteTool.mockResolvedValue('test data');
 
     // Mock fs.writeFileSync to throw error
     vi.mocked(fs.writeFileSync).mockImplementation(() => {
@@ -217,8 +226,12 @@ describe('Agent /init Command', () => {
 
   it('should handle empty tool responses', async () => {
     const fs = await import('fs');
-    const mockExecuteTool = vi.spyOn(agent as any, 'executeTool');
-    mockExecuteTool.mockResolvedValue(''); // Empty response
+    vi.mocked(fs.writeFileSync).mockClear().mockImplementation(() => {});
+
+    // Mock tools to return empty data
+    mockDetectProjectType.mockResolvedValue({ success: true, data: {} });
+    mockExtractConventions.mockResolvedValue({ success: true, data: {} });
+    mockGetProjectOverview.mockResolvedValue({ success: true, data: {} });
 
     const response = await agent.chat('/init');
 
@@ -233,18 +246,20 @@ describe('Agent /init Command', () => {
   // Integration Tests
   it('should format JSON tool responses correctly in CRAFT.md', async () => {
     const fs = await import('fs');
-    const mockExecuteTool = vi.spyOn(agent as any, 'executeTool');
-    mockExecuteTool.mockImplementation(async (toolName: string) => {
-      if (toolName === 'detect_project_type') {
-        return JSON.stringify({ language: 'TypeScript', framework: 'Node.js' }, null, 2);
-      }
-      if (toolName === 'extract_conventions') {
-        return JSON.stringify({ indent: '2 spaces', naming: 'camelCase' }, null, 2);
-      }
-      if (toolName === 'get_project_overview') {
-        return JSON.stringify({ name: 'CodeCraft', description: 'AI coding agent' }, null, 2);
-      }
-      return '';
+    vi.mocked(fs.writeFileSync).mockClear().mockImplementation(() => {});
+
+    // Mock tools to return structured data
+    mockDetectProjectType.mockResolvedValue({
+      success: true,
+      data: { language: 'TypeScript', framework: 'Node.js' }
+    });
+    mockExtractConventions.mockResolvedValue({
+      success: true,
+      data: { indent: '2 spaces', naming: 'camelCase' }
+    });
+    mockGetProjectOverview.mockResolvedValue({
+      success: true,
+      data: { name: 'CodeCraft', description: 'AI coding agent' }
     });
 
     await agent.chat('/init');
@@ -254,7 +269,7 @@ describe('Agent /init Command', () => {
     // Should not contain "[object Object]"
     expect(content).not.toContain('[object Object]');
 
-    // Should contain actual JSON data
+    // Should contain actual JSON data (serialized as JSON strings)
     expect(content).toContain('TypeScript');
     expect(content).toContain('camelCase');
     expect(content).toContain('CodeCraft');
@@ -262,12 +277,9 @@ describe('Agent /init Command', () => {
 
   it('should include timestamp in CRAFT.md', async () => {
     const fs = await import('fs');
-    const mockExecuteTool = vi.spyOn(agent as any, 'executeTool');
-    mockExecuteTool.mockResolvedValue('test data');
+    vi.mocked(fs.writeFileSync).mockClear().mockImplementation(() => {});
 
-    const beforeTime = new Date();
     await agent.chat('/init');
-    const afterTime = new Date();
 
     const content = vi.mocked(fs.writeFileSync).mock.calls[0][1];
 

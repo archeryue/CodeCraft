@@ -107,8 +107,9 @@ describe('bash tool', () => {
         command: 'ls /nonexistent'
       }, mockContext);
 
-      // Command executed, but failed
-      expect(result.success).toBe(true); // Tool executed successfully
+      // Command failed (non-zero exit code)
+      expect(result.success).toBe(false);
+      expect(result.error?.code).toBe('COMMAND_FAILED');
       expect(result.data).toHaveProperty('exitCode');
       expect(result.data.exitCode).not.toBe(0);
       expect(result.data).toHaveProperty('stderr');
@@ -119,7 +120,9 @@ describe('bash tool', () => {
         command: 'invalid|||syntax'
       }, mockContext);
 
-      expect(result.success).toBe(true); // Tool executed
+      // Command failed (syntax error causes non-zero exit)
+      expect(result.success).toBe(false);
+      expect(result.error?.code).toBe('COMMAND_FAILED');
       expect(result.data.exitCode).not.toBe(0);
       // stderr or output should have error info
       expect(result.data.stderr || result.data.output).toBeTruthy();
@@ -131,7 +134,7 @@ describe('bash tool', () => {
       }, mockContext);
 
       expect(result.success).toBe(false);
-      expect(result.error?.code).toBe('VALIDATION_ERROR');
+      expect(result.error?.code).toBe('INVALID_PARAMS');
     });
   });
 

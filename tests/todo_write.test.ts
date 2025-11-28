@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tool-setup.js';
+import { executeTool } from '../src/tool_setup.js';
 
 describe('todo_write tool', () => {
     it('should accept array of todos and return confirmation', async () => {

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "bash -c 'cd rust_engine && $HOME/.cargo/bin/cargo build --release && cp target/release/librust_engine.so ../rust_engine.linux-x64-gnu.node'",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:all": "vitest run && vitest run --config vitest.e2e.config.ts"
   },
   "napi": {
     "name": "rust_engine",

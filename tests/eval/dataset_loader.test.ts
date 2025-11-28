@@ -1,7 +1,7 @@
-// tests/eval/dataset-loader.test.ts
+// tests/eval/dataset_loader.test.ts
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { DatasetLoader } from '../../src/eval/dataset-loader';
+import { DatasetLoader } from '../../src/eval/dataset_loader';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';

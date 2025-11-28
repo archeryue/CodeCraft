@@ -180,9 +180,37 @@ The agent uses three framework modules for intelligent behavior:
 - Suggests alternative strategies when stuck
 - Shows `[Loop Detected]` and `[Suggestion]` warnings
 
+## Code Conventions
+
+### File Naming
+- **All files use `snake_case`**: `read_file.ts`, `tool_executor.ts`, `dataset_loader.ts`
+- Test files mirror source structure: `src/tools/read_file.ts` → `tests/tools/read_file.test.ts`
+
+### Code Style
+- **Classes**: PascalCase (`UnitEvalRunner`, `ToolExecutor`, `FixtureManager`)
+- **Functions/Methods**: camelCase (`runCase()`, `executeWithContext()`)
+- **Interfaces/Types**: PascalCase (`EvalCase`, `ToolResult`, `RunOptions`)
+- **Variables**: camelCase (`fixtureManager`, `evalCase`, `testResults`)
+- **Constants**: UPPER_SNAKE_CASE for true constants, camelCase for config objects
+
+### Import Style
+- Use ES Modules (`import`/`export`)
+- Group imports: external packages first, then internal modules
+- Use type imports where applicable: `import type { ToolResult } from './types'`
+
 ## Development Rules
 
 **CRITICAL: This project strictly follows Test-Driven Development (TDD).**
+
+### Zero Tolerance for Test Failures
+
+**We NEVER accept any test failures.** When tests fail:
+1. **Analyze the issue** - Understand what the test expects vs what the code does
+2. **Find the root cause** - Don't just fix symptoms, fix the underlying problem
+3. **Fix properly** - Either fix the code to match the expected behavior, OR update the test if the design changed intentionally
+4. **Verify** - Run full test suite to ensure no regressions
+
+**If you change the design of the code, you MUST update the corresponding tests.** Tests and code must always be in sync. A "passing" test suite with skipped or ignored tests is not acceptable.
 
 ### Before Writing Any Code:
 1. **Write a test plan** - Document ALL test cases in `TEST_PLANS.md` BEFORE writing any code

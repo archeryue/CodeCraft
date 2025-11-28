@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { editFileTool } from '../../src/tools/edit_file';
-import { createMockContext } from '../helpers/mock-context';
+import { createMockContext } from '../helpers/mock_context';
 
 describe('edit_file Tool', () => {
   let mockContext: any;

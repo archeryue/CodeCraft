@@ -1,7 +1,7 @@
-// tests/tool-registry.test.ts
+// tests/tool_registry.test.ts
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { DefaultToolRegistry } from '../src/tool-registry';
+import { DefaultToolRegistry } from '../src/tool_registry';
 import { Tool, ToolContext, ToolResult, ToolCapabilities } from '../src/types/tool';
 import { SchemaType } from '@google/generative-ai';
 

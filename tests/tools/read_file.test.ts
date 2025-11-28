@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { readFileTool } from '../../src/tools/read_file';
-import { createMockContext } from '../helpers/mock-context';
+import { createMockContext } from '../helpers/mock_context';
 import { ToolContext } from '../../src/types/tool';
 
 describe('read_file Tool', () => {

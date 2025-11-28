@@ -5,7 +5,7 @@ import { ToolContext } from '../../src/types/tool';
 import { vi } from 'vitest';
 
 // Re-export createDefaultContext for convenience
-export { createDefaultContext } from '../../src/tool-context';
+export { createDefaultContext } from '../../src/tool_context';
 
 /**
  * Options for creating mock context

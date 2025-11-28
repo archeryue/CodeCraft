@@ -2,10 +2,15 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { inspectSymbolTool } from '../../src/tools/inspect_symbol';
-import { createDefaultContext } from '../../src/tool-context';
+import { createDefaultContext } from '../../src/tool_context';
+import * as path from 'path';
 
 describe('inspect_symbol tool', () => {
   let mockContext: any;
+  const cwd = process.cwd();
+
+  // Helper to get expected absolute path
+  const absPath = (relativePath: string) => path.join(cwd, relativePath);
 
   beforeEach(() => {
     mockContext = createDefaultContext(null);
@@ -29,7 +34,8 @@ describe('inspect_symbol tool', () => {
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockInfo);
       expect(result.metadata?.mode).toBe('info');
-      expect(mockContext.rustEngine.getSymbolInfo).toHaveBeenCalledWith('src/agent.ts', 'Agent');
+      // Tool resolves relative paths to absolute before calling Rust engine
+      expect(mockContext.rustEngine.getSymbolInfo).toHaveBeenCalledWith(absPath('src/agent.ts'), 'Agent');
     });
 
     it('should get symbol info in explicit "info" mode', async () => {
@@ -44,7 +50,8 @@ describe('inspect_symbol tool', () => {
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockInfo);
       expect(result.metadata?.mode).toBe('info');
-      expect(mockContext.rustEngine.getSymbolInfo).toHaveBeenCalledWith('src/agent.ts', 'start');
+      // Tool resolves relative paths to absolute before calling Rust engine
+      expect(mockContext.rustEngine.getSymbolInfo).toHaveBeenCalledWith(absPath('src/agent.ts'), 'start');
     });
 
     it('should resolve symbol definition in "resolve" mode', async () => {
@@ -59,8 +66,9 @@ describe('inspect_symbol tool', () => {
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockLocation);
       expect(result.metadata?.mode).toBe('resolve');
-      // Note: resolveSymbol has different argument order!
-      expect(mockContext.rustEngine.resolveSymbol).toHaveBeenCalledWith('Agent', 'index.ts');
+      // Note: resolveSymbol has different argument order! (symbol, file)
+      // Tool resolves relative paths to absolute before calling Rust engine
+      expect(mockContext.rustEngine.resolveSymbol).toHaveBeenCalledWith('Agent', absPath('index.ts'));
     });
   });
 
@@ -222,18 +230,20 @@ describe('inspect_symbol tool', () => {
       mockContext.rustEngine.resolveSymbol.mockReturnValue(mockLocation);
 
       // Test info mode: getSymbolInfo(file, symbol)
+      // Tool resolves relative paths to absolute before calling Rust engine
       await inspectSymbolTool.execute(
         { symbol: 'Agent', file: 'src/agent.ts', mode: 'info' },
         mockContext
       );
-      expect(mockContext.rustEngine.getSymbolInfo).toHaveBeenCalledWith('src/agent.ts', 'Agent');
+      expect(mockContext.rustEngine.getSymbolInfo).toHaveBeenCalledWith(absPath('src/agent.ts'), 'Agent');
 
       // Test resolve mode: resolveSymbol(symbol, file) - different order!
+      // Tool resolves relative paths to absolute before calling Rust engine
       await inspectSymbolTool.execute(
         { symbol: 'Agent', file: 'index.ts', mode: 'resolve' },
         mockContext
       );
-      expect(mockContext.rustEngine.resolveSymbol).toHaveBeenCalledWith('Agent', 'index.ts');
+      expect(mockContext.rustEngine.resolveSymbol).toHaveBeenCalledWith('Agent', absPath('index.ts'));
     });
   });
 

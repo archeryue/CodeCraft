@@ -3,9 +3,9 @@
 
 import path from 'path';
 import { createRequire } from 'module';
-import { DefaultToolRegistry } from './tool-registry';
-import { DefaultToolExecutor } from './tool-executor';
-import { createDefaultContext } from './tool-context';
+import { DefaultToolRegistry } from './tool_registry';
+import { DefaultToolExecutor } from './tool_executor';
+import { createDefaultContext } from './tool_context';
 import type { ToolContext } from './types/tool';
 
 // Import all tools

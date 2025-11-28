@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { deleteFileTool } from '../../src/tools/delete_file';
-import { createMockContext } from '../helpers/mock-context';
+import { createMockContext } from '../helpers/mock_context';
 import { ToolContext } from '../../src/types/tool';
 
 describe('delete_file Tool', () => {

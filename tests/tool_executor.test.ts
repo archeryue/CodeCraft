@@ -1,8 +1,8 @@
-// tests/tool-executor.test.ts
+// tests/tool_executor.test.ts
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { DefaultToolExecutor } from '../src/tool-executor';
-import { DefaultToolRegistry } from '../src/tool-registry';
+import { DefaultToolExecutor } from '../src/tool_executor';
+import { DefaultToolRegistry } from '../src/tool_registry';
 import { Tool, ToolContext, ToolResult } from '../src/types/tool';
 import { SchemaType } from '@google/generative-ai';
 

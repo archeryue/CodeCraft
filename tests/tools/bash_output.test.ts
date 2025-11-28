@@ -165,28 +165,30 @@ describe('bash_output tool', () => {
 
   describe('Integration', () => {
     it('should support polling pattern', async () => {
-      // Start long-running process
+      // Start short-running process
       const startResult = await bashTool.execute({
-        command: 'for i in 1 2 3; do echo "count $i"; sleep 0.2; done',
+        command: 'for i in 1 2 3; do echo "count $i"; sleep 0.1; done',
         run_in_background: true
       }, mockContext);
 
       const bashId = startResult.data.bash_id;
 
-      // Poll multiple times
+      // Poll multiple times with enough time for process to complete
       const outputs = [];
 
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 6; i++) {
         await new Promise(resolve => setTimeout(resolve, 150));
         const result = await bashOutputTool.execute({ bash_id: bashId }, mockContext);
         outputs.push(result.data);
+        // Break early if completed
+        if (result.data.status === 'completed') break;
       }
 
       // Should see progression
       const statuses = outputs.map(o => o.status);
       expect(statuses).toBeDefined();
 
-      // At least one should be running, last should be completed
+      // Last status should be completed
       expect(statuses[statuses.length - 1]).toBe('completed');
     });
   });

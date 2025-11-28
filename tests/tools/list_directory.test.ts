@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { listDirectoryTool } from '../../src/tools/list_directory';
-import { createMockContext } from '../helpers/mock-context';
+import { createMockContext } from '../helpers/mock_context';
 
 describe('list_directory Tool', () => {
   let mockContext: any;

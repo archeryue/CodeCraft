@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tool-setup.js';
+import { executeTool } from '../src/tool_setup.js';
 
 describe('get_imports_exports tool', () => {
     describe('Import Tests', () => {
         it('should return imports from a TypeScript file', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -16,7 +16,7 @@ describe('get_imports_exports tool', () => {
 
         it('should identify named imports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -27,7 +27,7 @@ describe('get_imports_exports tool', () => {
 
         it('should identify default imports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -38,7 +38,7 @@ describe('get_imports_exports tool', () => {
 
         it('should identify type imports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -51,7 +51,7 @@ describe('get_imports_exports tool', () => {
     describe('Export Tests', () => {
         it('should return exports from a TypeScript file', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -61,7 +61,7 @@ describe('get_imports_exports tool', () => {
 
         it('should identify named exports', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -77,7 +77,7 @@ describe('get_imports_exports tool', () => {
         it('should return empty arrays when no imports/exports', async () => {
             // Create a test that might return empty results
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -120,7 +120,7 @@ describe('get_imports_exports tool', () => {
     describe('Output Format', () => {
         it('should return imports with source property', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 
@@ -130,7 +130,7 @@ describe('get_imports_exports tool', () => {
 
         it('should return exports with name property', async () => {
             const result = await executeTool('get_imports_exports', {
-                file: 'src/tool-setup.ts'
+                file: 'src/tool_setup.ts'
             });
             const data = JSON.parse(result);
 

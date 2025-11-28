@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tool-setup';
+import { executeTool } from '../src/tool_setup';
 
 describe('find_references tool', () => {
     describe('Happy Path Tests', () => {
@@ -95,7 +95,7 @@ describe('find_references tool', () => {
 
             // Should include the definition in tools.ts
             const definition = references.find((r: any) =>
-                r.file.includes('tool-setup.ts') && r.isDefinition === true
+                r.file.includes('tool_setup.ts') && r.isDefinition === true
             );
             expect(definition).toBeDefined();
         });

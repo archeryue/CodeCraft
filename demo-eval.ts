@@ -1,10 +1,10 @@
 // demo-eval.ts - Demonstration of the evaluation system
 
-import { DatasetLoader } from './src/eval/dataset-loader';
+import { DatasetLoader } from './src/eval/dataset_loader';
 import { FixtureManager } from './src/eval/fixtures';
 import { EvalScorer } from './src/eval/scorer';
-import { DefaultToolExecutor } from './src/tool-executor';
-import { DefaultToolRegistry } from './src/tool-registry';
+import { DefaultToolExecutor } from './src/tool_executor';
+import { DefaultToolRegistry } from './src/tool_registry';
 import { readFileTool } from './src/tools/read_file';
 import type { EvalResult, EvalSummary } from './src/eval/types';
 import * as fs from 'fs';

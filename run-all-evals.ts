@@ -1,10 +1,11 @@
 // run-all-evals.ts - Comprehensive evaluation runner for all tools
 
-import { DatasetLoader } from './src/eval/dataset-loader';
+import { DatasetLoader } from './src/eval/dataset_loader';
 import { FixtureManager } from './src/eval/fixtures';
 import { EvalScorer } from './src/eval/scorer';
-import { DefaultToolExecutor } from './src/tool-executor';
-import { DefaultToolRegistry } from './src/tool-registry';
+import { UnitEvalRunner } from './src/eval/unit_runner';
+import { DefaultToolExecutor } from './src/tool_executor';
+import { DefaultToolRegistry } from './src/tool_registry';
 import type { EvalResult, EvalSummary, EvalCase } from './src/eval/types';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -89,14 +90,23 @@ async function runAllEvaluations() {
     console.log(`   ⚠️  Rust engine not available: ${error instanceof Error ? error.message : String(error)}\n`);
   }
 
-  // Set Rust engine on fixture manager so it's available in all fixture contexts
-  fixtureManager.setRustEngine(rustEngine);
-
+  // Create executor with base context
   const executor = new DefaultToolExecutor(registry, {
     cwd: process.cwd(),
     fs: fs as any,
     rustEngine
   });
+
+  // Create UnitEvalRunner
+  const runner = new UnitEvalRunner({
+    executor,
+    fixtureManager,
+    scorer,
+    verbose: true
+  });
+
+  // Set Rust engine on runner (for fixture contexts)
+  runner.setRustEngine(rustEngine);
 
   // Find all dataset files
   const datasetsDir = path.join(process.cwd(), 'evals/datasets');
@@ -125,87 +135,29 @@ async function runAllEvaluations() {
       const cases = await loader.loadDataset(datasetPath);
       console.log(`   Test cases: ${cases.length}`);
 
-      const results: EvalResult[] = [];
-      let passed = 0;
-      let failed = 0;
-
-      // Run each test case
-      for (const evalCase of cases) {
-        const startTime = Date.now();
-
-        // Setup fixture
-        const { context, cleanup } = await fixtureManager.setup(evalCase.fixtures);
-
-        try {
-          // Execute tool
-          const toolResult = await executor.executeWithContext(
-            evalCase.tool,
-            evalCase.input.params!,
-            context
-          );
-
-          // Score result
-          const scoringResult = scorer.score(
-            toolResult,
-            evalCase.expected,
-            evalCase
-          );
-
-          if (scoringResult.passed) {
-            passed++;
-          } else {
-            failed++;
-            console.log(`   ❌ ${evalCase.id}: ${evalCase.description}`);
-            scoringResult.breakdown.forEach(b => {
-              if (!b.passed) {
-                console.log(`      ✗ ${b.criterion}: ${b.details}`);
-              }
-            });
-          }
-
-          // Create eval result
-          const result: EvalResult = {
-            caseId: evalCase.id,
-            passed: scoringResult.passed,
-            score: scoringResult.score,
-            actual: toolResult,
-            expected: evalCase.expected,
-            executionTimeMs: Date.now() - startTime,
-            breakdown: scoringResult.breakdown,
-            timestamp: new Date()
-          };
-
-          results.push(result);
-
-        } catch (error) {
-          failed++;
-          console.log(`   ❌ ${evalCase.id}: ${evalCase.description}`);
-          console.log(`      Error: ${error instanceof Error ? error.message : String(error)}`);
-
-          results.push({
-            caseId: evalCase.id,
-            passed: false,
-            score: 0,
-            actual: undefined,
-            expected: evalCase.expected,
-            executionTimeMs: Date.now() - startTime,
-            breakdown: [{
-              criterion: 'execution',
-              passed: false,
-              score: 0,
-              details: error instanceof Error ? error.message : String(error)
-            }],
-            error: error instanceof Error ? error : new Error(String(error)),
-            timestamp: new Date()
+      // Run all cases using UnitEvalRunner
+      const results = await runner.runCases(cases, { verbose: true }, (completed, total, result) => {
+        if (!result.passed) {
+          console.log(`   ❌ ${result.caseId}: ${cases.find(c => c.id === result.caseId)?.description}`);
+          result.breakdown?.forEach(b => {
+            if (!b.passed) {
+              console.log(`      ✗ ${b.criterion}: ${b.details}`);
+            }
           });
-        } finally {
-          await cleanup();
         }
-      }
+      });
 
-      // Generate summary for this tool
-      const summary = generateSummary(results, cases, toolName, datasetFile);
+      // Generate summary using UnitEvalRunner
+      const baseSummary = runner.summarize(results, toolName, cases);
+      const summary: ToolEvalSummary = {
+        ...baseSummary,
+        toolName,
+        datasetFile
+      };
       allSummaries.push(summary);
+
+      const passed = results.filter(r => r.passed).length;
+      const failed = results.filter(r => !r.passed).length;
 
       totalCases += cases.length;
       totalPassed += passed;
@@ -286,73 +238,13 @@ async function runAllEvaluations() {
   console.log('='.repeat(80));
 
   // Cleanup
-  await fixtureManager.cleanupAll();
+  await runner.cleanup();
 
   return {
     totalCases,
     totalPassed,
     totalFailed,
     summaries: allSummaries
-  };
-}
-
-function generateSummary(
-  results: EvalResult[],
-  cases: EvalCase[],
-  toolName: string,
-  datasetFile: string
-): ToolEvalSummary {
-  const passed = results.filter(r => r.passed);
-  const failed = results.filter(r => !r.passed);
-
-  const times = results.map(r => r.executionTimeMs).sort((a, b) => a - b);
-  const avgTime = times.reduce((sum, t) => sum + t, 0) / times.length;
-
-  // Group by category
-  const byCategory: Record<string, any> = {};
-  const casesById = new Map(cases.map(c => [c.id, c]));
-
-  results.forEach(r => {
-    const evalCase = casesById.get(r.caseId);
-    if (evalCase) {
-      const cat = evalCase.category;
-      if (!byCategory[cat]) {
-        byCategory[cat] = { total: 0, passed: 0, passRate: 0, avgScore: 0 };
-      }
-      byCategory[cat].total++;
-      if (r.passed) byCategory[cat].passed++;
-    }
-  });
-
-  // Calculate pass rates
-  for (const cat in byCategory) {
-    byCategory[cat].passRate = byCategory[cat].passed / byCategory[cat].total;
-    byCategory[cat].avgScore = byCategory[cat].passRate;
-  }
-
-  return {
-    toolName,
-    datasetFile,
-    subject: toolName,
-    totalCases: results.length,
-    passedCases: passed.length,
-    failedCases: failed.length,
-    passRate: passed.length / results.length,
-    averageScore: results.reduce((sum, r) => sum + r.score, 0) / results.length,
-    byCategory,
-    performance: {
-      avgExecutionTimeMs: avgTime,
-      p50ExecutionTimeMs: times[Math.floor(times.length * 0.5)],
-      p95ExecutionTimeMs: times[Math.floor(times.length * 0.95)],
-      p99ExecutionTimeMs: times[Math.floor(times.length * 0.99)],
-      maxExecutionTimeMs: Math.max(...times)
-    },
-    failures: failed.map(r => ({
-      caseId: r.caseId,
-      description: casesById.get(r.caseId)?.description || r.caseId,
-      error: r.error?.message
-    })),
-    timestamp: new Date()
   };
 }
 

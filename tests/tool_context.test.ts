@@ -1,7 +1,7 @@
 // tests/tool-context.test.ts
 
 import { describe, it, expect, vi } from 'vitest';
-import { createDefaultContext, createMockContext } from './helpers/mock-context';
+import { createDefaultContext, createMockContext } from './helpers/mock_context';
 import * as fs from 'fs';
 
 describe('ToolContext Factory', () => {
