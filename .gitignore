@@ -18,3 +18,7 @@ Cargo.lock
 .DS_Store
 Thumbs.db
 .claude/
+
+# Evaluation results
+*-eval-results.json
+eval-results/
