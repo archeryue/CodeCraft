@@ -1,14 +1,18 @@
 {
-  "tool": "edit_file",
+  "tool": "EditFile",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for edit_file tool",
   "cases": [
     {
       "id": "edit-001",
       "description": "Simple string replacement",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "happy_path",
-      "tags": ["edit", "replace", "basic"],
+      "tags": [
+        "edit",
+        "replace",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -30,9 +34,12 @@
     {
       "id": "edit-002",
       "description": "Replace multi-line text",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "happy_path",
-      "tags": ["edit", "multiline"],
+      "tags": [
+        "edit",
+        "multiline"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -54,9 +61,13 @@
     {
       "id": "edit-003",
       "description": "Replace with indentation preserved",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "happy_path",
-      "tags": ["edit", "indentation", "whitespace"],
+      "tags": [
+        "edit",
+        "indentation",
+        "whitespace"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -78,9 +89,12 @@
     {
       "id": "edit-004",
       "description": "Replace entire file content",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "happy_path",
-      "tags": ["edit", "full-replace"],
+      "tags": [
+        "edit",
+        "full-replace"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -102,9 +116,12 @@
     {
       "id": "edit-005",
       "description": "Delete text (replace with empty)",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "happy_path",
-      "tags": ["edit", "delete"],
+      "tags": [
+        "edit",
+        "delete"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -126,9 +143,12 @@
     {
       "id": "edit-006",
       "description": "Insert text (replace empty with content)",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "edge_case",
-      "tags": ["edit", "insert"],
+      "tags": [
+        "edit",
+        "insert"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -151,9 +171,12 @@
     {
       "id": "edit-007",
       "description": "Replace special characters",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "edge_case",
-      "tags": ["edit", "special-chars"],
+      "tags": [
+        "edit",
+        "special-chars"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -175,9 +198,13 @@
     {
       "id": "edit-008",
       "description": "Replace first occurrence only (default)",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "happy_path",
-      "tags": ["edit", "occurrence", "first"],
+      "tags": [
+        "edit",
+        "occurrence",
+        "first"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -199,9 +226,13 @@
     {
       "id": "edit-009",
       "description": "Edit non-existent file",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "error_handling",
-      "tags": ["edit", "error", "not-found"],
+      "tags": [
+        "edit",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -222,9 +253,13 @@
     {
       "id": "edit-010",
       "description": "Replace string not found in file",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "error_handling",
-      "tags": ["edit", "error", "not-found"],
+      "tags": [
+        "edit",
+        "error",
+        "not-found"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -247,9 +282,13 @@
     {
       "id": "edit-011",
       "description": "Edit with missing old_string parameter",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "error_handling",
-      "tags": ["edit", "error", "validation"],
+      "tags": [
+        "edit",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -271,9 +310,13 @@
     {
       "id": "edit-012",
       "description": "Edit with missing new_string parameter",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "error_handling",
-      "tags": ["edit", "error", "validation"],
+      "tags": [
+        "edit",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -295,9 +338,13 @@
     {
       "id": "edit-013",
       "description": "Edit identical strings (old == new)",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "error_handling",
-      "tags": ["edit", "error", "validation"],
+      "tags": [
+        "edit",
+        "error",
+        "validation"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -320,9 +367,13 @@
     {
       "id": "edit-014",
       "description": "Large file edit (performance)",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "performance",
-      "tags": ["edit", "performance", "large"],
+      "tags": [
+        "edit",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -347,15 +398,18 @@
     {
       "id": "edit-015",
       "description": "Edit file with unicode content",
-      "tool": "edit_file",
+      "tool": "EditFile",
       "category": "edge_case",
-      "tags": ["edit", "unicode"],
+      "tags": [
+        "edit",
+        "unicode"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
           "path": "unicode.txt",
-          "old_string": "🔴",
-          "new_string": "🟢"
+          "old_string": "\ud83d\udd34",
+          "new_string": "\ud83d\udfe2"
         }
       },
       "expected": {
@@ -364,7 +418,7 @@
       "fixtures": {
         "type": "inline",
         "files": {
-          "unicode.txt": "Status: 🔴 Error"
+          "unicode.txt": "Status: \ud83d\udd34 Error"
         }
       }
     }

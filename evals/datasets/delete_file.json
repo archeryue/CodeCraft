@@ -1,14 +1,17 @@
 {
-  "tool": "delete_file",
+  "tool": "DeleteFile",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for delete_file tool",
   "cases": [
     {
       "id": "delete-001",
       "description": "Delete simple text file",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "happy_path",
-      "tags": ["delete", "basic"],
+      "tags": [
+        "delete",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -28,9 +31,12 @@
     {
       "id": "delete-002",
       "description": "Delete empty file",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "happy_path",
-      "tags": ["delete", "empty"],
+      "tags": [
+        "delete",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -50,9 +56,12 @@
     {
       "id": "delete-003",
       "description": "Delete file in subdirectory",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "happy_path",
-      "tags": ["delete", "subdirectory"],
+      "tags": [
+        "delete",
+        "subdirectory"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -72,9 +81,12 @@
     {
       "id": "delete-004",
       "description": "Delete large file",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "happy_path",
-      "tags": ["delete", "large"],
+      "tags": [
+        "delete",
+        "large"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -94,9 +106,12 @@
     {
       "id": "delete-005",
       "description": "Delete binary file",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "happy_path",
-      "tags": ["delete", "binary"],
+      "tags": [
+        "delete",
+        "binary"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -116,9 +131,13 @@
     {
       "id": "delete-006",
       "description": "Delete file with special characters in name",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "edge_case",
-      "tags": ["delete", "special-chars", "filename"],
+      "tags": [
+        "delete",
+        "special-chars",
+        "filename"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -138,9 +157,13 @@
     {
       "id": "delete-007",
       "description": "Delete file with spaces in name",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "edge_case",
-      "tags": ["delete", "spaces", "filename"],
+      "tags": [
+        "delete",
+        "spaces",
+        "filename"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -160,9 +183,13 @@
     {
       "id": "delete-008",
       "description": "Delete non-existent file",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "error_handling",
-      "tags": ["delete", "error", "not-found"],
+      "tags": [
+        "delete",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -181,9 +208,13 @@
     {
       "id": "delete-009",
       "description": "Delete directory instead of file",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "error_handling",
-      "tags": ["delete", "error", "directory"],
+      "tags": [
+        "delete",
+        "error",
+        "directory"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -204,9 +235,13 @@
     {
       "id": "delete-010",
       "description": "Delete with missing path parameter",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "error_handling",
-      "tags": ["delete", "error", "validation"],
+      "tags": [
+        "delete",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -225,9 +260,13 @@
     {
       "id": "delete-011",
       "description": "Delete with empty path",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "error_handling",
-      "tags": ["delete", "error", "validation"],
+      "tags": [
+        "delete",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -246,9 +285,13 @@
     {
       "id": "delete-012",
       "description": "Delete with absolute path (security)",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "security",
-      "tags": ["delete", "security", "absolute-path"],
+      "tags": [
+        "delete",
+        "security",
+        "absolute-path"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -267,9 +310,13 @@
     {
       "id": "delete-013",
       "description": "Delete with path traversal attempt (security)",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "security",
-      "tags": ["delete", "security", "path-traversal"],
+      "tags": [
+        "delete",
+        "security",
+        "path-traversal"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -288,9 +335,12 @@
     {
       "id": "delete-014",
       "description": "Delete performance test",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "performance",
-      "tags": ["delete", "performance"],
+      "tags": [
+        "delete",
+        "performance"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -313,9 +363,12 @@
     {
       "id": "delete-015",
       "description": "Delete hidden file",
-      "tool": "delete_file",
+      "tool": "DeleteFile",
       "category": "edge_case",
-      "tags": ["delete", "hidden"],
+      "tags": [
+        "delete",
+        "hidden"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

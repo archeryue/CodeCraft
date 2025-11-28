@@ -25,7 +25,7 @@ describe('Evaluation Types', () => {
       const evalCase: EvalCase = {
         id: 'test-001',
         description: 'Test case description',
-        tool: 'read_file',
+        tool: 'ReadFile',
         category: 'happy_path',
         tags: ['read', 'file'],
         difficulty: 3,
@@ -39,7 +39,7 @@ describe('Evaluation Types', () => {
       };
 
       expect(evalCase.id).toBe('test-001');
-      expect(evalCase.tool).toBe('read_file');
+      expect(evalCase.tool).toBe('ReadFile');
       expect(evalCase.category).toBe('happy_path');
     });
 
@@ -47,7 +47,7 @@ describe('Evaluation Types', () => {
       const evalCase: EvalCase = {
         id: 'test-002',
         description: 'Test',
-        tool: 'read_file',
+        tool: 'ReadFile',
         category: 'happy_path',
         tags: [],
         difficulty: 1,
@@ -67,7 +67,7 @@ describe('Evaluation Types', () => {
       const evalCase: EvalCase = {
         id: 'test-003',
         description: 'Test',
-        tool: 'read_file',
+        tool: 'ReadFile',
         category: 'happy_path',
         tags: [],
         difficulty: 1,
@@ -141,8 +141,8 @@ describe('Evaluation Types', () => {
     it('TC-006: should support chain-based input', () => {
       const input: EvalInput = {
         chain: [
-          { tool: 'read_file', params: { path: 'test.txt' } },
-          { tool: 'write_file', params: 'from_previous' }
+          { tool: 'ReadFile', params: { path: 'test.txt' } },
+          { tool: 'WriteFile', params: 'from_previous' }
         ]
       };
 
@@ -234,7 +234,7 @@ describe('Evaluation Types', () => {
 
     it('TC-015: should support LLM-specific fields', () => {
       const expectation: EvalExpectation = {
-        expectedTool: 'read_file',
+        expectedTool: 'ReadFile',
         expectedParams: {
           path: {
             type: 'string',
@@ -243,7 +243,7 @@ describe('Evaluation Types', () => {
         }
       };
 
-      expect(expectation.expectedTool).toBe('read_file');
+      expect(expectation.expectedTool).toBe('ReadFile');
       expect(expectation.expectedParams).toBeDefined();
     });
   });
@@ -384,15 +384,15 @@ describe('Evaluation Types', () => {
         caseId: 'test-004',
         passed: true,
         score: 1.0,
-        actual: { tool: 'read_file', params: { path: 'test.txt' } },
-        expected: { expectedTool: 'read_file' },
+        actual: { tool: 'ReadFile', params: { path: 'test.txt' } },
+        expected: { expectedTool: 'ReadFile' },
         executionTimeMs: 200,
         timestamp: new Date(),
-        selectedTool: 'read_file',
+        selectedTool: 'ReadFile',
         generatedParams: { path: 'test.txt' }
       };
 
-      expect(result.selectedTool).toBe('read_file');
+      expect(result.selectedTool).toBe('ReadFile');
       expect(result.generatedParams).toBeDefined();
     });
   });
@@ -400,7 +400,7 @@ describe('Evaluation Types', () => {
   describe('EvalSummary Aggregation', () => {
     it('TC-025: should have all summary fields', () => {
       const summary: EvalSummary = {
-        subject: 'read_file',
+        subject: 'ReadFile',
         totalCases: 100,
         passedCases: 95,
         failedCases: 5,
@@ -428,7 +428,7 @@ describe('Evaluation Types', () => {
         timestamp: new Date()
       };
 
-      expect(summary.subject).toBe('read_file');
+      expect(summary.subject).toBe('ReadFile');
       expect(summary.totalCases).toBe(100);
       expect(summary.passRate).toBe(0.95);
     });
@@ -489,22 +489,22 @@ describe('Evaluation Types', () => {
   describe('Helper Types', () => {
     it('TC-028: ChainStep structure', () => {
       const step: ChainStep = {
-        tool: 'read_file',
+        tool: 'ReadFile',
         params: { path: 'test.txt' },
         extractOutput: '$.data'
       };
 
-      expect(step.tool).toBe('read_file');
+      expect(step.tool).toBe('ReadFile');
       expect(step.extractOutput).toBe('$.data');
     });
 
     it('TC-029: ChainStep supports from_previous', () => {
       const step: ChainStep = {
-        tool: 'write_file',
+        tool: 'WriteFile',
         params: 'from_previous'
       };
 
-      expect(step.tool).toBe('write_file');
+      expect(step.tool).toBe('WriteFile');
       expect(step.params).toBe('from_previous');
     });
 

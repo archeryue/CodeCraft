@@ -53,7 +53,7 @@ describe('Agent Workflow', () => {
         it('should define multi-step task workflow', () => {
             const workflow = {
                 step1: 'Classify intent and scope',
-                step2: 'Create todo plan using todo_write',
+                step2: 'Create todo plan using TodoWrite',
                 step3: 'Execute tasks in order',
                 step4: 'Mark each todo as in_progress before starting',
                 step5: 'Mark each todo as completed after finishing',
@@ -62,7 +62,7 @@ describe('Agent Workflow', () => {
             };
 
             expect(Object.keys(workflow)).toHaveLength(7);
-            expect(workflow.step2).toContain('todo_write');
+            expect(workflow.step2).toContain('TodoWrite');
             expect(workflow.step6).toContain('tests');
         });
     });

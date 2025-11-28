@@ -33,9 +33,9 @@ export interface CLIResult {
 /**
  * Run the CLI with a query and capture output
  * @param query - The query to send to the CLI
- * @param timeoutMs - Maximum time to wait (default 60s)
+ * @param timeoutMs - Maximum time to wait (default 45s)
  */
-export function runCLI(query: string, timeoutMs = 60000): Promise<CLIResult> {
+export function runCLI(query: string, timeoutMs = 45000): Promise<CLIResult> {
   return new Promise((resolve) => {
     const proc = spawn('npx', ['tsx', 'index.ts'], {
       cwd: process.cwd(),
@@ -137,13 +137,13 @@ export function skipIfNoAPIKey(): void {
 /**
  * Run CLI with retry for flaky LLM responses
  * @param query - The query to send
- * @param retries - Number of retries (default 2)
+ * @param retries - Number of retries (default 1)
  * @param timeoutMs - Timeout per attempt
  */
 export async function runCLIWithRetry(
   query: string,
-  retries = 2,
-  timeoutMs = 60000
+  retries = 1,
+  timeoutMs = 45000
 ): Promise<CLIResult> {
   let lastResult: CLIResult | null = null;
 
@@ -159,9 +159,9 @@ export async function runCLIWithRetry(
       return result;
     }
 
-    // Wait before retry
+    // Wait before retry (avoid rate limiting)
     if (attempt < retries) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   }
 

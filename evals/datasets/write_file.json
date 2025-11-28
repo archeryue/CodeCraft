@@ -1,14 +1,18 @@
 {
-  "tool": "write_file",
+  "tool": "WriteFile",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for write_file tool",
   "cases": [
     {
       "id": "write-001",
       "description": "Write new simple text file",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "happy_path",
-      "tags": ["write", "create", "basic"],
+      "tags": [
+        "write",
+        "create",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -27,9 +31,12 @@
     {
       "id": "write-002",
       "description": "Write multi-line file",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "happy_path",
-      "tags": ["write", "multiline"],
+      "tags": [
+        "write",
+        "multiline"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -48,9 +55,13 @@
     {
       "id": "write-003",
       "description": "Write file to subdirectory (auto-create)",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "happy_path",
-      "tags": ["write", "subdirectory", "mkdir"],
+      "tags": [
+        "write",
+        "subdirectory",
+        "mkdir"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -69,9 +80,12 @@
     {
       "id": "write-004",
       "description": "Overwrite existing file",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "happy_path",
-      "tags": ["write", "overwrite"],
+      "tags": [
+        "write",
+        "overwrite"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -92,9 +106,12 @@
     {
       "id": "write-005",
       "description": "Write empty file",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "edge_case",
-      "tags": ["write", "empty"],
+      "tags": [
+        "write",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -113,14 +130,18 @@
     {
       "id": "write-006",
       "description": "Write file with special characters",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "edge_case",
-      "tags": ["write", "special-chars", "unicode"],
+      "tags": [
+        "write",
+        "special-chars",
+        "unicode"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
           "path": "special.txt",
-          "content": "Hello 🚀 World!\n\tSpecial: @#$%^&*()"
+          "content": "Hello \ud83d\ude80 World!\n\tSpecial: @#$%^&*()"
         }
       },
       "expected": {
@@ -134,9 +155,12 @@
     {
       "id": "write-007",
       "description": "Write JSON file",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "happy_path",
-      "tags": ["write", "json"],
+      "tags": [
+        "write",
+        "json"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -155,9 +179,13 @@
     {
       "id": "write-008",
       "description": "Write code file with indentation",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "happy_path",
-      "tags": ["write", "code", "indentation"],
+      "tags": [
+        "write",
+        "code",
+        "indentation"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -176,9 +204,13 @@
     {
       "id": "write-009",
       "description": "Write to invalid path (parent doesn't exist, no auto-create)",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "error_handling",
-      "tags": ["write", "error", "path"],
+      "tags": [
+        "write",
+        "error",
+        "path"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -198,9 +230,13 @@
     {
       "id": "write-010",
       "description": "Write with missing path parameter",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "error_handling",
-      "tags": ["write", "error", "validation"],
+      "tags": [
+        "write",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -219,9 +255,13 @@
     {
       "id": "write-011",
       "description": "Write with missing content parameter",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "error_handling",
-      "tags": ["write", "error", "validation"],
+      "tags": [
+        "write",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -240,9 +280,13 @@
     {
       "id": "write-012",
       "description": "Write large file (performance)",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "performance",
-      "tags": ["write", "performance", "large"],
+      "tags": [
+        "write",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -264,9 +308,13 @@
     {
       "id": "write-013",
       "description": "Write file with windows line endings",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "edge_case",
-      "tags": ["write", "line-endings", "windows"],
+      "tags": [
+        "write",
+        "line-endings",
+        "windows"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -285,9 +333,12 @@
     {
       "id": "write-014",
       "description": "Write file with very long single line",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "edge_case",
-      "tags": ["write", "long-line"],
+      "tags": [
+        "write",
+        "long-line"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -306,9 +357,13 @@
     {
       "id": "write-015",
       "description": "Write to path with spaces",
-      "tool": "write_file",
+      "tool": "WriteFile",
       "category": "edge_case",
-      "tags": ["write", "path", "spaces"],
+      "tags": [
+        "write",
+        "path",
+        "spaces"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

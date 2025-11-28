@@ -231,7 +231,7 @@ describe('FixtureManager', () => {
       cleanupFunctions.push(cleanup);
 
       // Import and execute a real tool
-      const { readFileTool } = await import('../../src/tools/read_file');
+      const { readFileTool } = await import('../../src/tools/read-file');
       const result = await readFileTool.execute({ path: 'test.txt' }, context);
 
       expect(result.success).toBe(true);

@@ -1,14 +1,18 @@
 {
-  "tool": "search_code",
+  "tool": "SearchCode",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for search_code tool (fuzzy symbol search)",
   "cases": [
     {
       "id": "search-001",
       "description": "Exact function name match",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "exact", "function"],
+      "tags": [
+        "search",
+        "exact",
+        "function"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -30,9 +34,13 @@
     {
       "id": "search-002",
       "description": "Fuzzy match function name",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "fuzzy", "function"],
+      "tags": [
+        "search",
+        "fuzzy",
+        "function"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -54,9 +62,12 @@
     {
       "id": "search-003",
       "description": "Class name search",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "class"],
+      "tags": [
+        "search",
+        "class"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -78,9 +89,12 @@
     {
       "id": "search-004",
       "description": "Interface name search",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "interface"],
+      "tags": [
+        "search",
+        "interface"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -102,9 +116,12 @@
     {
       "id": "search-005",
       "description": "Search across multiple files",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "multi-file"],
+      "tags": [
+        "search",
+        "multi-file"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -128,9 +145,13 @@
     {
       "id": "search-006",
       "description": "Rust function search",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "rust", "function"],
+      "tags": [
+        "search",
+        "rust",
+        "function"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -152,9 +173,13 @@
     {
       "id": "search-007",
       "description": "Rust struct search",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "rust", "struct"],
+      "tags": [
+        "search",
+        "rust",
+        "struct"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -176,9 +201,12 @@
     {
       "id": "search-008",
       "description": "No matches found",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "edge_case",
-      "tags": ["search", "no-match"],
+      "tags": [
+        "search",
+        "no-match"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -200,9 +228,12 @@
     {
       "id": "search-009",
       "description": "Empty directory search",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "edge_case",
-      "tags": ["search", "empty"],
+      "tags": [
+        "search",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -222,9 +253,13 @@
     {
       "id": "search-010",
       "description": "Case-insensitive fuzzy match",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "fuzzy", "case-insensitive"],
+      "tags": [
+        "search",
+        "fuzzy",
+        "case-insensitive"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -246,9 +281,12 @@
     {
       "id": "search-011",
       "description": "Search returns ranked results",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "ranking"],
+      "tags": [
+        "search",
+        "ranking"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -272,9 +310,13 @@
     {
       "id": "search-012",
       "description": "Missing query parameter",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "error_handling",
-      "tags": ["search", "error", "validation"],
+      "tags": [
+        "search",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -291,9 +333,13 @@
     {
       "id": "search-013",
       "description": "Non-existent path",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "error_handling",
-      "tags": ["search", "error", "not-found"],
+      "tags": [
+        "search",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -313,9 +359,13 @@
     {
       "id": "search-014",
       "description": "Large codebase search (performance)",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "performance",
-      "tags": ["search", "performance", "large"],
+      "tags": [
+        "search",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -339,9 +389,12 @@
     {
       "id": "search-015",
       "description": "Search with partial symbol name",
-      "tool": "search_code",
+      "tool": "SearchCode",
       "category": "happy_path",
-      "tags": ["search", "partial"],
+      "tags": [
+        "search",
+        "partial"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

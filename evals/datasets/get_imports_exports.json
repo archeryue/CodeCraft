@@ -1,14 +1,17 @@
 {
-  "tool": "get_imports_exports",
+  "tool": "GetImportsExports",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for get_imports_exports tool",
   "cases": [
     {
       "id": "imports-001",
       "description": "Simple imports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["imports", "basic"],
+      "tags": [
+        "imports",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -29,9 +32,12 @@
     {
       "id": "imports-002",
       "description": "Simple exports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["exports", "basic"],
+      "tags": [
+        "exports",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -52,9 +58,12 @@
     {
       "id": "imports-003",
       "description": "Multiple imports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["imports", "multiple"],
+      "tags": [
+        "imports",
+        "multiple"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -75,9 +84,12 @@
     {
       "id": "imports-004",
       "description": "Default export",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["exports", "default"],
+      "tags": [
+        "exports",
+        "default"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -98,9 +110,12 @@
     {
       "id": "imports-005",
       "description": "Named and default export",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["exports", "mixed"],
+      "tags": [
+        "exports",
+        "mixed"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -121,9 +136,12 @@
     {
       "id": "imports-006",
       "description": "Re-exports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["exports", "re-export"],
+      "tags": [
+        "exports",
+        "re-export"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -144,9 +162,11 @@
     {
       "id": "imports-007",
       "description": "No imports or exports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "edge_case",
-      "tags": ["none"],
+      "tags": [
+        "none"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -155,7 +175,10 @@
       },
       "expected": {
         "success": true,
-        "exact": { "imports": [], "exports": [] }
+        "exact": {
+          "imports": [],
+          "exports": []
+        }
       },
       "fixtures": {
         "type": "inline",
@@ -167,9 +190,12 @@
     {
       "id": "imports-008",
       "description": "Type imports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["imports", "types"],
+      "tags": [
+        "imports",
+        "types"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -190,9 +216,12 @@
     {
       "id": "imports-009",
       "description": "File not found",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "error_handling",
-      "tags": ["error", "not-found"],
+      "tags": [
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -211,9 +240,12 @@
     {
       "id": "imports-010",
       "description": "Missing file parameter",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "error_handling",
-      "tags": ["error", "validation"],
+      "tags": [
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -230,9 +262,12 @@
     {
       "id": "imports-011",
       "description": "Rust use statements",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["rust", "imports"],
+      "tags": [
+        "rust",
+        "imports"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -253,9 +288,12 @@
     {
       "id": "imports-012",
       "description": "Rust pub exports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["rust", "exports"],
+      "tags": [
+        "rust",
+        "exports"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -276,9 +314,12 @@
     {
       "id": "imports-013",
       "description": "Namespace imports",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "happy_path",
-      "tags": ["imports", "namespace"],
+      "tags": [
+        "imports",
+        "namespace"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -299,9 +340,11 @@
     {
       "id": "imports-014",
       "description": "Performance test",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "performance",
-      "tags": ["performance"],
+      "tags": [
+        "performance"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -324,9 +367,12 @@
     {
       "id": "imports-015",
       "description": "Side-effect import",
-      "tool": "get_imports_exports",
+      "tool": "GetImportsExports",
       "category": "edge_case",
-      "tags": ["imports", "side-effect"],
+      "tags": [
+        "imports",
+        "side-effect"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

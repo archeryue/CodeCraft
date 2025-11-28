@@ -37,7 +37,7 @@ process.on('exit', () => {
 });
 
 export const bashTool: Tool = {
-  name: 'bash',
+  name: 'Bash',
   description: 'Execute bash commands. Supports foreground (blocking) and background execution. Returns output for foreground commands, bash_id for background commands.',
   parameters: {
     type: 'object',

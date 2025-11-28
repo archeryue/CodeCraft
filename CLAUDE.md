@@ -196,24 +196,6 @@ The agent uses three framework modules for intelligent behavior:
 - Suggests alternative strategies when stuck
 - Shows `[Loop Detected]` and `[Suggestion]` warnings
 
-## Code Conventions
-
-### File Naming
-- **All files use `snake_case`**: `read_file.ts`, `tool_executor.ts`, `dataset_loader.ts`
-- Test files mirror source structure: `src/tools/read_file.ts` → `tests/tools/read_file.test.ts`
-
-### Code Style
-- **Classes**: PascalCase (`UnitEvalRunner`, `ToolExecutor`, `FixtureManager`)
-- **Functions/Methods**: camelCase (`runCase()`, `executeWithContext()`)
-- **Interfaces/Types**: PascalCase (`EvalCase`, `ToolResult`, `RunOptions`)
-- **Variables**: camelCase (`fixtureManager`, `evalCase`, `testResults`)
-- **Constants**: UPPER_SNAKE_CASE for true constants, camelCase for config objects
-
-### Import Style
-- Use ES Modules (`import`/`export`)
-- Group imports: external packages first, then internal modules
-- Use type imports where applicable: `import type { ToolResult } from './types'`
-
 ## Development Rules
 
 **CRITICAL: This project strictly follows Test-Driven Development (TDD).**

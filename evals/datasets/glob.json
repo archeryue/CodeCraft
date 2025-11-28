@@ -1,14 +1,18 @@
 {
-  "tool": "glob",
+  "tool": "Glob",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for glob tool",
   "cases": [
     {
       "id": "glob-001",
       "description": "Simple wildcard pattern",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "wildcard", "basic"],
+      "tags": [
+        "glob",
+        "wildcard",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -31,9 +35,12 @@
     {
       "id": "glob-002",
       "description": "Recursive glob pattern",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "recursive"],
+      "tags": [
+        "glob",
+        "recursive"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -56,9 +63,12 @@
     {
       "id": "glob-003",
       "description": "Match specific directory",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "directory"],
+      "tags": [
+        "glob",
+        "directory"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -81,9 +91,12 @@
     {
       "id": "glob-004",
       "description": "Character class pattern",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "char-class"],
+      "tags": [
+        "glob",
+        "char-class"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -106,9 +119,12 @@
     {
       "id": "glob-005",
       "description": "Brace expansion pattern",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "brace"],
+      "tags": [
+        "glob",
+        "brace"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -131,9 +147,12 @@
     {
       "id": "glob-006",
       "description": "Match single file",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "exact"],
+      "tags": [
+        "glob",
+        "exact"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -154,9 +173,12 @@
     {
       "id": "glob-007",
       "description": "No matches",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "edge_case",
-      "tags": ["glob", "no-match"],
+      "tags": [
+        "glob",
+        "no-match"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -177,9 +199,12 @@
     {
       "id": "glob-008",
       "description": "Match hidden files",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "edge_case",
-      "tags": ["glob", "hidden"],
+      "tags": [
+        "glob",
+        "hidden"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -201,9 +226,12 @@
     {
       "id": "glob-009",
       "description": "Negation pattern",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "negation"],
+      "tags": [
+        "glob",
+        "negation"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -225,9 +253,12 @@
     {
       "id": "glob-010",
       "description": "Deep nested pattern",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "deep"],
+      "tags": [
+        "glob",
+        "deep"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -249,9 +280,12 @@
     {
       "id": "glob-011",
       "description": "Pattern with special characters",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "edge_case",
-      "tags": ["glob", "special-chars"],
+      "tags": [
+        "glob",
+        "special-chars"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -272,9 +306,13 @@
     {
       "id": "glob-012",
       "description": "Invalid glob pattern",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "error_handling",
-      "tags": ["glob", "error", "invalid"],
+      "tags": [
+        "glob",
+        "error",
+        "invalid"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -293,9 +331,13 @@
     {
       "id": "glob-013",
       "description": "Missing pattern parameter",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "error_handling",
-      "tags": ["glob", "error", "validation"],
+      "tags": [
+        "glob",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -312,9 +354,13 @@
     {
       "id": "glob-014",
       "description": "Large directory glob (performance)",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "performance",
-      "tags": ["glob", "performance", "large"],
+      "tags": [
+        "glob",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -337,9 +383,12 @@
     {
       "id": "glob-015",
       "description": "Glob with custom path",
-      "tool": "glob",
+      "tool": "Glob",
       "category": "happy_path",
-      "tags": ["glob", "path"],
+      "tags": [
+        "glob",
+        "path"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

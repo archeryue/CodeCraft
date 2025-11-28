@@ -5,7 +5,7 @@ import { SchemaType } from '@google/generative-ai';
 import fg from 'fast-glob';
 
 export const globTool: Tool = {
-  name: 'glob',
+  name: 'Glob',
   description: 'Finds files matching a glob pattern (e.g., **/*.ts). Fast file discovery.',
   version: '1.0.0',
 

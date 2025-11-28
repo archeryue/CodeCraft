@@ -1,0 +1,404 @@
+{
+  "tool": "llm_evaluation",
+  "version": "1.0",
+  "description": "LLM tool selection evaluation for code analysis operations",
+  "cases": [
+    {
+      "id": "llm-analysis-001",
+      "description": "Inspect symbol information",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "symbol"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Tell me about the executeTool symbol in src/tools.ts"
+      },
+      "expected": {
+        "expectedTool": "InspectSymbol",
+        "expectedParams": {
+          "symbol": {
+            "contains": "execute"
+          },
+          "file": {
+            "contains": "tools"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-002",
+      "description": "Find symbol definition",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "symbol"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Where is the Agent class actually defined?"
+      },
+      "expected": {
+        "expectedTool": "InspectSymbol",
+        "acceptableTools": [
+          "SearchCode",
+          "Grep"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "Agent"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-003",
+      "description": "Get imports and exports",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "imports"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "What does src/agent.ts import and export?"
+      },
+      "expected": {
+        "expectedTool": "GetImportsExports",
+        "expectedParams": {
+          "file": {
+            "contains": "agent"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-004",
+      "description": "Analyze file dependencies",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "imports"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Show me all imports in src/tools.ts"
+      },
+      "expected": {
+        "expectedTool": "GetImportsExports",
+        "expectedParams": {
+          "file": {
+            "contains": "tools"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-005",
+      "description": "Build dependency graph",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "dependencies"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "Show me the dependency graph for the project"
+      },
+      "expected": {
+        "expectedTool": "BuildDependencyGraph",
+        "expectedParams": {
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-006",
+      "description": "Analyze module dependencies",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "dependencies"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "What files depend on src/agent.ts?"
+      },
+      "expected": {
+        "expectedTool": "BuildDependencyGraph",
+        "acceptableTools": [
+          "Grep",
+          "FindReferences"
+        ],
+        "expectedParams": {
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-007",
+      "description": "Find all references to symbol",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "references"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Where is executeTool used in the codebase?"
+      },
+      "expected": {
+        "expectedTool": "FindReferences",
+        "acceptableTools": [
+          "Grep",
+          "SearchCode"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "execute"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-008",
+      "description": "Find usages of function",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "references"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all places that call the Agent class"
+      },
+      "expected": {
+        "expectedTool": "FindReferences",
+        "acceptableTools": [
+          "Grep"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "Agent"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-009",
+      "description": "Understand symbol type",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "symbol"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "What type is the TOOLS constant?"
+      },
+      "expected": {
+        "expectedTool": "InspectSymbol",
+        "acceptableTools": [
+          "ReadFile",
+          "SearchCode"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "TOOLS"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-010",
+      "description": "Get export information",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "imports"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "What does index.ts export?"
+      },
+      "expected": {
+        "expectedTool": "GetImportsExports",
+        "expectedParams": {
+          "file": {
+            "contains": "index"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-011",
+      "description": "Trace import source",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "symbol"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "Where does the Tool interface come from in src/agent.ts?"
+      },
+      "expected": {
+        "expectedTool": "InspectSymbol",
+        "acceptableTools": [
+          "GetImportsExports",
+          "Grep"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "Tool"
+          },
+          "file": {
+            "contains": "agent"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-012",
+      "description": "Find all references to type",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "references"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "Find everywhere ToolResult is used"
+      },
+      "expected": {
+        "expectedTool": "FindReferences",
+        "acceptableTools": [
+          "Grep"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "ToolResult"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-013",
+      "description": "Get codebase map for analysis",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "overview"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "I need to understand the codebase structure"
+      },
+      "expected": {
+        "expectedTool": "GetCodebaseMap",
+        "acceptableTools": [
+          "ListDirectory"
+        ],
+        "expectedParams": {
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-014",
+      "description": "Dependency analysis for specific module",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "dependencies"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "What are all the dependencies of src/tools.ts?"
+      },
+      "expected": {
+        "expectedTool": "GetImportsExports",
+        "acceptableTools": [
+          "BuildDependencyGraph"
+        ],
+        "expectedParams": {
+          "file": {
+            "contains": "tools"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-015",
+      "description": "Find interface usage",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "references"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Which files implement the Tool interface?"
+      },
+      "expected": {
+        "expectedTool": "FindReferences",
+        "acceptableTools": [
+          "Grep",
+          "SearchCode"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "Tool"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-analysis-016",
+      "description": "Symbol resolution",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "analysis",
+        "symbol"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "Resolve the definition of ToolExecutor"
+      },
+      "expected": {
+        "expectedTool": "InspectSymbol",
+        "acceptableTools": [
+          "SearchCode"
+        ],
+        "expectedParams": {
+          "symbol": {
+            "contains": "ToolExecutor"
+          }
+        }
+      }
+    }
+  ]
+}

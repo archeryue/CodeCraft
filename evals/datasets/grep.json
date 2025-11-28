@@ -1,14 +1,18 @@
 {
-  "tool": "grep",
+  "tool": "Grep",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for grep tool",
   "cases": [
     {
       "id": "grep-001",
       "description": "Simple string search",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "basic", "string"],
+      "tags": [
+        "grep",
+        "basic",
+        "string"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -31,9 +35,12 @@
     {
       "id": "grep-002",
       "description": "Regex pattern search",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "regex"],
+      "tags": [
+        "grep",
+        "regex"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -56,9 +63,12 @@
     {
       "id": "grep-003",
       "description": "Case-insensitive search",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "case-insensitive"],
+      "tags": [
+        "grep",
+        "case-insensitive"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -84,9 +94,13 @@
     {
       "id": "grep-004",
       "description": "Search with file type filter",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "filter", "type"],
+      "tags": [
+        "grep",
+        "filter",
+        "type"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -113,9 +127,12 @@
     {
       "id": "grep-005",
       "description": "Search with context lines",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "context"],
+      "tags": [
+        "grep",
+        "context"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -140,9 +157,12 @@
     {
       "id": "grep-006",
       "description": "Multi-file search",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "multi-file"],
+      "tags": [
+        "grep",
+        "multi-file"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -166,9 +186,12 @@
     {
       "id": "grep-007",
       "description": "Whole word match",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "word"],
+      "tags": [
+        "grep",
+        "word"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -191,9 +214,12 @@
     {
       "id": "grep-008",
       "description": "No matches found",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "edge_case",
-      "tags": ["grep", "no-match"],
+      "tags": [
+        "grep",
+        "no-match"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -215,9 +241,12 @@
     {
       "id": "grep-009",
       "description": "Search in empty directory",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "edge_case",
-      "tags": ["grep", "empty"],
+      "tags": [
+        "grep",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -237,9 +266,12 @@
     {
       "id": "grep-010",
       "description": "Search with line numbers",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "happy_path",
-      "tags": ["grep", "line-numbers"],
+      "tags": [
+        "grep",
+        "line-numbers"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -264,9 +296,13 @@
     {
       "id": "grep-011",
       "description": "Invalid regex pattern",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "error_handling",
-      "tags": ["grep", "error", "invalid-regex"],
+      "tags": [
+        "grep",
+        "error",
+        "invalid-regex"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -285,9 +321,13 @@
     {
       "id": "grep-012",
       "description": "Missing pattern parameter",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "error_handling",
-      "tags": ["grep", "error", "validation"],
+      "tags": [
+        "grep",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -304,9 +344,13 @@
     {
       "id": "grep-013",
       "description": "Search in non-existent directory",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "error_handling",
-      "tags": ["grep", "error", "not-found"],
+      "tags": [
+        "grep",
+        "error",
+        "not-found"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -326,9 +370,13 @@
     {
       "id": "grep-014",
       "description": "Large codebase search (performance)",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "performance",
-      "tags": ["grep", "performance", "large"],
+      "tags": [
+        "grep",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -352,13 +400,16 @@
     {
       "id": "grep-015",
       "description": "Search with unicode pattern",
-      "tool": "grep",
+      "tool": "Grep",
       "category": "edge_case",
-      "tags": ["grep", "unicode"],
+      "tags": [
+        "grep",
+        "unicode"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
-          "pattern": "🚀",
+          "pattern": "\ud83d\ude80",
           "path": "."
         }
       },
@@ -369,7 +420,7 @@
       "fixtures": {
         "type": "inline",
         "files": {
-          "README.md": "# Project 🚀"
+          "README.md": "# Project \ud83d\ude80"
         }
       }
     }

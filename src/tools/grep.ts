@@ -5,7 +5,7 @@ import { SchemaType } from '@google/generative-ai';
 import fg from 'fast-glob';
 
 export const grepTool: Tool = {
-  name: 'grep',
+  name: 'Grep',
   description: 'Searches file contents using regex. Returns matches with line numbers.',
   version: '1.0.0',
 

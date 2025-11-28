@@ -1,14 +1,18 @@
 {
-  "tool": "get_codebase_map",
+  "tool": "GetCodebaseMap",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for get_codebase_map tool (AST-based code skeleton)",
   "cases": [
     {
       "id": "codemap-001",
       "description": "Simple TypeScript file",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "typescript", "basic"],
+      "tags": [
+        "codemap",
+        "typescript",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -29,9 +33,13 @@
     {
       "id": "codemap-002",
       "description": "TypeScript class with methods",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "class", "methods"],
+      "tags": [
+        "codemap",
+        "class",
+        "methods"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -52,9 +60,12 @@
     {
       "id": "codemap-003",
       "description": "TypeScript interface",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "interface"],
+      "tags": [
+        "codemap",
+        "interface"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -75,9 +86,12 @@
     {
       "id": "codemap-004",
       "description": "Multiple files",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "multi-file"],
+      "tags": [
+        "codemap",
+        "multi-file"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -100,9 +114,12 @@
     {
       "id": "codemap-005",
       "description": "Nested directory structure",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "nested"],
+      "tags": [
+        "codemap",
+        "nested"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -124,9 +141,13 @@
     {
       "id": "codemap-006",
       "description": "Rust file with functions",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "rust", "functions"],
+      "tags": [
+        "codemap",
+        "rust",
+        "functions"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -147,9 +168,13 @@
     {
       "id": "codemap-007",
       "description": "Rust struct and impl",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "rust", "struct"],
+      "tags": [
+        "codemap",
+        "rust",
+        "struct"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -170,9 +195,12 @@
     {
       "id": "codemap-008",
       "description": "Mixed TypeScript and Rust",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "mixed"],
+      "tags": [
+        "codemap",
+        "mixed"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -194,9 +222,12 @@
     {
       "id": "codemap-009",
       "description": "Empty directory",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "edge_case",
-      "tags": ["codemap", "empty"],
+      "tags": [
+        "codemap",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -215,9 +246,12 @@
     {
       "id": "codemap-010",
       "description": "Files with no exports",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "edge_case",
-      "tags": ["codemap", "no-exports"],
+      "tags": [
+        "codemap",
+        "no-exports"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -238,9 +272,12 @@
     {
       "id": "codemap-011",
       "description": "Ignores node_modules",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "happy_path",
-      "tags": ["codemap", "ignore"],
+      "tags": [
+        "codemap",
+        "ignore"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -262,9 +299,13 @@
     {
       "id": "codemap-012",
       "description": "Non-existent directory",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "error_handling",
-      "tags": ["codemap", "error", "not-found"],
+      "tags": [
+        "codemap",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -283,9 +324,13 @@
     {
       "id": "codemap-013",
       "description": "Missing path parameter",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "error_handling",
-      "tags": ["codemap", "error", "validation"],
+      "tags": [
+        "codemap",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -302,9 +347,13 @@
     {
       "id": "codemap-014",
       "description": "Large codebase (performance)",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "performance",
-      "tags": ["codemap", "performance", "large"],
+      "tags": [
+        "codemap",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -327,9 +376,12 @@
     {
       "id": "codemap-015",
       "description": "Deeply nested structure",
-      "tool": "get_codebase_map",
+      "tool": "GetCodebaseMap",
       "category": "edge_case",
-      "tags": ["codemap", "deep-nesting"],
+      "tags": [
+        "codemap",
+        "deep-nesting"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

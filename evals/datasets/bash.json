@@ -1,14 +1,18 @@
 {
-  "tool": "bash",
+  "tool": "Bash",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for bash tool (run_command)",
   "cases": [
     {
       "id": "bash-001",
       "description": "Simple echo command",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "echo", "basic"],
+      "tags": [
+        "bash",
+        "echo",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -27,9 +31,12 @@
     {
       "id": "bash-002",
       "description": "List files in directory",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "ls"],
+      "tags": [
+        "bash",
+        "ls"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -50,9 +57,12 @@
     {
       "id": "bash-003",
       "description": "Check file exists",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "test"],
+      "tags": [
+        "bash",
+        "test"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -73,9 +83,12 @@
     {
       "id": "bash-004",
       "description": "Create directory",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "mkdir"],
+      "tags": [
+        "bash",
+        "mkdir"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -93,9 +106,12 @@
     {
       "id": "bash-005",
       "description": "Pipe commands",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "pipe"],
+      "tags": [
+        "bash",
+        "pipe"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -114,9 +130,12 @@
     {
       "id": "bash-006",
       "description": "Run in background",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "background"],
+      "tags": [
+        "bash",
+        "background"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -136,9 +155,12 @@
     {
       "id": "bash-007",
       "description": "Command with timeout",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "timeout"],
+      "tags": [
+        "bash",
+        "timeout"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -158,9 +180,13 @@
     {
       "id": "bash-008",
       "description": "Command fails (non-zero exit)",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "error_handling",
-      "tags": ["bash", "error", "exit-code"],
+      "tags": [
+        "bash",
+        "error",
+        "exit-code"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -179,9 +205,13 @@
     {
       "id": "bash-009",
       "description": "Command timeout exceeded",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "error_handling",
-      "tags": ["bash", "error", "timeout"],
+      "tags": [
+        "bash",
+        "error",
+        "timeout"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -201,9 +231,13 @@
     {
       "id": "bash-010",
       "description": "Missing command parameter",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "error_handling",
-      "tags": ["bash", "error", "validation"],
+      "tags": [
+        "bash",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -220,9 +254,12 @@
     {
       "id": "bash-011",
       "description": "Command with environment variables",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "env"],
+      "tags": [
+        "bash",
+        "env"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -241,9 +278,12 @@
     {
       "id": "bash-012",
       "description": "Multi-line output",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "happy_path",
-      "tags": ["bash", "multiline"],
+      "tags": [
+        "bash",
+        "multiline"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -262,9 +302,12 @@
     {
       "id": "bash-013",
       "description": "Command with stderr",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "edge_case",
-      "tags": ["bash", "stderr"],
+      "tags": [
+        "bash",
+        "stderr"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -283,9 +326,12 @@
     {
       "id": "bash-014",
       "description": "Performance test (quick command)",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "performance",
-      "tags": ["bash", "performance"],
+      "tags": [
+        "bash",
+        "performance"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -306,9 +352,12 @@
     {
       "id": "bash-015",
       "description": "Command with special characters",
-      "tool": "bash",
+      "tool": "Bash",
       "category": "edge_case",
-      "tags": ["bash", "special-chars"],
+      "tags": [
+        "bash",
+        "special-chars"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

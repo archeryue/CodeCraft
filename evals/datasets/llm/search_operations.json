@@ -1,0 +1,524 @@
+{
+  "tool": "llm_evaluation",
+  "version": "1.0",
+  "description": "LLM tool selection evaluation for search and discovery operations",
+  "cases": [
+    {
+      "id": "llm-search-001",
+      "description": "Find class definition",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "code"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Where is the Agent class defined?"
+      },
+      "expected": {
+        "expectedTool": "SearchCode",
+        "acceptableTools": [
+          "Grep"
+        ],
+        "expectedParams": {
+          "query": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-002",
+      "description": "Find function",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "code"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find the executeTool function"
+      },
+      "expected": {
+        "expectedTool": "SearchCode",
+        "acceptableTools": [
+          "Grep"
+        ],
+        "expectedParams": {
+          "query": {
+            "contains": "execute"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-003",
+      "description": "Search for text pattern",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "grep"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Search for 'TODO' in all files"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "acceptableTools": [
+          "SearchCode"
+        ],
+        "expectedParams": {
+          "pattern": {
+            "contains": "TODO"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-004",
+      "description": "Find error messages",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "grep"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all error messages containing 'not found'"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "expectedParams": {
+          "pattern": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-005",
+      "description": "Find TypeScript files",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "glob"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Find all TypeScript files"
+      },
+      "expected": {
+        "expectedTool": "Glob",
+        "expectedParams": {
+          "pattern": {
+            "pattern": "\\*\\*.*\\.ts"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-006",
+      "description": "Find test files",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "glob"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Find all test files"
+      },
+      "expected": {
+        "expectedTool": "Glob",
+        "expectedParams": {
+          "pattern": {
+            "pattern": "\\*\\*.*test"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-007",
+      "description": "Find files in specific directory",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "glob"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all .json files in the src directory"
+      },
+      "expected": {
+        "expectedTool": "Glob",
+        "expectedParams": {
+          "pattern": {
+            "pattern": "src.*json"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-008",
+      "description": "Get codebase overview",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "overview"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Show me the structure of the codebase"
+      },
+      "expected": {
+        "expectedTool": "GetCodebaseMap",
+        "acceptableTools": [
+          "ListDirectory",
+          "Glob"
+        ],
+        "expectedParams": {
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-009",
+      "description": "Get project skeleton",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "overview"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Give me an AST-based skeleton of the src directory"
+      },
+      "expected": {
+        "expectedTool": "GetCodebaseMap",
+        "expectedParams": {
+          "path": {
+            "contains": "src"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-010",
+      "description": "Search with regex",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "grep",
+        "regex"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "Find all async functions in the code"
+      },
+      "expected": {
+        "expectedTool": "SearchCode",
+        "acceptableTools": [
+          "Grep"
+        ],
+        "expectedParams": {
+          "query": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-011",
+      "description": "Search in specific file type",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "grep"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Search for 'import' in all TypeScript files"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "expectedParams": {
+          "pattern": {
+            "contains": "import"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-012",
+      "description": "Find configuration files",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "glob"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all config files"
+      },
+      "expected": {
+        "expectedTool": "Glob",
+        "acceptableTools": [
+          "Grep",
+          "ListDirectory"
+        ],
+        "expectedParams": {
+          "pattern": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-013",
+      "description": "Search for interface",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "code"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Where is the ToolResult interface?"
+      },
+      "expected": {
+        "expectedTool": "SearchCode",
+        "acceptableTools": [
+          "Grep"
+        ],
+        "expectedParams": {
+          "query": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-014",
+      "description": "Case insensitive search",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "grep"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find 'error' (case insensitive) in all files"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "expectedParams": {
+          "pattern": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-015",
+      "description": "Find markdown files",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "glob"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "List all markdown files"
+      },
+      "expected": {
+        "expectedTool": "Glob",
+        "expectedParams": {
+          "pattern": {
+            "pattern": "\\*\\*.*\\.md"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-016",
+      "description": "Search for constant",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "code"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find where TOOLS constant is defined"
+      },
+      "expected": {
+        "expectedTool": "SearchCode",
+        "acceptableTools": [
+          "Grep"
+        ],
+        "expectedParams": {
+          "query": {
+            "contains": "TOOLS"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-017",
+      "description": "Find imports",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "grep"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all files that import 'vitest'"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "expectedParams": {
+          "pattern": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-018",
+      "description": "Find files by extension pattern",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "glob"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all .js and .ts files"
+      },
+      "expected": {
+        "expectedTool": "Glob",
+        "expectedParams": {
+          "pattern": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-019",
+      "description": "Get code structure",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "overview"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Show me all the functions and classes"
+      },
+      "expected": {
+        "expectedTool": "GetCodebaseMap",
+        "acceptableTools": [
+          "SearchCode"
+        ]
+      }
+    },
+    {
+      "id": "llm-search-020",
+      "description": "Ambiguous search",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "ambiguous"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find 'Agent'"
+      },
+      "expected": {
+        "expectedTool": "SearchCode",
+        "acceptableTools": [
+          "Grep",
+          "GetCodebaseMap"
+        ],
+        "expectedParams": {
+          "query": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-021",
+      "description": "Search for comments",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "grep"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all comments containing 'FIXME'"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "expectedParams": {
+          "pattern": {
+            "contains": "FIXME"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-search-022",
+      "description": "Search for usage",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "search",
+        "code"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "Where is executeTool being called?"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "acceptableTools": [
+          "SearchCode",
+          "FindReferences"
+        ],
+        "expectedParams": {
+          "pattern": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

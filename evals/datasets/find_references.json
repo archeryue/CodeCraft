@@ -1,14 +1,17 @@
 {
-  "tool": "find_references",
+  "tool": "FindReferences",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for find_references tool",
   "cases": [
     {
       "id": "findref-001",
       "description": "Find function references",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "function"],
+      "tags": [
+        "references",
+        "function"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -31,9 +34,12 @@
     {
       "id": "findref-002",
       "description": "Find class references",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "class"],
+      "tags": [
+        "references",
+        "class"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -56,9 +62,12 @@
     {
       "id": "findref-003",
       "description": "Multiple references",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "multiple"],
+      "tags": [
+        "references",
+        "multiple"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -82,9 +91,12 @@
     {
       "id": "findref-004",
       "description": "No references found",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "edge_case",
-      "tags": ["references", "none"],
+      "tags": [
+        "references",
+        "none"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -107,9 +119,12 @@
     {
       "id": "findref-005",
       "description": "References across subdirectories",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "subdirectory"],
+      "tags": [
+        "references",
+        "subdirectory"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -132,9 +147,12 @@
     {
       "id": "findref-006",
       "description": "Type references",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "type"],
+      "tags": [
+        "references",
+        "type"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -157,9 +175,12 @@
     {
       "id": "findref-007",
       "description": "Rust symbol references",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "rust"],
+      "tags": [
+        "references",
+        "rust"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -182,9 +203,12 @@
     {
       "id": "findref-008",
       "description": "Method references",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "method"],
+      "tags": [
+        "references",
+        "method"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -207,9 +231,13 @@
     {
       "id": "findref-009",
       "description": "Missing symbol parameter",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "error_handling",
-      "tags": ["references", "error", "validation"],
+      "tags": [
+        "references",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -228,9 +256,13 @@
     {
       "id": "findref-010",
       "description": "Non-existent path",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "error_handling",
-      "tags": ["references", "error", "not-found"],
+      "tags": [
+        "references",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -250,9 +282,12 @@
     {
       "id": "findref-011",
       "description": "Empty directory",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "edge_case",
-      "tags": ["references", "empty"],
+      "tags": [
+        "references",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -272,9 +307,12 @@
     {
       "id": "findref-012",
       "description": "Variable references",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "happy_path",
-      "tags": ["references", "variable"],
+      "tags": [
+        "references",
+        "variable"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -297,9 +335,12 @@
     {
       "id": "findref-013",
       "description": "Renamed import",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "edge_case",
-      "tags": ["references", "renamed"],
+      "tags": [
+        "references",
+        "renamed"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -322,9 +363,13 @@
     {
       "id": "findref-014",
       "description": "Large codebase (performance)",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "performance",
-      "tags": ["references", "performance", "large"],
+      "tags": [
+        "references",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -349,9 +394,12 @@
     {
       "id": "findref-015",
       "description": "Namespace usage",
-      "tool": "find_references",
+      "tool": "FindReferences",
       "category": "edge_case",
-      "tags": ["references", "namespace"],
+      "tags": [
+        "references",
+        "namespace"
+      ],
       "difficulty": 3,
       "input": {
         "params": {

@@ -1,14 +1,18 @@
 {
-  "tool": "extract_conventions",
+  "tool": "ExtractConventions",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for extract_conventions tool",
   "cases": [
     {
       "id": "conv-001",
       "description": "Detect naming convention (camelCase)",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "naming", "camelCase"],
+      "tags": [
+        "conventions",
+        "naming",
+        "camelCase"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -29,9 +33,12 @@
     {
       "id": "conv-002",
       "description": "Detect indentation (2 spaces)",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "indentation"],
+      "tags": [
+        "conventions",
+        "indentation"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -52,9 +59,12 @@
     {
       "id": "conv-003",
       "description": "Detect quotes preference (single)",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "quotes"],
+      "tags": [
+        "conventions",
+        "quotes"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -75,9 +85,12 @@
     {
       "id": "conv-004",
       "description": "Detect file organization",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "organization"],
+      "tags": [
+        "conventions",
+        "organization"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -100,9 +113,12 @@
     {
       "id": "conv-005",
       "description": "Detect export patterns",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "exports"],
+      "tags": [
+        "conventions",
+        "exports"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -123,9 +139,12 @@
     {
       "id": "conv-006",
       "description": "Detect comment style",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "comments"],
+      "tags": [
+        "conventions",
+        "comments"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -146,9 +165,12 @@
     {
       "id": "conv-007",
       "description": "Detect test file patterns",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "testing"],
+      "tags": [
+        "conventions",
+        "testing"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -170,9 +192,12 @@
     {
       "id": "conv-008",
       "description": "Mixed conventions (inconsistent)",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "edge_case",
-      "tags": ["conventions", "mixed"],
+      "tags": [
+        "conventions",
+        "mixed"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -193,9 +218,12 @@
     {
       "id": "conv-009",
       "description": "Empty project",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "edge_case",
-      "tags": ["conventions", "empty"],
+      "tags": [
+        "conventions",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -214,9 +242,13 @@
     {
       "id": "conv-010",
       "description": "Non-existent path",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "error_handling",
-      "tags": ["conventions", "error", "not-found"],
+      "tags": [
+        "conventions",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -235,9 +267,13 @@
     {
       "id": "conv-011",
       "description": "Missing path parameter",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "error_handling",
-      "tags": ["conventions", "error", "validation"],
+      "tags": [
+        "conventions",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -254,9 +290,12 @@
     {
       "id": "conv-012",
       "description": "Detect semicolon usage",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "semicolons"],
+      "tags": [
+        "conventions",
+        "semicolons"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -277,9 +316,13 @@
     {
       "id": "conv-013",
       "description": "Rust naming conventions",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "rust", "naming"],
+      "tags": [
+        "conventions",
+        "rust",
+        "naming"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -300,9 +343,12 @@
     {
       "id": "conv-014",
       "description": "Performance test",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "performance",
-      "tags": ["conventions", "performance"],
+      "tags": [
+        "conventions",
+        "performance"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -325,9 +371,12 @@
     {
       "id": "conv-015",
       "description": "Detect arrow function preference",
-      "tool": "extract_conventions",
+      "tool": "ExtractConventions",
       "category": "happy_path",
-      "tags": ["conventions", "functions"],
+      "tags": [
+        "conventions",
+        "functions"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

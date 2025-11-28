@@ -1,14 +1,18 @@
 {
-  "tool": "read_file",
+  "tool": "ReadFile",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for read_file tool",
   "cases": [
     {
       "id": "read-001",
       "description": "Read simple text file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "basic", "text"],
+      "tags": [
+        "read",
+        "basic",
+        "text"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -29,9 +33,12 @@
     {
       "id": "read-002",
       "description": "Read multi-line file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "multiline"],
+      "tags": [
+        "read",
+        "multiline"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -52,9 +59,13 @@
     {
       "id": "read-003",
       "description": "Read file with offset",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "offset", "partial"],
+      "tags": [
+        "read",
+        "offset",
+        "partial"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -76,9 +87,13 @@
     {
       "id": "read-004",
       "description": "Read file with limit",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "limit", "partial"],
+      "tags": [
+        "read",
+        "limit",
+        "partial"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -100,9 +115,14 @@
     {
       "id": "read-005",
       "description": "Read file with offset and limit",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "offset", "limit", "partial"],
+      "tags": [
+        "read",
+        "offset",
+        "limit",
+        "partial"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -125,9 +145,12 @@
     {
       "id": "read-006",
       "description": "Read empty file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "edge_case",
-      "tags": ["read", "empty"],
+      "tags": [
+        "read",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -148,9 +171,13 @@
     {
       "id": "read-007",
       "description": "Read file with special characters",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "edge_case",
-      "tags": ["read", "special-chars", "unicode"],
+      "tags": [
+        "read",
+        "special-chars",
+        "unicode"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -159,21 +186,25 @@
       },
       "expected": {
         "success": true,
-        "contains": "🚀"
+        "contains": "\ud83d\ude80"
       },
       "fixtures": {
         "type": "inline",
         "files": {
-          "special.txt": "Hello 🚀 World! \n\t Special chars: @#$%^&*()"
+          "special.txt": "Hello \ud83d\ude80 World! \n\t Special chars: @#$%^&*()"
         }
       }
     },
     {
       "id": "read-008",
       "description": "Read file in subdirectory",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "subdirectory", "path"],
+      "tags": [
+        "read",
+        "subdirectory",
+        "path"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -194,9 +225,13 @@
     {
       "id": "read-009",
       "description": "Read JSON file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "json", "structured"],
+      "tags": [
+        "read",
+        "json",
+        "structured"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -217,9 +252,13 @@
     {
       "id": "read-010",
       "description": "Read non-existent file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "error_handling",
-      "tags": ["read", "error", "not-found"],
+      "tags": [
+        "read",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -238,9 +277,13 @@
     {
       "id": "read-011",
       "description": "Read directory instead of file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "error_handling",
-      "tags": ["read", "error", "directory"],
+      "tags": [
+        "read",
+        "error",
+        "directory"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -261,9 +304,14 @@
     {
       "id": "read-012",
       "description": "Read with invalid offset (negative)",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "error_handling",
-      "tags": ["read", "error", "validation", "offset"],
+      "tags": [
+        "read",
+        "error",
+        "validation",
+        "offset"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -285,9 +333,14 @@
     {
       "id": "read-013",
       "description": "Read with invalid limit (zero)",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "error_handling",
-      "tags": ["read", "error", "validation", "limit"],
+      "tags": [
+        "read",
+        "error",
+        "validation",
+        "limit"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -309,9 +362,13 @@
     {
       "id": "read-014",
       "description": "Read large file (performance)",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "performance",
-      "tags": ["read", "performance", "large"],
+      "tags": [
+        "read",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -335,9 +392,12 @@
     {
       "id": "read-015",
       "description": "Read file with very long lines",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "edge_case",
-      "tags": ["read", "long-lines"],
+      "tags": [
+        "read",
+        "long-lines"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

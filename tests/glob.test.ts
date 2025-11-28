@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tool_setup.js';
+import { executeTool } from '../src/tool-setup.js';
 
 describe('glob tool', () => {
     describe('Happy Path Tests', () => {
         it('should find all TypeScript files with **/*.ts', async () => {
-            const result = await executeTool('glob', { pattern: '**/*.ts', path: '.' });
+            const result = await executeTool('Glob', { pattern: '**/*.ts', path: '.' });
             const files = JSON.parse(result);
 
             expect(Array.isArray(files)).toBe(true);
@@ -13,7 +13,7 @@ describe('glob tool', () => {
         });
 
         it('should find files in specific directory with src/*.ts', async () => {
-            const result = await executeTool('glob', { pattern: 'src/*.ts', path: '.' });
+            const result = await executeTool('Glob', { pattern: 'src/*.ts', path: '.' });
             const files = JSON.parse(result);
 
             expect(Array.isArray(files)).toBe(true);
@@ -22,7 +22,7 @@ describe('glob tool', () => {
         });
 
         it('should find files with multiple extensions **/*.{ts,md}', async () => {
-            const result = await executeTool('glob', { pattern: '**/*.{ts,md}', path: '.' });
+            const result = await executeTool('Glob', { pattern: '**/*.{ts,md}', path: '.' });
             const files = JSON.parse(result);
 
             expect(Array.isArray(files)).toBe(true);
@@ -33,7 +33,7 @@ describe('glob tool', () => {
         });
 
         it('should return empty array when no matches', async () => {
-            const result = await executeTool('glob', { pattern: '**/*.nonexistent', path: '.' });
+            const result = await executeTool('Glob', { pattern: '**/*.nonexistent', path: '.' });
             const files = JSON.parse(result);
 
             expect(files).toEqual([]);
@@ -42,14 +42,14 @@ describe('glob tool', () => {
 
     describe('Edge Cases', () => {
         it('should ignore node_modules by default', async () => {
-            const result = await executeTool('glob', { pattern: '**/*.ts', path: '.' });
+            const result = await executeTool('Glob', { pattern: '**/*.ts', path: '.' });
             const files = JSON.parse(result);
 
             expect(files.every((f: string) => !f.includes('node_modules'))).toBe(true);
         });
 
         it('should ignore hidden files by default', async () => {
-            const result = await executeTool('glob', { pattern: '**/*', path: '.' });
+            const result = await executeTool('Glob', { pattern: '**/*', path: '.' });
             const files = JSON.parse(result);
 
             expect(files.every((f: string) => {
@@ -59,13 +59,13 @@ describe('glob tool', () => {
         });
 
         it('should handle non-existent directory gracefully', async () => {
-            const result = await executeTool('glob', { pattern: '**/*.ts', path: './nonexistent_dir_12345' });
+            const result = await executeTool('Glob', { pattern: '**/*.ts', path: './nonexistent_dir_12345' });
 
             expect(result).toContain('Error');
         });
 
         it('should work with relative paths', async () => {
-            const result = await executeTool('glob', { pattern: '*.ts', path: './src' });
+            const result = await executeTool('Glob', { pattern: '*.ts', path: './src' });
             const files = JSON.parse(result);
 
             expect(Array.isArray(files)).toBe(true);
@@ -75,7 +75,7 @@ describe('glob tool', () => {
 
     describe('Pattern Tests', () => {
         it('should support * wildcard (single level)', async () => {
-            const result = await executeTool('glob', { pattern: 'src/*', path: '.' });
+            const result = await executeTool('Glob', { pattern: 'src/*', path: '.' });
             const files = JSON.parse(result);
 
             expect(Array.isArray(files)).toBe(true);
@@ -87,7 +87,7 @@ describe('glob tool', () => {
         });
 
         it('should support ** wildcard (recursive)', async () => {
-            const result = await executeTool('glob', { pattern: 'src/**/*.ts', path: '.' });
+            const result = await executeTool('Glob', { pattern: 'src/**/*.ts', path: '.' });
             const files = JSON.parse(result);
 
             expect(Array.isArray(files)).toBe(true);
@@ -95,14 +95,14 @@ describe('glob tool', () => {
         });
 
         it('should support ? wildcard (single character)', async () => {
-            const result = await executeTool('glob', { pattern: 'src/?.ts', path: '.' });
+            const result = await executeTool('Glob', { pattern: 'src/?.ts', path: '.' });
 
             // Just verify it doesn't throw - specific results depend on filesystem
             expect(typeof result).toBe('string');
         });
 
         it('should support brace expansion {ts,md}', async () => {
-            const result = await executeTool('glob', { pattern: '**/*.{ts,md}', path: '.' });
+            const result = await executeTool('Glob', { pattern: '**/*.{ts,md}', path: '.' });
             const files = JSON.parse(result);
 
             expect(Array.isArray(files)).toBe(true);

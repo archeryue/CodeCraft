@@ -1,14 +1,18 @@
 {
-  "tool": "detect_project_type",
+  "tool": "DetectProjectType",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for detect_project_type tool",
   "cases": [
     {
       "id": "detect-001",
       "description": "Node.js TypeScript project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "nodejs", "typescript"],
+      "tags": [
+        "detect",
+        "nodejs",
+        "typescript"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -31,9 +35,12 @@
     {
       "id": "detect-002",
       "description": "Rust project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "rust"],
+      "tags": [
+        "detect",
+        "rust"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -55,9 +62,12 @@
     {
       "id": "detect-003",
       "description": "Python project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "python"],
+      "tags": [
+        "detect",
+        "python"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -79,9 +89,12 @@
     {
       "id": "detect-004",
       "description": "Plain JavaScript project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "javascript"],
+      "tags": [
+        "detect",
+        "javascript"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -103,9 +116,13 @@
     {
       "id": "detect-005",
       "description": "React TypeScript project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "react", "typescript"],
+      "tags": [
+        "detect",
+        "react",
+        "typescript"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -128,9 +145,12 @@
     {
       "id": "detect-006",
       "description": "Next.js project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "nextjs"],
+      "tags": [
+        "detect",
+        "nextjs"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -152,9 +172,12 @@
     {
       "id": "detect-007",
       "description": "Monorepo detection",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "monorepo"],
+      "tags": [
+        "detect",
+        "monorepo"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -177,9 +200,12 @@
     {
       "id": "detect-008",
       "description": "Unknown/mixed project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "edge_case",
-      "tags": ["detect", "unknown"],
+      "tags": [
+        "detect",
+        "unknown"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -200,9 +226,12 @@
     {
       "id": "detect-009",
       "description": "Empty directory",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "edge_case",
-      "tags": ["detect", "empty"],
+      "tags": [
+        "detect",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -221,9 +250,13 @@
     {
       "id": "detect-010",
       "description": "Non-existent path",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "error_handling",
-      "tags": ["detect", "error", "not-found"],
+      "tags": [
+        "detect",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -242,9 +275,13 @@
     {
       "id": "detect-011",
       "description": "Missing path parameter",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "error_handling",
-      "tags": ["detect", "error", "validation"],
+      "tags": [
+        "detect",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -261,9 +298,12 @@
     {
       "id": "detect-012",
       "description": "Go project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "go"],
+      "tags": [
+        "detect",
+        "go"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -285,9 +325,12 @@
     {
       "id": "detect-013",
       "description": "Java project",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "happy_path",
-      "tags": ["detect", "java"],
+      "tags": [
+        "detect",
+        "java"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -309,9 +352,12 @@
     {
       "id": "detect-014",
       "description": "Multiple project types",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "edge_case",
-      "tags": ["detect", "multiple"],
+      "tags": [
+        "detect",
+        "multiple"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -334,9 +380,12 @@
     {
       "id": "detect-015",
       "description": "Performance test",
-      "tool": "detect_project_type",
+      "tool": "DetectProjectType",
       "category": "performance",
-      "tags": ["detect", "performance"],
+      "tags": [
+        "detect",
+        "performance"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

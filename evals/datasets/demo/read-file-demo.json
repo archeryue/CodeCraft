@@ -1,14 +1,17 @@
 {
-  "tool": "read_file",
+  "tool": "ReadFile",
   "version": "1.0",
   "description": "Demo evaluation dataset for read_file tool",
   "cases": [
     {
       "id": "demo-read-001",
       "description": "Read simple text file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "basic"],
+      "tags": [
+        "read",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -29,9 +32,12 @@
     {
       "id": "demo-read-002",
       "description": "Read file with specific content",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "happy_path",
-      "tags": ["read", "contains"],
+      "tags": [
+        "read",
+        "contains"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -52,9 +58,12 @@
     {
       "id": "demo-read-003",
       "description": "Read non-existent file",
-      "tool": "read_file",
+      "tool": "ReadFile",
       "category": "error_handling",
-      "tags": ["read", "error"],
+      "tags": [
+        "read",
+        "error"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

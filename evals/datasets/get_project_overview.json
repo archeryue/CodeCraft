@@ -1,14 +1,17 @@
 {
-  "tool": "get_project_overview",
+  "tool": "GetProjectOverview",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for get_project_overview tool",
   "cases": [
     {
       "id": "overview-001",
       "description": "Simple project overview",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "basic"],
+      "tags": [
+        "overview",
+        "basic"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -30,9 +33,12 @@
     {
       "id": "overview-002",
       "description": "Overview with dependencies",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "dependencies"],
+      "tags": [
+        "overview",
+        "dependencies"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -54,9 +60,12 @@
     {
       "id": "overview-003",
       "description": "Overview with file structure",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "structure"],
+      "tags": [
+        "overview",
+        "structure"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -79,9 +88,12 @@
     {
       "id": "overview-004",
       "description": "Overview with tech stack",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "tech-stack"],
+      "tags": [
+        "overview",
+        "tech-stack"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -104,9 +116,12 @@
     {
       "id": "overview-005",
       "description": "Rust project overview",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "rust"],
+      "tags": [
+        "overview",
+        "rust"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -128,9 +143,12 @@
     {
       "id": "overview-006",
       "description": "Overview with build tools",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "build"],
+      "tags": [
+        "overview",
+        "build"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -152,9 +170,12 @@
     {
       "id": "overview-007",
       "description": "Overview with testing",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "testing"],
+      "tags": [
+        "overview",
+        "testing"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -176,9 +197,12 @@
     {
       "id": "overview-008",
       "description": "Empty project",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "edge_case",
-      "tags": ["overview", "empty"],
+      "tags": [
+        "overview",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -197,9 +221,12 @@
     {
       "id": "overview-009",
       "description": "Monorepo overview",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "monorepo"],
+      "tags": [
+        "overview",
+        "monorepo"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -222,9 +249,13 @@
     {
       "id": "overview-010",
       "description": "Non-existent path",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "error_handling",
-      "tags": ["overview", "error", "not-found"],
+      "tags": [
+        "overview",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -243,9 +274,13 @@
     {
       "id": "overview-011",
       "description": "Missing path parameter",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "error_handling",
-      "tags": ["overview", "error", "validation"],
+      "tags": [
+        "overview",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -262,9 +297,12 @@
     {
       "id": "overview-012",
       "description": "Overview with documentation",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "docs"],
+      "tags": [
+        "overview",
+        "docs"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -286,9 +324,12 @@
     {
       "id": "overview-013",
       "description": "Overview with CI/CD",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "ci-cd"],
+      "tags": [
+        "overview",
+        "ci-cd"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -309,9 +350,12 @@
     {
       "id": "overview-014",
       "description": "Performance test",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "performance",
-      "tags": ["overview", "performance"],
+      "tags": [
+        "overview",
+        "performance"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -335,9 +379,12 @@
     {
       "id": "overview-015",
       "description": "Overview with linting",
-      "tool": "get_project_overview",
+      "tool": "GetProjectOverview",
       "category": "happy_path",
-      "tags": ["overview", "linting"],
+      "tags": [
+        "overview",
+        "linting"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

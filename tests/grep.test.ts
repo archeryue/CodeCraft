@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { executeTool } from '../src/tool_setup.js';
+import { executeTool } from '../src/tool-setup.js';
 
 describe('grep tool', () => {
     describe('Happy Path Tests', () => {
         it('should find lines matching a simple string', async () => {
-            const result = await executeTool('grep', { pattern: 'executeTool', path: '.' });
+            const result = await executeTool('Grep', { pattern: 'executeTool', path: '.' });
             const matches = JSON.parse(result);
 
             expect(Array.isArray(matches)).toBe(true);
@@ -12,14 +12,14 @@ describe('grep tool', () => {
         });
 
         it('should find lines matching a regex pattern', async () => {
-            const result = await executeTool('grep', { pattern: 'function.*async', path: '.' });
+            const result = await executeTool('Grep', { pattern: 'function.*async', path: '.' });
             const matches = JSON.parse(result);
 
             expect(Array.isArray(matches)).toBe(true);
         });
 
         it('should return file path and line number with matches', async () => {
-            const result = await executeTool('grep', { pattern: 'import.*from', path: 'src' });
+            const result = await executeTool('Grep', { pattern: 'import.*from', path: 'src' });
             const matches = JSON.parse(result);
 
             expect(Array.isArray(matches)).toBe(true);
@@ -31,7 +31,7 @@ describe('grep tool', () => {
         });
 
         it('should search recursively by default', async () => {
-            const result = await executeTool('grep', { pattern: 'describe', path: '.' });
+            const result = await executeTool('Grep', { pattern: 'describe', path: '.' });
             const matches = JSON.parse(result);
 
             expect(Array.isArray(matches)).toBe(true);
@@ -43,7 +43,7 @@ describe('grep tool', () => {
 
     describe('Options Tests', () => {
         it('should support case-insensitive search', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'EXECUTETOOL',
                 path: '.',
                 ignoreCase: true
@@ -55,7 +55,7 @@ describe('grep tool', () => {
         });
 
         it('should support file pattern filtering with include', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'import',
                 path: '.',
                 include: '*.ts'
@@ -67,7 +67,7 @@ describe('grep tool', () => {
         });
 
         it('should return empty array when no matches', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'thispatterndoesnotexistanywhere99999',
                 path: 'src',
                 include: '*.ts'
@@ -80,14 +80,14 @@ describe('grep tool', () => {
 
     describe('Edge Cases', () => {
         it('should ignore node_modules by default', async () => {
-            const result = await executeTool('grep', { pattern: 'function', path: '.' });
+            const result = await executeTool('Grep', { pattern: 'function', path: '.' });
             const matches = JSON.parse(result);
 
             expect(matches.every((m: any) => !m.file.includes('node_modules'))).toBe(true);
         });
 
         it('should handle non-existent directory gracefully', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'test',
                 path: './nonexistent_dir_12345'
             });
@@ -96,7 +96,7 @@ describe('grep tool', () => {
         });
 
         it('should handle invalid regex gracefully', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: '[invalid(regex',
                 path: '.'
             });
@@ -108,7 +108,7 @@ describe('grep tool', () => {
 
     describe('Context Line Tests', () => {
         it('should return context lines when contextLines specified', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'executeTool',
                 path: 'src',
                 contextLines: 2
@@ -126,7 +126,7 @@ describe('grep tool', () => {
         });
 
         it('should support before context only', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'function',
                 path: 'src',
                 beforeContext: 3
@@ -139,7 +139,7 @@ describe('grep tool', () => {
         });
 
         it('should support after context only', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'import',
                 path: 'src',
                 afterContext: 5
@@ -153,7 +153,7 @@ describe('grep tool', () => {
 
         it('should handle context at file boundaries', async () => {
             // Find a match near the beginning of a file
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'import',
                 path: 'tests',
                 include: '*.ts',
@@ -171,7 +171,7 @@ describe('grep tool', () => {
         });
 
         it('should include line numbers in context', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'describe',
                 path: 'tests',
                 contextLines: 2
@@ -194,7 +194,7 @@ describe('grep tool', () => {
         });
 
         it('should work without context parameters (backward compatible)', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'import',
                 path: 'src'
             });
@@ -206,7 +206,7 @@ describe('grep tool', () => {
         });
 
         it('should work with all grep parameters together', async () => {
-            const result = await executeTool('grep', {
+            const result = await executeTool('Grep', {
                 pattern: 'function',
                 path: 'src',
                 include: '*.ts',

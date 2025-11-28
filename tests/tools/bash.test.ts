@@ -91,7 +91,7 @@ describe('bash tool', () => {
 
   // Edge Cases
   describe('Edge Cases', () => {
-    it.skip('should timeout foreground command that exceeds limit', async () => {
+    it('should timeout foreground command that exceeds limit', async () => {
       const result = await bashTool.execute({
         command: 'sleep 2',
         timeout: 500
@@ -99,7 +99,7 @@ describe('bash tool', () => {
 
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe('TIMEOUT');
-      expect(result.error?.message).toContain('timeout');
+      expect(result.error?.message).toContain('timed out');
     });
 
     it('should handle command with non-zero exit code', async () => {

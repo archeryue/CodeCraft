@@ -1,14 +1,17 @@
 {
-  "tool": "bash_output",
+  "tool": "BashOutput",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for bash_output tool",
   "cases": [
     {
       "id": "bashout-001",
       "description": "Read output from background bash",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "happy_path",
-      "tags": ["bash-output", "basic"],
+      "tags": [
+        "bash-output",
+        "basic"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -27,9 +30,12 @@
     {
       "id": "bashout-002",
       "description": "Read incremental output",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "happy_path",
-      "tags": ["bash-output", "incremental"],
+      "tags": [
+        "bash-output",
+        "incremental"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -48,9 +54,12 @@
     {
       "id": "bashout-003",
       "description": "No new output available",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "edge_case",
-      "tags": ["bash-output", "empty"],
+      "tags": [
+        "bash-output",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -69,9 +78,12 @@
     {
       "id": "bashout-004",
       "description": "Process completed",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "happy_path",
-      "tags": ["bash-output", "completed"],
+      "tags": [
+        "bash-output",
+        "completed"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -90,9 +102,12 @@
     {
       "id": "bashout-005",
       "description": "Process still running",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "happy_path",
-      "tags": ["bash-output", "running"],
+      "tags": [
+        "bash-output",
+        "running"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -111,9 +126,13 @@
     {
       "id": "bashout-006",
       "description": "Invalid bash ID",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "error_handling",
-      "tags": ["bash-output", "error", "not-found"],
+      "tags": [
+        "bash-output",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -132,9 +151,13 @@
     {
       "id": "bashout-007",
       "description": "Missing bashId parameter",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "error_handling",
-      "tags": ["bash-output", "error", "validation"],
+      "tags": [
+        "bash-output",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -151,9 +174,12 @@
     {
       "id": "bashout-008",
       "description": "Read stdout and stderr",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "happy_path",
-      "tags": ["bash-output", "stderr"],
+      "tags": [
+        "bash-output",
+        "stderr"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -172,9 +198,12 @@
     {
       "id": "bashout-009",
       "description": "Large output",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "edge_case",
-      "tags": ["bash-output", "large"],
+      "tags": [
+        "bash-output",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -193,9 +222,12 @@
     {
       "id": "bashout-010",
       "description": "Process failed with error",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "happy_path",
-      "tags": ["bash-output", "failed"],
+      "tags": [
+        "bash-output",
+        "failed"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -214,9 +246,12 @@
     {
       "id": "bashout-011",
       "description": "Multiple readers",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "edge_case",
-      "tags": ["bash-output", "concurrent"],
+      "tags": [
+        "bash-output",
+        "concurrent"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -235,9 +270,12 @@
     {
       "id": "bashout-012",
       "description": "Read after completion",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "edge_case",
-      "tags": ["bash-output", "post-completion"],
+      "tags": [
+        "bash-output",
+        "post-completion"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -256,9 +294,13 @@
     {
       "id": "bashout-013",
       "description": "Empty bash ID",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "error_handling",
-      "tags": ["bash-output", "error", "validation"],
+      "tags": [
+        "bash-output",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -277,9 +319,12 @@
     {
       "id": "bashout-014",
       "description": "Performance test",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "performance",
-      "tags": ["bash-output", "performance"],
+      "tags": [
+        "bash-output",
+        "performance"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -300,9 +345,12 @@
     {
       "id": "bashout-015",
       "description": "Unicode in output",
-      "tool": "bash_output",
+      "tool": "BashOutput",
       "category": "edge_case",
-      "tags": ["bash-output", "unicode"],
+      "tags": [
+        "bash-output",
+        "unicode"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -311,7 +359,7 @@
       },
       "expected": {
         "success": true,
-        "contains": "🚀"
+        "contains": "\ud83d\ude80"
       },
       "fixtures": {
         "type": "inline",

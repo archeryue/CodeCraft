@@ -1,14 +1,18 @@
 {
-  "tool": "inspect_symbol",
+  "tool": "InspectSymbol",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for inspect_symbol tool",
   "cases": [
     {
       "id": "inspect-001",
       "description": "Get function symbol info",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "function", "info"],
+      "tags": [
+        "inspect",
+        "function",
+        "info"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -30,9 +34,13 @@
     {
       "id": "inspect-002",
       "description": "Get class symbol info",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "class", "info"],
+      "tags": [
+        "inspect",
+        "class",
+        "info"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -54,9 +62,13 @@
     {
       "id": "inspect-003",
       "description": "Resolve symbol definition",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "resolve", "definition"],
+      "tags": [
+        "inspect",
+        "resolve",
+        "definition"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -80,9 +92,12 @@
     {
       "id": "inspect-004",
       "description": "Inspect interface symbol",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "interface"],
+      "tags": [
+        "inspect",
+        "interface"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -104,9 +119,13 @@
     {
       "id": "inspect-005",
       "description": "Symbol not found in file",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "error_handling",
-      "tags": ["inspect", "error", "not-found"],
+      "tags": [
+        "inspect",
+        "error",
+        "not-found"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -128,9 +147,13 @@
     {
       "id": "inspect-006",
       "description": "File not found",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "error_handling",
-      "tags": ["inspect", "error", "file-not-found"],
+      "tags": [
+        "inspect",
+        "error",
+        "file-not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -150,9 +173,13 @@
     {
       "id": "inspect-007",
       "description": "Missing symbol parameter",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "error_handling",
-      "tags": ["inspect", "error", "validation"],
+      "tags": [
+        "inspect",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -173,9 +200,13 @@
     {
       "id": "inspect-008",
       "description": "Missing file parameter",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "error_handling",
-      "tags": ["inspect", "error", "validation"],
+      "tags": [
+        "inspect",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -194,9 +225,12 @@
     {
       "id": "inspect-009",
       "description": "Inspect exported symbol",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "export"],
+      "tags": [
+        "inspect",
+        "export"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -218,9 +252,13 @@
     {
       "id": "inspect-010",
       "description": "Inspect method in class",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "method", "class"],
+      "tags": [
+        "inspect",
+        "method",
+        "class"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -242,9 +280,13 @@
     {
       "id": "inspect-011",
       "description": "Inspect Rust function",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "rust", "function"],
+      "tags": [
+        "inspect",
+        "rust",
+        "function"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -266,9 +308,13 @@
     {
       "id": "inspect-012",
       "description": "Inspect Rust struct",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "happy_path",
-      "tags": ["inspect", "rust", "struct"],
+      "tags": [
+        "inspect",
+        "rust",
+        "struct"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -290,9 +336,13 @@
     {
       "id": "inspect-013",
       "description": "Invalid mode parameter",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "error_handling",
-      "tags": ["inspect", "error", "validation"],
+      "tags": [
+        "inspect",
+        "error",
+        "validation"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -315,9 +365,12 @@
     {
       "id": "inspect-014",
       "description": "Performance test",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "performance",
-      "tags": ["inspect", "performance"],
+      "tags": [
+        "inspect",
+        "performance"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -341,9 +394,12 @@
     {
       "id": "inspect-015",
       "description": "Inspect type alias",
-      "tool": "inspect_symbol",
+      "tool": "InspectSymbol",
       "category": "edge_case",
-      "tags": ["inspect", "type-alias"],
+      "tags": [
+        "inspect",
+        "type-alias"
+      ],
       "difficulty": 2,
       "input": {
         "params": {

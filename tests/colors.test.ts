@@ -73,8 +73,8 @@ describe('Colors Module', () => {
         });
 
         it('should have toolCall() for formatting tool calls', () => {
-            const result = colors.toolCall('read_file', { path: 'test.ts' });
-            expect(result).toContain('read_file');
+            const result = colors.toolCall('ReadFile', { path: 'test.ts' });
+            expect(result).toContain('ReadFile');
         });
 
         it('should have errorWithSuggestion() for rich errors', () => {

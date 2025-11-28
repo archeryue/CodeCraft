@@ -18,7 +18,7 @@ class Guardrails {
     recordCall(call: ToolCall): void {
         this.callHistory.push(call);
 
-        if (call.tool === 'read_file' && call.params.path) {
+        if (call.tool === 'ReadFile' && call.params.path) {
             const path = call.params.path;
             this.fileReadCounts.set(path, (this.fileReadCounts.get(path) || 0) + 1);
         }
@@ -26,7 +26,7 @@ class Guardrails {
 
     shouldBlockCall(call: ToolCall): boolean {
         // Block if reading same file 3+ times
-        if (call.tool === 'read_file' && call.params.path) {
+        if (call.tool === 'ReadFile' && call.params.path) {
             const count = this.fileReadCounts.get(call.params.path) || 0;
             if (count >= 3) {
                 return true;
@@ -101,12 +101,12 @@ describe('Guardrails', () => {
 
     describe('Test Cases', () => {
         it('Should limit consecutive reads of same file to 3', () => {
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
 
             const shouldBlock = guardrails.shouldBlockCall({
-                tool: 'read_file',
+                tool: 'ReadFile',
                 params: { path: 'foo.ts' }
             });
 
@@ -115,9 +115,9 @@ describe('Guardrails', () => {
         });
 
         it('Should detect when no progress is being made', () => {
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
 
             const isProgressing = guardrails.isProgressBeingMade();
             expect(isProgressing).toBe(false);
@@ -130,31 +130,31 @@ describe('Guardrails', () => {
         });
 
         it('Should prevent infinite loops between 2 tools', () => {
-            guardrails.recordCall({ tool: 'grep', params: {} });
-            guardrails.recordCall({ tool: 'list_directory', params: {} });
-            guardrails.recordCall({ tool: 'grep', params: {} });
-            guardrails.recordCall({ tool: 'list_directory', params: {} });
-            guardrails.recordCall({ tool: 'grep', params: {} });
+            guardrails.recordCall({ tool: 'Grep', params: {} });
+            guardrails.recordCall({ tool: 'ListDirectory', params: {} });
+            guardrails.recordCall({ tool: 'Grep', params: {} });
+            guardrails.recordCall({ tool: 'ListDirectory', params: {} });
+            guardrails.recordCall({ tool: 'Grep', params: {} });
 
             // Should detect alternation
-            const shouldBlock = guardrails.shouldBlockCall({ tool: 'list_directory', params: {} });
+            const shouldBlock = guardrails.shouldBlockCall({ tool: 'ListDirectory', params: {} });
             expect(shouldBlock).toBe(true);
         });
     });
 
     describe('Edge Cases', () => {
         it('Should allow reading different files (not same file repeatedly)', () => {
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'b.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'c.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'b.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'c.ts' } });
 
             const shouldBlockA = guardrails.shouldBlockCall({
-                tool: 'read_file',
+                tool: 'ReadFile',
                 params: { path: 'a.ts' }
             });
 
             const shouldBlockD = guardrails.shouldBlockCall({
-                tool: 'read_file',
+                tool: 'ReadFile',
                 params: { path: 'd.ts' }
             });
 
@@ -163,9 +163,9 @@ describe('Guardrails', () => {
         });
 
         it('Should allow legitimate multi-step workflows', () => {
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
-            guardrails.recordCall({ tool: 'edit_file', params: { path: 'foo.ts' } });
-            guardrails.recordCall({ tool: 'run_command', params: { command: 'npm test' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'EditFile', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'RunCommand', params: { command: 'npm test' } });
 
             const isProgressing = guardrails.isProgressBeingMade();
             expect(isProgressing).toBe(true); // Different tools = making progress
@@ -173,11 +173,11 @@ describe('Guardrails', () => {
 
         it('Should NOT overly restrict valid agent behavior', () => {
             // Reading 2 times should be OK
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
 
             const shouldBlock = guardrails.shouldBlockCall({
-                tool: 'read_file',
+                tool: 'ReadFile',
                 params: { path: 'foo.ts' }
             });
 
@@ -187,8 +187,8 @@ describe('Guardrails', () => {
 
     describe('Reset and State Management', () => {
         it('Should reset state when new user message arrives', () => {
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'foo.ts' } });
 
             expect(guardrails.getFileReadCount('foo.ts')).toBe(2);
 
@@ -198,19 +198,19 @@ describe('Guardrails', () => {
         });
 
         it('Should track multiple files independently', () => {
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'b.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'b.ts' } });
 
             expect(guardrails.getFileReadCount('a.ts')).toBe(2);
             expect(guardrails.getFileReadCount('b.ts')).toBe(1);
         });
 
         it('Should provide list of allowed files', () => {
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'a.ts' } });
-            guardrails.recordCall({ tool: 'read_file', params: { path: 'b.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'a.ts' } });
+            guardrails.recordCall({ tool: 'ReadFile', params: { path: 'b.ts' } });
 
             const allowed = guardrails.getAllowedFiles(['a.ts', 'b.ts', 'c.ts']);
 

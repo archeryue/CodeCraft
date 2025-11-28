@@ -1,14 +1,17 @@
 {
-  "tool": "build_dependency_graph",
+  "tool": "BuildDependencyGraph",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for build_dependency_graph tool",
   "cases": [
     {
       "id": "depgraph-001",
       "description": "Simple dependency chain",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "simple"],
+      "tags": [
+        "graph",
+        "simple"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -30,9 +33,12 @@
     {
       "id": "depgraph-002",
       "description": "Multi-level dependencies",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "multi-level"],
+      "tags": [
+        "graph",
+        "multi-level"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -55,9 +61,12 @@
     {
       "id": "depgraph-003",
       "description": "Circular dependencies",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "edge_case",
-      "tags": ["graph", "circular"],
+      "tags": [
+        "graph",
+        "circular"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -79,9 +88,12 @@
     {
       "id": "depgraph-004",
       "description": "No dependencies",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "edge_case",
-      "tags": ["graph", "isolated"],
+      "tags": [
+        "graph",
+        "isolated"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -102,9 +114,12 @@
     {
       "id": "depgraph-005",
       "description": "External dependencies excluded",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "external"],
+      "tags": [
+        "graph",
+        "external"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -126,9 +141,12 @@
     {
       "id": "depgraph-006",
       "description": "Multiple entry points",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "multi-entry"],
+      "tags": [
+        "graph",
+        "multi-entry"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -152,9 +170,12 @@
     {
       "id": "depgraph-007",
       "description": "Empty directory",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "edge_case",
-      "tags": ["graph", "empty"],
+      "tags": [
+        "graph",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -173,9 +194,12 @@
     {
       "id": "depgraph-008",
       "description": "Shared dependency",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "shared"],
+      "tags": [
+        "graph",
+        "shared"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -198,9 +222,13 @@
     {
       "id": "depgraph-009",
       "description": "Non-existent path",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "error_handling",
-      "tags": ["graph", "error", "not-found"],
+      "tags": [
+        "graph",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -219,9 +247,13 @@
     {
       "id": "depgraph-010",
       "description": "Missing path parameter",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "error_handling",
-      "tags": ["graph", "error", "validation"],
+      "tags": [
+        "graph",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -238,9 +270,12 @@
     {
       "id": "depgraph-011",
       "description": "Re-exports in graph",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "re-export"],
+      "tags": [
+        "graph",
+        "re-export"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -263,9 +298,12 @@
     {
       "id": "depgraph-012",
       "description": "Mixed TypeScript and Rust",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "mixed"],
+      "tags": [
+        "graph",
+        "mixed"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -288,9 +326,12 @@
     {
       "id": "depgraph-013",
       "description": "Subdirectory dependencies",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "happy_path",
-      "tags": ["graph", "subdirectory"],
+      "tags": [
+        "graph",
+        "subdirectory"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -312,9 +353,13 @@
     {
       "id": "depgraph-014",
       "description": "Large codebase (performance)",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "performance",
-      "tags": ["graph", "performance", "large"],
+      "tags": [
+        "graph",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -337,9 +382,12 @@
     {
       "id": "depgraph-015",
       "description": "Deep dependency chain",
-      "tool": "build_dependency_graph",
+      "tool": "BuildDependencyGraph",
       "category": "edge_case",
-      "tags": ["graph", "deep"],
+      "tags": [
+        "graph",
+        "deep"
+      ],
       "difficulty": 3,
       "input": {
         "params": {

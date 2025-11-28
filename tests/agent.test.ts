@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { Agent } from '../src/agent';
-import { TOOLS } from '../src/tool_setup';
+import { TOOLS } from '../src/tool-setup';
 
 // Mock the GoogleGenerativeAI class to avoid making real API calls
 const mockChat = {

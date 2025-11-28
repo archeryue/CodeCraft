@@ -1,0 +1,280 @@
+{
+  "tool": "llm_evaluation",
+  "version": "1.0",
+  "description": "LLM tool selection evaluation for command execution and process management",
+  "cases": [
+    {
+      "id": "llm-cmd-001",
+      "description": "Run simple command",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "bash"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Run the command 'npm test'"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "contains": "npm test"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-002",
+      "description": "Execute build command",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "bash"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Build the project"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-003",
+      "description": "Run git command",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "git"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Show me the git status"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "contains": "git"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-004",
+      "description": "Check installed packages",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "npm"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "List installed npm packages"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "contains": "npm"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-005",
+      "description": "Run background process",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "background"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Start the dev server in the background"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "type": "string"
+          },
+          "run_in_background": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-006",
+      "description": "Check background process output",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "background"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Check the output of background process bash-123"
+      },
+      "expected": {
+        "expectedTool": "BashOutput",
+        "expectedParams": {
+          "bashId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-007",
+      "description": "Kill background process",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "background"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Stop the background process with ID bash-456"
+      },
+      "expected": {
+        "expectedTool": "KillBash",
+        "expectedParams": {
+          "bashId": {
+            "contains": "bash"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-008",
+      "description": "Run tests",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "test"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Execute the test suite"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-009",
+      "description": "Lint code",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "lint"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Run the linter"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-010",
+      "description": "Execute custom script",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "script"
+      ],
+      "difficulty": 1,
+      "input": {
+        "query": "Run the script.sh file"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "contains": "script"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-011",
+      "description": "Monitor long-running process",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "background"
+      ],
+      "difficulty": 3,
+      "input": {
+        "query": "Start the build in background and let me know when it's done"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "type": "string"
+          },
+          "run_in_background": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "id": "llm-cmd-012",
+      "description": "Terminate runaway process",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": [
+        "command",
+        "background"
+      ],
+      "difficulty": 2,
+      "input": {
+        "query": "Kill the hanging process"
+      },
+      "expected": {
+        "expectedTool": "KillBash",
+        "acceptableTools": [
+          "Bash"
+        ],
+        "expectedParams": {
+          "bashId": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,14 +1,17 @@
 {
-  "tool": "list_directory",
+  "tool": "ListDirectory",
   "version": "1.0",
   "description": "Comprehensive evaluation dataset for list_directory tool",
   "cases": [
     {
       "id": "list-001",
       "description": "List simple directory",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "happy_path",
-      "tags": ["list", "basic"],
+      "tags": [
+        "list",
+        "basic"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -30,9 +33,12 @@
     {
       "id": "list-002",
       "description": "List empty directory",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "edge_case",
-      "tags": ["list", "empty"],
+      "tags": [
+        "list",
+        "empty"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -51,9 +57,12 @@
     {
       "id": "list-003",
       "description": "List directory with subdirectories",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "happy_path",
-      "tags": ["list", "subdirectories"],
+      "tags": [
+        "list",
+        "subdirectories"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -75,9 +84,12 @@
     {
       "id": "list-004",
       "description": "List subdirectory",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "happy_path",
-      "tags": ["list", "subdirectory"],
+      "tags": [
+        "list",
+        "subdirectory"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -98,9 +110,12 @@
     {
       "id": "list-005",
       "description": "List directory with hidden files",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "happy_path",
-      "tags": ["list", "hidden"],
+      "tags": [
+        "list",
+        "hidden"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -122,9 +137,12 @@
     {
       "id": "list-006",
       "description": "List directory with various file types",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "happy_path",
-      "tags": ["list", "mixed-types"],
+      "tags": [
+        "list",
+        "mixed-types"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -148,9 +166,12 @@
     {
       "id": "list-007",
       "description": "List directory with special characters in names",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "edge_case",
-      "tags": ["list", "special-chars"],
+      "tags": [
+        "list",
+        "special-chars"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -171,9 +192,12 @@
     {
       "id": "list-008",
       "description": "List directory with spaces in names",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "edge_case",
-      "tags": ["list", "spaces"],
+      "tags": [
+        "list",
+        "spaces"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -194,9 +218,13 @@
     {
       "id": "list-009",
       "description": "List non-existent directory",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "error_handling",
-      "tags": ["list", "error", "not-found"],
+      "tags": [
+        "list",
+        "error",
+        "not-found"
+      ],
       "difficulty": 1,
       "input": {
         "params": {
@@ -215,9 +243,13 @@
     {
       "id": "list-010",
       "description": "List file instead of directory",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "error_handling",
-      "tags": ["list", "error", "not-directory"],
+      "tags": [
+        "list",
+        "error",
+        "not-directory"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
@@ -238,9 +270,13 @@
     {
       "id": "list-011",
       "description": "List with missing path parameter",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "error_handling",
-      "tags": ["list", "error", "validation"],
+      "tags": [
+        "list",
+        "error",
+        "validation"
+      ],
       "difficulty": 1,
       "input": {
         "params": {}
@@ -257,9 +293,13 @@
     {
       "id": "list-012",
       "description": "List with absolute path (security)",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "security",
-      "tags": ["list", "security", "absolute-path"],
+      "tags": [
+        "list",
+        "security",
+        "absolute-path"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -278,9 +318,13 @@
     {
       "id": "list-013",
       "description": "List with path traversal (security)",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "security",
-      "tags": ["list", "security", "path-traversal"],
+      "tags": [
+        "list",
+        "security",
+        "path-traversal"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -299,9 +343,13 @@
     {
       "id": "list-014",
       "description": "List large directory (performance)",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "performance",
-      "tags": ["list", "performance", "large"],
+      "tags": [
+        "list",
+        "performance",
+        "large"
+      ],
       "difficulty": 3,
       "input": {
         "params": {
@@ -324,9 +372,12 @@
     {
       "id": "list-015",
       "description": "List deeply nested directory",
-      "tool": "list_directory",
+      "tool": "ListDirectory",
       "category": "edge_case",
-      "tags": ["list", "deep-nesting"],
+      "tags": [
+        "list",
+        "deep-nesting"
+      ],
       "difficulty": 2,
       "input": {
         "params": {
