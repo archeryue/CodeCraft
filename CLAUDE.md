@@ -42,8 +42,8 @@ npx vitest
 
 **Running Evaluations:**
 ```bash
-npx tsx run-all-evals.ts   # Tool evaluations (161/300 passing, 53.7%)
-npx tsx run-llm-evals.ts   # LLM evaluations (47/72 passing, 65.3%)
+npx tsx evals/run-all-evals.ts   # Tool evaluations (161/300 passing, 53.7%)
+npx tsx evals/run-llm-evals.ts   # LLM evaluations (47/72 passing, 65.3%)
 ```
 
 **Test Configuration:**
