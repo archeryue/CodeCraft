@@ -1,0 +1,348 @@
+{
+  "tool": "get_imports_exports",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for get_imports_exports tool",
+  "cases": [
+    {
+      "id": "imports-001",
+      "description": "Simple imports",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["imports", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "helper"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { helper } from './util';"
+        }
+      }
+    },
+    {
+      "id": "imports-002",
+      "description": "Simple exports",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["exports", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "file": "util.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "helper"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "imports-003",
+      "description": "Multiple imports",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["imports", "multiple"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "helper"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { helper, test } from './util';\nimport fs from 'fs';"
+        }
+      }
+    },
+    {
+      "id": "imports-004",
+      "description": "Default export",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["exports", "default"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "component.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "default"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "component.ts": "export default class Component {}"
+        }
+      }
+    },
+    {
+      "id": "imports-005",
+      "description": "Named and default export",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["exports", "mixed"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "util.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "helper"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}\nexport default class Util {}"
+        }
+      }
+    },
+    {
+      "id": "imports-006",
+      "description": "Re-exports",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["exports", "re-export"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "file": "index.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "export"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "index.ts": "export { helper } from './util';\nexport * from './types';"
+        }
+      }
+    },
+    {
+      "id": "imports-007",
+      "description": "No imports or exports",
+      "tool": "get_imports_exports",
+      "category": "edge_case",
+      "tags": ["none"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "file": "standalone.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": { "imports": [], "exports": [] }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "standalone.ts": "const x = 1;"
+        }
+      }
+    },
+    {
+      "id": "imports-008",
+      "description": "Type imports",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["imports", "types"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "User"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import type { User } from './types';"
+        }
+      }
+    },
+    {
+      "id": "imports-009",
+      "description": "File not found",
+      "tool": "get_imports_exports",
+      "category": "error_handling",
+      "tags": ["error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "file": "nonexistent.ts"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "FILE_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "imports-010",
+      "description": "Missing file parameter",
+      "tool": "get_imports_exports",
+      "category": "error_handling",
+      "tags": ["error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "imports-011",
+      "description": "Rust use statements",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["rust", "imports"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "main.rs"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "std"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "main.rs": "use std::fs;\nfn main() {}"
+        }
+      }
+    },
+    {
+      "id": "imports-012",
+      "description": "Rust pub exports",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["rust", "exports"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "lib.rs"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "helper"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "lib.rs": "pub fn helper() {}"
+        }
+      }
+    },
+    {
+      "id": "imports-013",
+      "description": "Namespace imports",
+      "tool": "get_imports_exports",
+      "category": "happy_path",
+      "tags": ["imports", "namespace"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "util"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import * as util from './util';"
+        }
+      }
+    },
+    {
+      "id": "imports-014",
+      "description": "Performance test",
+      "tool": "get_imports_exports",
+      "category": "performance",
+      "tags": ["performance"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "file": "large.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 200
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "large.ts": "{{repeat:import { func{{i}} } from './module{{i}}';\n:100}}"
+        }
+      }
+    },
+    {
+      "id": "imports-015",
+      "description": "Side-effect import",
+      "tool": "get_imports_exports",
+      "category": "edge_case",
+      "tags": ["imports", "side-effect"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "./polyfill"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import './polyfill';"
+        }
+      }
+    }
+  ]
+}

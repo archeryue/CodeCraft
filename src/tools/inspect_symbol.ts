@@ -47,12 +47,13 @@ export const inspectSymbolTool: Tool = {
     }
 
     try {
+      const filePath = p.file.startsWith('/') ? p.file : `${context.cwd}/${p.file}`;
       let result;
 
       if (mode === 'resolve') {
         // Resolve mode: find where symbol is defined
         // Note: resolveSymbol uses (symbol, file) order
-        result = context.rustEngine.resolveSymbol(p.symbol, p.file);
+        result = context.rustEngine.resolveSymbol(p.symbol, filePath);
 
         if (!result) {
           return {
@@ -67,7 +68,7 @@ export const inspectSymbolTool: Tool = {
       } else {
         // Info mode: get symbol details (default)
         // Note: getSymbolInfo uses (file, symbol) order
-        result = context.rustEngine.getSymbolInfo(p.file, p.symbol);
+        result = context.rustEngine.getSymbolInfo(filePath, p.symbol);
 
         if (!result) {
           return {

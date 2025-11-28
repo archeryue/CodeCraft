@@ -34,7 +34,9 @@ export const buildDependencyGraphTool: Tool = {
     }
 
     try {
-      const graph = context.rustEngine.buildDependencyGraph(p.path || '.');
+      const graphPath = p.path || '.';
+      const absolutePath = graphPath.startsWith('/') ? graphPath : `${context.cwd}/${graphPath}`.replace(/\/\.$/, '');
+      const graph = context.rustEngine.buildDependencyGraph(absolutePath);
       if (!graph) {
         return {
           success: false,

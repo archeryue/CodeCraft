@@ -1,0 +1,351 @@
+{
+  "tool": "get_codebase_map",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for get_codebase_map tool (AST-based code skeleton)",
+  "cases": [
+    {
+      "id": "codemap-001",
+      "description": "Simple TypeScript file",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "typescript", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "function hello"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function hello() {\n  return 'world';\n}"
+        }
+      }
+    },
+    {
+      "id": "codemap-002",
+      "description": "TypeScript class with methods",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "class", "methods"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "class MyClass"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "class.ts": "class MyClass {\n  constructor() {}\n  method() { return 1; }\n}"
+        }
+      }
+    },
+    {
+      "id": "codemap-003",
+      "description": "TypeScript interface",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "interface"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "interface User"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "types.ts": "interface User {\n  name: string;\n  age: number;\n}"
+        }
+      }
+    },
+    {
+      "id": "codemap-004",
+      "description": "Multiple files",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "multi-file"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "function test"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function main() {}",
+          "test.ts": "function test() {}",
+          "util.ts": "function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "codemap-005",
+      "description": "Nested directory structure",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "nested"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "src/lib/util.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/index.ts": "export {}",
+          "src/lib/util.ts": "function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "codemap-006",
+      "description": "Rust file with functions",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "rust", "functions"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "fn main"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "main.rs": "fn main() {\n  println!(\"hello\");\n}"
+        }
+      }
+    },
+    {
+      "id": "codemap-007",
+      "description": "Rust struct and impl",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "rust", "struct"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "struct Point"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "lib.rs": "struct Point { x: i32, y: i32 }\nimpl Point { fn new() -> Self { Point { x: 0, y: 0 } } }"
+        }
+      }
+    },
+    {
+      "id": "codemap-008",
+      "description": "Mixed TypeScript and Rust",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "mixed"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function test() {}",
+          "lib.rs": "fn main() {}"
+        }
+      }
+    },
+    {
+      "id": "codemap-009",
+      "description": "Empty directory",
+      "tool": "get_codebase_map",
+      "category": "edge_case",
+      "tags": ["codemap", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": ""
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "codemap-010",
+      "description": "Files with no exports",
+      "tool": "get_codebase_map",
+      "category": "edge_case",
+      "tags": ["codemap", "no-exports"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.ts": "const x = 1;"
+        }
+      }
+    },
+    {
+      "id": "codemap-011",
+      "description": "Ignores node_modules",
+      "tool": "get_codebase_map",
+      "category": "happy_path",
+      "tags": ["codemap", "ignore"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "^((?!node_modules).)*$"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function test() {}",
+          "node_modules/pkg/index.js": "module.exports = {}"
+        }
+      }
+    },
+    {
+      "id": "codemap-012",
+      "description": "Non-existent directory",
+      "tool": "get_codebase_map",
+      "category": "error_handling",
+      "tags": ["codemap", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "PATH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "codemap-013",
+      "description": "Missing path parameter",
+      "tool": "get_codebase_map",
+      "category": "error_handling",
+      "tags": ["codemap", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "codemap-014",
+      "description": "Large codebase (performance)",
+      "tool": "get_codebase_map",
+      "category": "performance",
+      "tags": ["codemap", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 2000
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "{{repeat:src/file{{i}}.ts:50}}": "function test{{i}}() { return {{i}}; }"
+        }
+      }
+    },
+    {
+      "id": "codemap-015",
+      "description": "Deeply nested structure",
+      "tool": "get_codebase_map",
+      "category": "edge_case",
+      "tags": ["codemap", "deep-nesting"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "a/b/c/d/deep.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "a/b/c/d/deep.ts": "function deep() {}"
+        }
+      }
+    }
+  ]
+}

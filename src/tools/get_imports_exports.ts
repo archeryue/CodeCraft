@@ -34,7 +34,8 @@ export const getImportsExportsTool: Tool = {
     }
 
     try {
-      const info = context.rustEngine.getImportsExports(p.file);
+      const filePath = p.file.startsWith('/') ? p.file : `${context.cwd}/${p.file}`;
+      const info = context.rustEngine.getImportsExports(filePath);
       if (!info) {
         return {
           success: false,

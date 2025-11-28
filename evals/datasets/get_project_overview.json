@@ -1,0 +1,360 @@
+{
+  "tool": "get_project_overview",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for get_project_overview tool",
+  "cases": [
+    {
+      "id": "overview-001",
+      "description": "Simple project overview",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "basic"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "typescript"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{\"name\": \"test-project\"}",
+          "src/index.ts": "export function main() {}"
+        }
+      }
+    },
+    {
+      "id": "overview-002",
+      "description": "Overview with dependencies",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "dependencies"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "dependencies"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{\"dependencies\": {\"react\": \"^18.0.0\"}}",
+          "src/index.ts": "import React from 'react';"
+        }
+      }
+    },
+    {
+      "id": "overview-003",
+      "description": "Overview with file structure",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "structure"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "src"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/index.ts": "export {}",
+          "src/lib/util.ts": "export {}",
+          "tests/app.test.ts": "describe('test', () => {})"
+        }
+      }
+    },
+    {
+      "id": "overview-004",
+      "description": "Overview with tech stack",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "tech-stack"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "react"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{\"dependencies\": {\"react\": \"^18.0.0\", \"next\": \"^14.0.0\"}}",
+          "tsconfig.json": "{}",
+          "src/App.tsx": "export default function App() {}"
+        }
+      }
+    },
+    {
+      "id": "overview-005",
+      "description": "Rust project overview",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "rust"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "rust"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "Cargo.toml": "[package]\nname = \"test-project\"",
+          "src/main.rs": "fn main() {}"
+        }
+      }
+    },
+    {
+      "id": "overview-006",
+      "description": "Overview with build tools",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "build"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "build"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{\"scripts\": {\"build\": \"tsc\"}}",
+          "tsconfig.json": "{}"
+        }
+      }
+    },
+    {
+      "id": "overview-007",
+      "description": "Overview with testing",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "testing"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{\"devDependencies\": {\"vitest\": \"^1.0.0\"}}",
+          "tests/app.test.ts": "describe('test', () => {})"
+        }
+      }
+    },
+    {
+      "id": "overview-008",
+      "description": "Empty project",
+      "tool": "get_project_overview",
+      "category": "edge_case",
+      "tags": ["overview", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "empty"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "overview-009",
+      "description": "Monorepo overview",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "monorepo"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "monorepo"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{\"workspaces\": [\"packages/*\"]}",
+          "packages/app/package.json": "{}",
+          "packages/lib/package.json": "{}"
+        }
+      }
+    },
+    {
+      "id": "overview-010",
+      "description": "Non-existent path",
+      "tool": "get_project_overview",
+      "category": "error_handling",
+      "tags": ["overview", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "PATH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "overview-011",
+      "description": "Missing path parameter",
+      "tool": "get_project_overview",
+      "category": "error_handling",
+      "tags": ["overview", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "overview-012",
+      "description": "Overview with documentation",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "docs"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "README"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "README.md": "# Test Project",
+          "docs/guide.md": "## Guide"
+        }
+      }
+    },
+    {
+      "id": "overview-013",
+      "description": "Overview with CI/CD",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "ci-cd"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "ci"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          ".github/workflows/ci.yml": "name: CI"
+        }
+      }
+    },
+    {
+      "id": "overview-014",
+      "description": "Performance test",
+      "tool": "get_project_overview",
+      "category": "performance",
+      "tags": ["overview", "performance"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 2000
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{}",
+          "{{repeat:src/file{{i}}.ts:100}}": "export {}"
+        }
+      }
+    },
+    {
+      "id": "overview-015",
+      "description": "Overview with linting",
+      "tool": "get_project_overview",
+      "category": "happy_path",
+      "tags": ["overview", "linting"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "eslint"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "package.json": "{\"devDependencies\": {\"eslint\": \"^8.0.0\"}}",
+          ".eslintrc.json": "{}"
+        }
+      }
+    }
+  ]
+}

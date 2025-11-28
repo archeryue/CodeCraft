@@ -1,0 +1,363 @@
+{
+  "tool": "glob",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for glob tool",
+  "cases": [
+    {
+      "id": "glob-001",
+      "description": "Simple wildcard pattern",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "wildcard", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "pattern": "*.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test.txt"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content",
+          "other.txt": "other",
+          "script.sh": "#!/bin/bash"
+        }
+      }
+    },
+    {
+      "id": "glob-002",
+      "description": "Recursive glob pattern",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "recursive"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "**/*.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "src/index.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "index.ts": "export {}",
+          "src/index.ts": "export {}",
+          "src/lib/util.ts": "export {}"
+        }
+      }
+    },
+    {
+      "id": "glob-003",
+      "description": "Match specific directory",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "directory"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "src/*.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "src/index.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "index.ts": "export {}",
+          "src/index.ts": "export {}",
+          "src/util.ts": "export {}"
+        }
+      }
+    },
+    {
+      "id": "glob-004",
+      "description": "Character class pattern",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "char-class"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "test[0-9].txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test1.txt"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test1.txt": "content",
+          "test2.txt": "content",
+          "testA.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "glob-005",
+      "description": "Brace expansion pattern",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "brace"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "*.{ts,js}"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "export {}",
+          "util.js": "module.exports = {}",
+          "data.json": "{}"
+        }
+      }
+    },
+    {
+      "id": "glob-006",
+      "description": "Match single file",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "exact"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "pattern": "README.md"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "README.md"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "README.md": "# Test"
+        }
+      }
+    },
+    {
+      "id": "glob-007",
+      "description": "No matches",
+      "tool": "glob",
+      "category": "edge_case",
+      "tags": ["glob", "no-match"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "pattern": "*.xyz"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": []
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "glob-008",
+      "description": "Match hidden files",
+      "tool": "glob",
+      "category": "edge_case",
+      "tags": ["glob", "hidden"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": ".*"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": ".hidden"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          ".hidden": "content",
+          ".gitignore": "node_modules"
+        }
+      }
+    },
+    {
+      "id": "glob-009",
+      "description": "Negation pattern",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "negation"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "pattern": "!*.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "export {}",
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "glob-010",
+      "description": "Deep nested pattern",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "deep"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "**/lib/**/*.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "src/lib/utils/helper.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/lib/utils/helper.ts": "export {}",
+          "src/index.ts": "export {}"
+        }
+      }
+    },
+    {
+      "id": "glob-011",
+      "description": "Pattern with special characters",
+      "tool": "glob",
+      "category": "edge_case",
+      "tags": ["glob", "special-chars"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "pattern": "file-*@*.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "file-test@123.txt"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "file-test@123.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "glob-012",
+      "description": "Invalid glob pattern",
+      "tool": "glob",
+      "category": "error_handling",
+      "tags": ["glob", "error", "invalid"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "[[["
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PATTERN"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "glob-013",
+      "description": "Missing pattern parameter",
+      "tool": "glob",
+      "category": "error_handling",
+      "tags": ["glob", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "glob-014",
+      "description": "Large directory glob (performance)",
+      "tool": "glob",
+      "category": "performance",
+      "tags": ["glob", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "pattern": "**/*.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 500
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "{{repeat:dir{{i}}/file.txt:100}}": "content"
+        }
+      }
+    },
+    {
+      "id": "glob-015",
+      "description": "Glob with custom path",
+      "tool": "glob",
+      "category": "happy_path",
+      "tags": ["glob", "path"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "*.ts",
+          "path": "src"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "index.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/index.ts": "export {}",
+          "test.ts": "export {}"
+        }
+      }
+    }
+  ]
+}

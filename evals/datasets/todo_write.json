@@ -1,0 +1,351 @@
+{
+  "tool": "todo_write",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for todo_write tool",
+  "cases": [
+    {
+      "id": "todo-001",
+      "description": "Create simple todo list",
+      "tool": "todo_write",
+      "category": "happy_path",
+      "tags": ["todo", "create", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Task 1", "status": "pending", "activeForm": "Working on Task 1"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-002",
+      "description": "Create multiple todos",
+      "tool": "todo_write",
+      "category": "happy_path",
+      "tags": ["todo", "multiple"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Task 1", "status": "completed", "activeForm": "Working on Task 1"},
+            {"content": "Task 2", "status": "in_progress", "activeForm": "Working on Task 2"},
+            {"content": "Task 3", "status": "pending", "activeForm": "Working on Task 3"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-003",
+      "description": "Update todo status",
+      "tool": "todo_write",
+      "category": "happy_path",
+      "tags": ["todo", "update", "status"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Task 1", "status": "completed", "activeForm": "Working on Task 1"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-004",
+      "description": "Complex multi-step task list",
+      "tool": "todo_write",
+      "category": "happy_path",
+      "tags": ["todo", "complex"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Read requirements", "status": "completed", "activeForm": "Reading requirements"},
+            {"content": "Design architecture", "status": "completed", "activeForm": "Designing architecture"},
+            {"content": "Implement features", "status": "in_progress", "activeForm": "Implementing features"},
+            {"content": "Write tests", "status": "pending", "activeForm": "Writing tests"},
+            {"content": "Deploy to production", "status": "pending", "activeForm": "Deploying to production"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-005",
+      "description": "Clear all todos",
+      "tool": "todo_write",
+      "category": "happy_path",
+      "tags": ["todo", "clear"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "todos": []
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-006",
+      "description": "Missing todos parameter",
+      "tool": "todo_write",
+      "category": "error_handling",
+      "tags": ["todo", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-007",
+      "description": "Invalid status value",
+      "tool": "todo_write",
+      "category": "error_handling",
+      "tags": ["todo", "error", "validation"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Task 1", "status": "invalid", "activeForm": "Working on Task 1"}
+          ]
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-008",
+      "description": "Missing content field",
+      "tool": "todo_write",
+      "category": "error_handling",
+      "tags": ["todo", "error", "validation"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"status": "pending", "activeForm": "Working"}
+          ]
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-009",
+      "description": "Missing activeForm field",
+      "tool": "todo_write",
+      "category": "error_handling",
+      "tags": ["todo", "error", "validation"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Task 1", "status": "pending"}
+          ]
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-010",
+      "description": "Empty content",
+      "tool": "todo_write",
+      "category": "error_handling",
+      "tags": ["todo", "error", "validation"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "", "status": "pending", "activeForm": "Working"}
+          ]
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-011",
+      "description": "Multiple in_progress tasks",
+      "tool": "todo_write",
+      "category": "edge_case",
+      "tags": ["todo", "multiple-in-progress"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Task 1", "status": "in_progress", "activeForm": "Working on Task 1"},
+            {"content": "Task 2", "status": "in_progress", "activeForm": "Working on Task 2"}
+          ]
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_STATE"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-012",
+      "description": "Long content",
+      "tool": "todo_write",
+      "category": "edge_case",
+      "tags": ["todo", "long-content"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "This is a very long task description that contains a lot of detail about what needs to be done in this particular step of the process", "status": "pending", "activeForm": "Working on long task"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-013",
+      "description": "Special characters in content",
+      "tool": "todo_write",
+      "category": "edge_case",
+      "tags": ["todo", "special-chars"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Fix @bug #123: Handle <special> characters & symbols", "status": "pending", "activeForm": "Fixing bug"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-014",
+      "description": "Performance test (many todos)",
+      "tool": "todo_write",
+      "category": "performance",
+      "tags": ["todo", "performance", "many"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Task 1", "status": "completed", "activeForm": "Working on Task 1"},
+            {"content": "Task 2", "status": "completed", "activeForm": "Working on Task 2"},
+            {"content": "Task 3", "status": "completed", "activeForm": "Working on Task 3"},
+            {"content": "Task 4", "status": "in_progress", "activeForm": "Working on Task 4"},
+            {"content": "Task 5", "status": "pending", "activeForm": "Working on Task 5"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 100
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "todo-015",
+      "description": "Unicode in content",
+      "tool": "todo_write",
+      "category": "edge_case",
+      "tags": ["todo", "unicode"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "todos": [
+            {"content": "Deploy 🚀 to production", "status": "pending", "activeForm": "Deploying 🚀"}
+          ]
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    }
+  ]
+}

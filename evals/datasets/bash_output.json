@@ -1,0 +1,322 @@
+{
+  "tool": "bash_output",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for bash_output tool",
+  "cases": [
+    {
+      "id": "bashout-001",
+      "description": "Read output from background bash",
+      "tool": "bash_output",
+      "category": "happy_path",
+      "tags": ["bash-output", "basic"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-001"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "output"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-002",
+      "description": "Read incremental output",
+      "tool": "bash_output",
+      "category": "happy_path",
+      "tags": ["bash-output", "incremental"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-002"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "line"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-003",
+      "description": "No new output available",
+      "tool": "bash_output",
+      "category": "edge_case",
+      "tags": ["bash-output", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "bashId": "test-bash-003"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": ""
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-004",
+      "description": "Process completed",
+      "tool": "bash_output",
+      "category": "happy_path",
+      "tags": ["bash-output", "completed"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-004"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "completed"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-005",
+      "description": "Process still running",
+      "tool": "bash_output",
+      "category": "happy_path",
+      "tags": ["bash-output", "running"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-005"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "running"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-006",
+      "description": "Invalid bash ID",
+      "tool": "bash_output",
+      "category": "error_handling",
+      "tags": ["bash-output", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "bashId": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "BASH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-007",
+      "description": "Missing bashId parameter",
+      "tool": "bash_output",
+      "category": "error_handling",
+      "tags": ["bash-output", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-008",
+      "description": "Read stdout and stderr",
+      "tool": "bash_output",
+      "category": "happy_path",
+      "tags": ["bash-output", "stderr"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-008"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "stderr"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-009",
+      "description": "Large output",
+      "tool": "bash_output",
+      "category": "edge_case",
+      "tags": ["bash-output", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "bashId": "test-bash-009"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "line"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-010",
+      "description": "Process failed with error",
+      "tool": "bash_output",
+      "category": "happy_path",
+      "tags": ["bash-output", "failed"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-010"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "failed"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-011",
+      "description": "Multiple readers",
+      "tool": "bash_output",
+      "category": "edge_case",
+      "tags": ["bash-output", "concurrent"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "bashId": "test-bash-011"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "output"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-012",
+      "description": "Read after completion",
+      "tool": "bash_output",
+      "category": "edge_case",
+      "tags": ["bash-output", "post-completion"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-012"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": ""
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-013",
+      "description": "Empty bash ID",
+      "tool": "bash_output",
+      "category": "error_handling",
+      "tags": ["bash-output", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "bashId": ""
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-014",
+      "description": "Performance test",
+      "tool": "bash_output",
+      "category": "performance",
+      "tags": ["bash-output", "performance"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-014"
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 200
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bashout-015",
+      "description": "Unicode in output",
+      "tool": "bash_output",
+      "category": "edge_case",
+      "tags": ["bash-output", "unicode"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-015"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "🚀"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    }
+  ]
+}

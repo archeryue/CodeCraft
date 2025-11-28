@@ -1,0 +1,328 @@
+{
+  "tool": "bash",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for bash tool (run_command)",
+  "cases": [
+    {
+      "id": "bash-001",
+      "description": "Simple echo command",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "echo", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "command": "echo 'hello world'"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "hello world"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-002",
+      "description": "List files in directory",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "ls"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "command": "ls"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test.txt"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "bash-003",
+      "description": "Check file exists",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "test"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "test -f test.txt && echo 'exists'"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "exists"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "bash-004",
+      "description": "Create directory",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "mkdir"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "command": "mkdir newdir"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-005",
+      "description": "Pipe commands",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "pipe"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "echo 'test' | tr 'a-z' 'A-Z'"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "TEST"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-006",
+      "description": "Run in background",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "background"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "sleep 1 && echo 'done'",
+          "runInBackground": true
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "bash_id"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-007",
+      "description": "Command with timeout",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "timeout"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "echo 'quick'",
+          "timeout": 1000
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "quick"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-008",
+      "description": "Command fails (non-zero exit)",
+      "tool": "bash",
+      "category": "error_handling",
+      "tags": ["bash", "error", "exit-code"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "exit 1"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "COMMAND_FAILED"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-009",
+      "description": "Command timeout exceeded",
+      "tool": "bash",
+      "category": "error_handling",
+      "tags": ["bash", "error", "timeout"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "command": "sleep 10",
+          "timeout": 100
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "TIMEOUT"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-010",
+      "description": "Missing command parameter",
+      "tool": "bash",
+      "category": "error_handling",
+      "tags": ["bash", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-011",
+      "description": "Command with environment variables",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "env"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "TEST_VAR=hello && echo $TEST_VAR"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "hello"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-012",
+      "description": "Multi-line output",
+      "tool": "bash",
+      "category": "happy_path",
+      "tags": ["bash", "multiline"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "echo 'line1'; echo 'line2'"
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "line1.*line2"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-013",
+      "description": "Command with stderr",
+      "tool": "bash",
+      "category": "edge_case",
+      "tags": ["bash", "stderr"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "echo 'error' >&2"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "error"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-014",
+      "description": "Performance test (quick command)",
+      "tool": "bash",
+      "category": "performance",
+      "tags": ["bash", "performance"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "echo 'test'"
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 500
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "bash-015",
+      "description": "Command with special characters",
+      "tool": "bash",
+      "category": "edge_case",
+      "tags": ["bash", "special-chars"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "command": "echo 'test@#$%'"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test@#$%"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    }
+  ]
+}

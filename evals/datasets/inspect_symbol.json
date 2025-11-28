@@ -1,0 +1,366 @@
+{
+  "tool": "inspect_symbol",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for inspect_symbol tool",
+  "cases": [
+    {
+      "id": "inspect-001",
+      "description": "Get function symbol info",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "function", "info"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "hello",
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "function"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function hello() { return 'world'; }"
+        }
+      }
+    },
+    {
+      "id": "inspect-002",
+      "description": "Get class symbol info",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "class", "info"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "MyClass",
+          "file": "class.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "class"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "class.ts": "class MyClass { method() {} }"
+        }
+      }
+    },
+    {
+      "id": "inspect-003",
+      "description": "Resolve symbol definition",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "resolve", "definition"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "file": "app.ts",
+          "mode": "resolve"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "util.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { helper } from './util';",
+          "util.ts": "export function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "inspect-004",
+      "description": "Inspect interface symbol",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "interface"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "User",
+          "file": "types.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "interface"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "types.ts": "interface User { name: string; }"
+        }
+      }
+    },
+    {
+      "id": "inspect-005",
+      "description": "Symbol not found in file",
+      "tool": "inspect_symbol",
+      "category": "error_handling",
+      "tags": ["inspect", "error", "not-found"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "nonexistent",
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "SYMBOL_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function hello() {}"
+        }
+      }
+    },
+    {
+      "id": "inspect-006",
+      "description": "File not found",
+      "tool": "inspect_symbol",
+      "category": "error_handling",
+      "tags": ["inspect", "error", "file-not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "test",
+          "file": "nonexistent.ts"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "FILE_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "inspect-007",
+      "description": "Missing symbol parameter",
+      "tool": "inspect_symbol",
+      "category": "error_handling",
+      "tags": ["inspect", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "file": "app.ts"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function test() {}"
+        }
+      }
+    },
+    {
+      "id": "inspect-008",
+      "description": "Missing file parameter",
+      "tool": "inspect_symbol",
+      "category": "error_handling",
+      "tags": ["inspect", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "test"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "inspect-009",
+      "description": "Inspect exported symbol",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "export"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "file": "util.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "export"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "inspect-010",
+      "description": "Inspect method in class",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "method", "class"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "myMethod",
+          "file": "class.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "method"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "class.ts": "class Test { myMethod() {} }"
+        }
+      }
+    },
+    {
+      "id": "inspect-011",
+      "description": "Inspect Rust function",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "rust", "function"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "main",
+          "file": "main.rs"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "fn"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "main.rs": "fn main() {}"
+        }
+      }
+    },
+    {
+      "id": "inspect-012",
+      "description": "Inspect Rust struct",
+      "tool": "inspect_symbol",
+      "category": "happy_path",
+      "tags": ["inspect", "rust", "struct"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "Point",
+          "file": "lib.rs"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "struct"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "lib.rs": "struct Point { x: i32 }"
+        }
+      }
+    },
+    {
+      "id": "inspect-013",
+      "description": "Invalid mode parameter",
+      "tool": "inspect_symbol",
+      "category": "error_handling",
+      "tags": ["inspect", "error", "validation"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "test",
+          "file": "app.ts",
+          "mode": "invalid"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function test() {}"
+        }
+      }
+    },
+    {
+      "id": "inspect-014",
+      "description": "Performance test",
+      "tool": "inspect_symbol",
+      "category": "performance",
+      "tags": ["inspect", "performance"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "symbol": "test",
+          "file": "large.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 200
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "large.ts": "{{repeat:function func{{i}}() {}\n:1000}}\nfunction test() {}"
+        }
+      }
+    },
+    {
+      "id": "inspect-015",
+      "description": "Inspect type alias",
+      "tool": "inspect_symbol",
+      "category": "edge_case",
+      "tags": ["inspect", "type-alias"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "ID",
+          "file": "types.ts"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "type"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "types.ts": "type ID = string | number;"
+        }
+      }
+    }
+  ]
+}

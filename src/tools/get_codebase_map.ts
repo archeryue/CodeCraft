@@ -34,7 +34,13 @@ export const getCodebaseMapTool: Tool = {
     }
 
     try {
-      const map = context.rustEngine.generateRepoMap(p.path || '.');
+      // Resolve path relative to context.cwd to support fixture isolation
+      const mapPath = p.path || '.';
+      const absolutePath = mapPath.startsWith('/')
+        ? mapPath
+        : `${context.cwd}/${mapPath}`.replace(/\/\.$/, '');
+
+      const map = context.rustEngine.generateRepoMap(absolutePath);
       return {
         success: true,
         data: map,

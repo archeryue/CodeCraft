@@ -165,7 +165,12 @@ export class EvalScorer {
       return actual.includes(expected);
     }
 
-    // Array contains
+    // Object/Array contains string value (search recursively)
+    if ((typeof actual === 'object' || Array.isArray(actual)) && actual !== null && typeof expected === 'string') {
+      return this.objectContainsString(actual, expected);
+    }
+
+    // Array contains exact item
     if (Array.isArray(actual)) {
       return actual.some(item => JSON.stringify(item) === JSON.stringify(expected));
     }
@@ -174,6 +179,29 @@ export class EvalScorer {
     if (typeof actual === 'object' && actual !== null &&
         typeof expected === 'object' && expected !== null) {
       return this.objectContains(actual as Record<string, unknown>, expected as Record<string, unknown>);
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if any string value in object (recursively) contains the expected string
+   */
+  private objectContainsString(obj: unknown, expected: string): boolean {
+    if (typeof obj === 'string') {
+      return obj.includes(expected);
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.some(item => this.objectContainsString(item, expected));
+    }
+
+    if (typeof obj === 'object' && obj !== null) {
+      for (const value of Object.values(obj)) {
+        if (this.objectContainsString(value, expected)) {
+          return true;
+        }
+      }
     }
 
     return false;

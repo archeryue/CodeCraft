@@ -1,0 +1,359 @@
+{
+  "tool": "read_file",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for read_file tool",
+  "cases": [
+    {
+      "id": "read-001",
+      "description": "Read simple text file",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "basic", "text"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "hello.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": "Hello, World!"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "hello.txt": "Hello, World!"
+        }
+      }
+    },
+    {
+      "id": "read-002",
+      "description": "Read multi-line file",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "multiline"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "multi.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "line 2"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "multi.txt": "line 1\nline 2\nline 3"
+        }
+      }
+    },
+    {
+      "id": "read-003",
+      "description": "Read file with offset",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "offset", "partial"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "numbers.txt",
+          "offset": 5
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "^6"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "numbers.txt": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10"
+        }
+      }
+    },
+    {
+      "id": "read-004",
+      "description": "Read file with limit",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "limit", "partial"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "numbers.txt",
+          "limit": 3
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "^1\\n2\\n3$"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "numbers.txt": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10"
+        }
+      }
+    },
+    {
+      "id": "read-005",
+      "description": "Read file with offset and limit",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "offset", "limit", "partial"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "numbers.txt",
+          "offset": 3,
+          "limit": 2
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "^4\\n5$"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "numbers.txt": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10"
+        }
+      }
+    },
+    {
+      "id": "read-006",
+      "description": "Read empty file",
+      "tool": "read_file",
+      "category": "edge_case",
+      "tags": ["read", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "empty.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": ""
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "empty.txt": ""
+        }
+      }
+    },
+    {
+      "id": "read-007",
+      "description": "Read file with special characters",
+      "tool": "read_file",
+      "category": "edge_case",
+      "tags": ["read", "special-chars", "unicode"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "special.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "🚀"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "special.txt": "Hello 🚀 World! \n\t Special chars: @#$%^&*()"
+        }
+      }
+    },
+    {
+      "id": "read-008",
+      "description": "Read file in subdirectory",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "subdirectory", "path"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "subdir/nested.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": "nested content"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "subdir/nested.txt": "nested content"
+        }
+      }
+    },
+    {
+      "id": "read-009",
+      "description": "Read JSON file",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "json", "structured"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "data.json"
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "\\{.*name.*:.*test.*\\}"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "data.json": "{\"name\": \"test\", \"value\": 123}"
+        }
+      }
+    },
+    {
+      "id": "read-010",
+      "description": "Read non-existent file",
+      "tool": "read_file",
+      "category": "error_handling",
+      "tags": ["read", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "does-not-exist.txt"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "FILE_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "read-011",
+      "description": "Read directory instead of file",
+      "tool": "read_file",
+      "category": "error_handling",
+      "tags": ["read", "error", "directory"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "somedir"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PATH"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "somedir/.keep": ""
+        }
+      }
+    },
+    {
+      "id": "read-012",
+      "description": "Read with invalid offset (negative)",
+      "tool": "read_file",
+      "category": "error_handling",
+      "tags": ["read", "error", "validation", "offset"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "offset": -1
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "read-013",
+      "description": "Read with invalid limit (zero)",
+      "tool": "read_file",
+      "category": "error_handling",
+      "tags": ["read", "error", "validation", "limit"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "limit": 0
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "read-014",
+      "description": "Read large file (performance)",
+      "tool": "read_file",
+      "category": "performance",
+      "tags": ["read", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "large.txt",
+          "limit": 100
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 100
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "large.txt": "{{repeat:line {{i}}\n:10000}}"
+        }
+      }
+    },
+    {
+      "id": "read-015",
+      "description": "Read file with very long lines",
+      "tool": "read_file",
+      "category": "edge_case",
+      "tags": ["read", "long-lines"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "longline.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "^a{3000}$"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "longline.txt": "{{repeat:a:3000}}"
+        }
+      }
+    }
+  ]
+}

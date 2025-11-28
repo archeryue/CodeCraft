@@ -1,0 +1,375 @@
+{
+  "tool": "find_references",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for find_references tool",
+  "cases": [
+    {
+      "id": "findref-001",
+      "description": "Find function references",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "function"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}",
+          "app.ts": "import { helper } from './util';\nhelper();"
+        }
+      }
+    },
+    {
+      "id": "findref-002",
+      "description": "Find class references",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "class"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "MyClass",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "class.ts": "export class MyClass {}",
+          "app.ts": "import { MyClass } from './class';\nnew MyClass();"
+        }
+      }
+    },
+    {
+      "id": "findref-003",
+      "description": "Multiple references",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "multiple"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}",
+          "app.ts": "import { helper } from './util';\nhelper();\nhelper();",
+          "test.ts": "import { helper } from './util';\nhelper();"
+        }
+      }
+    },
+    {
+      "id": "findref-004",
+      "description": "No references found",
+      "tool": "find_references",
+      "category": "edge_case",
+      "tags": ["references", "none"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "unused",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": []
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function unused() {}",
+          "app.ts": "import { other } from './other';"
+        }
+      }
+    },
+    {
+      "id": "findref-005",
+      "description": "References across subdirectories",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "subdirectory"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "src/app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "lib/util.ts": "export function helper() {}",
+          "src/app.ts": "import { helper } from '../lib/util';\nhelper();"
+        }
+      }
+    },
+    {
+      "id": "findref-006",
+      "description": "Type references",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "type"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "User",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "types.ts": "export interface User { name: string; }",
+          "app.ts": "import type { User } from './types';\nconst user: User = { name: 'test' };"
+        }
+      }
+    },
+    {
+      "id": "findref-007",
+      "description": "Rust symbol references",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "rust"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "main.rs"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "lib.rs": "pub fn helper() {}",
+          "main.rs": "use crate::helper;\nfn main() { helper(); }"
+        }
+      }
+    },
+    {
+      "id": "findref-008",
+      "description": "Method references",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "method"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "symbol": "doSomething",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "class.ts": "export class MyClass { doSomething() {} }",
+          "app.ts": "import { MyClass } from './class';\nconst obj = new MyClass();\nobj.doSomething();"
+        }
+      }
+    },
+    {
+      "id": "findref-009",
+      "description": "Missing symbol parameter",
+      "tool": "find_references",
+      "category": "error_handling",
+      "tags": ["references", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "findref-010",
+      "description": "Non-existent path",
+      "tool": "find_references",
+      "category": "error_handling",
+      "tags": ["references", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "test",
+          "path": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "PATH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "findref-011",
+      "description": "Empty directory",
+      "tool": "find_references",
+      "category": "edge_case",
+      "tags": ["references", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "symbol": "anything",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": []
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "findref-012",
+      "description": "Variable references",
+      "tool": "find_references",
+      "category": "happy_path",
+      "tags": ["references", "variable"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "symbol": "config",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "config.ts": "export const config = { api: 'url' };",
+          "app.ts": "import { config } from './config';\nconsole.log(config.api);"
+        }
+      }
+    },
+    {
+      "id": "findref-013",
+      "description": "Renamed import",
+      "tool": "find_references",
+      "category": "edge_case",
+      "tags": ["references", "renamed"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}",
+          "app.ts": "import { helper as myHelper } from './util';\nmyHelper();"
+        }
+      }
+    },
+    {
+      "id": "findref-014",
+      "description": "Large codebase (performance)",
+      "tool": "find_references",
+      "category": "performance",
+      "tags": ["references", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "symbol": "helper",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 2000
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}",
+          "{{repeat:file{{i}}.ts:50}}": "import { helper } from './util';\nhelper();"
+        }
+      }
+    },
+    {
+      "id": "findref-015",
+      "description": "Namespace usage",
+      "tool": "find_references",
+      "category": "edge_case",
+      "tags": ["references", "namespace"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "symbol": "util",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "export function helper() {}",
+          "app.ts": "import * as util from './util';\nutil.helper();"
+        }
+      }
+    }
+  ]
+}

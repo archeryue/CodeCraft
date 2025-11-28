@@ -20,6 +20,7 @@ export interface FixtureSetupResult {
 export class FixtureManager {
   private tempDirs: Set<string> = new Set();
   private nextId = 1;
+  private rustEngine?: any;
 
   /**
    * Setup a fixture and return isolated ToolContext
@@ -204,6 +205,13 @@ export class FixtureManager {
   }
 
   /**
+   * Set the Rust engine to be used in contexts
+   */
+  setRustEngine(rustEngine: any): void {
+    this.rustEngine = rustEngine;
+  }
+
+  /**
    * Create ToolContext for the fixture
    */
   private createContext(tempDir: string): ToolContext {
@@ -239,7 +247,7 @@ export class FixtureManager {
           return fs.statSync(fullPath);
         }
       },
-      rustEngine: undefined, // Will be provided by test setup if needed
+      rustEngine: this.rustEngine,
       logger: {
         debug: () => {},
         info: () => {},

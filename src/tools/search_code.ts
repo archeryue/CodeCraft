@@ -35,7 +35,13 @@ export const searchCodeTool: Tool = {
     }
 
     try {
-      const results = context.rustEngine.search(p.path || '.', p.query);
+      // Resolve path relative to context.cwd to support fixture isolation
+      const searchPath = p.path || '.';
+      const absolutePath = searchPath.startsWith('/')
+        ? searchPath
+        : `${context.cwd}/${searchPath}`.replace(/\/\.$/, '');
+
+      const results = context.rustEngine.search(absolutePath, p.query);
       return {
         success: true,
         data: results,

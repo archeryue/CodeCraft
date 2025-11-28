@@ -1,0 +1,365 @@
+{
+  "tool": "build_dependency_graph",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for build_dependency_graph tool",
+  "cases": [
+    {
+      "id": "depgraph-001",
+      "description": "Simple dependency chain",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "simple"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { helper } from './util';",
+          "util.ts": "export function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "depgraph-002",
+      "description": "Multi-level dependencies",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "multi-level"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "util.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { helper } from './util';",
+          "util.ts": "import { base } from './base';",
+          "base.ts": "export function base() {}"
+        }
+      }
+    },
+    {
+      "id": "depgraph-003",
+      "description": "Circular dependencies",
+      "tool": "build_dependency_graph",
+      "category": "edge_case",
+      "tags": ["graph", "circular"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "circular"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "a.ts": "import { b } from './b';",
+          "b.ts": "import { a } from './a';"
+        }
+      }
+    },
+    {
+      "id": "depgraph-004",
+      "description": "No dependencies",
+      "tool": "build_dependency_graph",
+      "category": "edge_case",
+      "tags": ["graph", "isolated"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "standalone.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "standalone.ts": "const x = 1;"
+        }
+      }
+    },
+    {
+      "id": "depgraph-005",
+      "description": "External dependencies excluded",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "external"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": "^((?!node_modules).)*$"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import fs from 'fs';\nimport { helper } from './util';",
+          "util.ts": "export function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "depgraph-006",
+      "description": "Multiple entry points",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "multi-entry"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { util1 } from './util1';",
+          "worker.ts": "import { util2 } from './util2';",
+          "util1.ts": "export const util1 = 1;",
+          "util2.ts": "export const util2 = 2;"
+        }
+      }
+    },
+    {
+      "id": "depgraph-007",
+      "description": "Empty directory",
+      "tool": "build_dependency_graph",
+      "category": "edge_case",
+      "tags": ["graph", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": {}
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "depgraph-008",
+      "description": "Shared dependency",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "shared"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "shared.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "a.ts": "import { shared } from './shared';",
+          "b.ts": "import { shared } from './shared';",
+          "shared.ts": "export const shared = 1;"
+        }
+      }
+    },
+    {
+      "id": "depgraph-009",
+      "description": "Non-existent path",
+      "tool": "build_dependency_graph",
+      "category": "error_handling",
+      "tags": ["graph", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "PATH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "depgraph-010",
+      "description": "Missing path parameter",
+      "tool": "build_dependency_graph",
+      "category": "error_handling",
+      "tags": ["graph", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "depgraph-011",
+      "description": "Re-exports in graph",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "re-export"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "index.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { helper } from './index';",
+          "index.ts": "export { helper } from './util';",
+          "util.ts": "export function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "depgraph-012",
+      "description": "Mixed TypeScript and Rust",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "mixed"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { helper } from './util';",
+          "util.ts": "export function helper() {}",
+          "lib.rs": "pub fn rust_helper() {}"
+        }
+      }
+    },
+    {
+      "id": "depgraph-013",
+      "description": "Subdirectory dependencies",
+      "tool": "build_dependency_graph",
+      "category": "happy_path",
+      "tags": ["graph", "subdirectory"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "src/lib/util.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/index.ts": "import { helper } from './lib/util';",
+          "src/lib/util.ts": "export function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "depgraph-014",
+      "description": "Large codebase (performance)",
+      "tool": "build_dependency_graph",
+      "category": "performance",
+      "tags": ["graph", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 3000
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "{{repeat:src/file{{i}}.ts:50}}": "import { func{{i}} } from './util{{i}}';"
+        }
+      }
+    },
+    {
+      "id": "depgraph-015",
+      "description": "Deep dependency chain",
+      "tool": "build_dependency_graph",
+      "category": "edge_case",
+      "tags": ["graph", "deep"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "level5.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "level1.ts": "import { l2 } from './level2';",
+          "level2.ts": "import { l3 } from './level3';",
+          "level3.ts": "import { l4 } from './level4';",
+          "level4.ts": "import { l5 } from './level5';",
+          "level5.ts": "export const l5 = 1;"
+        }
+      }
+    }
+  ]
+}

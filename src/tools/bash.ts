@@ -66,7 +66,7 @@ export const bashTool: Tool = {
       return {
         success: false,
         error: {
-          code: 'VALIDATION_ERROR',
+          code: 'INVALID_PARAMS',
           message: 'Command is required and must be a string'
         }
       };
@@ -76,7 +76,7 @@ export const bashTool: Tool = {
       return {
         success: false,
         error: {
-          code: 'VALIDATION_ERROR',
+          code: 'INVALID_PARAMS',
           message: 'Command cannot be empty'
         }
       };
@@ -89,7 +89,7 @@ export const bashTool: Tool = {
     if (runInBackground) {
       const bashId = generateBashId();
       const childProc = exec(params.command, {
-        cwd: context.workingDir || process.cwd(),
+        cwd: context.cwd || process.cwd(),
         timeout: undefined // No timeout for background processes
       });
 
@@ -165,7 +165,7 @@ export const bashTool: Tool = {
       }, timeout);
 
       childProcess = exec(params.command, {
-        cwd: context.workingDir || process.cwd(),
+        cwd: context.cwd || process.cwd(),
         timeout: timeout
       }, (error, stdout, stderr) => {
         if (hasResolved) {
@@ -177,20 +177,42 @@ export const bashTool: Tool = {
 
         const exitCode = error ? (error.code || 1) : 0;
 
-        resolve({
-          success: true,
-          data: {
-            stdout: stdout,
-            stderr: stderr,
-            exitCode: exitCode,
-            output: stdout + stderr
-          },
-          metadata: {
-            executionTime: Date.now() - start,
-            command: params.command,
-            exitCode: exitCode
-          }
-        });
+        // If command failed (non-zero exit code), return error
+        if (exitCode !== 0) {
+          resolve({
+            success: false,
+            error: {
+              code: 'COMMAND_FAILED',
+              message: `Command failed with exit code ${exitCode}`
+            },
+            data: {
+              stdout: stdout,
+              stderr: stderr,
+              exitCode: exitCode,
+              output: stdout + stderr
+            },
+            metadata: {
+              executionTime: Date.now() - start,
+              command: params.command,
+              exitCode: exitCode
+            }
+          });
+        } else {
+          resolve({
+            success: true,
+            data: {
+              stdout: stdout,
+              stderr: stderr,
+              exitCode: exitCode,
+              output: stdout + stderr
+            },
+            metadata: {
+              executionTime: Date.now() - start,
+              command: params.command,
+              exitCode: exitCode
+            }
+          });
+        }
       });
     });
   }

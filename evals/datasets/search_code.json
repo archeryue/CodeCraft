@@ -1,0 +1,364 @@
+{
+  "tool": "search_code",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for search_code tool (fuzzy symbol search)",
+  "cases": [
+    {
+      "id": "search-001",
+      "description": "Exact function name match",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "exact", "function"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "hello",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "hello"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function hello() { return 'world'; }"
+        }
+      }
+    },
+    {
+      "id": "search-002",
+      "description": "Fuzzy match function name",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "fuzzy", "function"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "hlp",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "helper"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "util.ts": "function helper() { return true; }"
+        }
+      }
+    },
+    {
+      "id": "search-003",
+      "description": "Class name search",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "class"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "MyClass",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "MyClass"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "class.ts": "class MyClass { method() {} }"
+        }
+      }
+    },
+    {
+      "id": "search-004",
+      "description": "Interface name search",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "interface"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "User",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "User"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "types.ts": "interface User { name: string; }"
+        }
+      }
+    },
+    {
+      "id": "search-005",
+      "description": "Search across multiple files",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "multi-file"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "test",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function main() {}",
+          "test.ts": "function test() {}",
+          "util.ts": "function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "search-006",
+      "description": "Rust function search",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "rust", "function"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "main",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "main"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "main.rs": "fn main() { println!(\"hello\"); }"
+        }
+      }
+    },
+    {
+      "id": "search-007",
+      "description": "Rust struct search",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "rust", "struct"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "Point",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "Point"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "lib.rs": "struct Point { x: i32, y: i32 }"
+        }
+      }
+    },
+    {
+      "id": "search-008",
+      "description": "No matches found",
+      "tool": "search_code",
+      "category": "edge_case",
+      "tags": ["search", "no-match"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "nonexistent",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": []
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "function hello() {}"
+        }
+      }
+    },
+    {
+      "id": "search-009",
+      "description": "Empty directory search",
+      "tool": "search_code",
+      "category": "edge_case",
+      "tags": ["search", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "anything",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": []
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "search-010",
+      "description": "Case-insensitive fuzzy match",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "fuzzy", "case-insensitive"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "myclass",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "MyClass"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "class.ts": "class MyClass {}"
+        }
+      }
+    },
+    {
+      "id": "search-011",
+      "description": "Search returns ranked results",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "ranking"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "query": "test",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.ts": "function test() {}",
+          "testing.ts": "function testing() {}",
+          "util.ts": "function helper() {}"
+        }
+      }
+    },
+    {
+      "id": "search-012",
+      "description": "Missing query parameter",
+      "tool": "search_code",
+      "category": "error_handling",
+      "tags": ["search", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "search-013",
+      "description": "Non-existent path",
+      "tool": "search_code",
+      "category": "error_handling",
+      "tags": ["search", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "test",
+          "path": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "PATH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "search-014",
+      "description": "Large codebase search (performance)",
+      "tool": "search_code",
+      "category": "performance",
+      "tags": ["search", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "query": "test",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 1000
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "{{repeat:src/file{{i}}.ts:50}}": "function test{{i}}() { return {{i}}; }"
+        }
+      }
+    },
+    {
+      "id": "search-015",
+      "description": "Search with partial symbol name",
+      "tool": "search_code",
+      "category": "happy_path",
+      "tags": ["search", "partial"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "calc",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "calculate"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "math.ts": "function calculateSum() { return 0; }"
+        }
+      }
+    }
+  ]
+}

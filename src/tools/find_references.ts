@@ -35,7 +35,9 @@ export const findReferencesTool: Tool = {
     }
 
     try {
-      const refs = context.rustEngine.findReferences(p.symbol, p.path || '.');
+      const searchPath = p.path || '.';
+      const absolutePath = searchPath.startsWith('/') ? searchPath : `${context.cwd}/${searchPath}`.replace(/\/\.$/, '');
+      const refs = context.rustEngine.findReferences(p.symbol, absolutePath);
       return {
         success: true,
         data: refs,

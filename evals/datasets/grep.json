@@ -1,0 +1,377 @@
+{
+  "tool": "grep",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for grep tool",
+  "cases": [
+    {
+      "id": "grep-001",
+      "description": "Simple string search",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "basic", "string"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "pattern": "hello",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "test.txt"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "hello world",
+          "other.txt": "goodbye"
+        }
+      }
+    },
+    {
+      "id": "grep-002",
+      "description": "Regex pattern search",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "regex"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "function\\s+\\w+",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "code.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "code.ts": "function test() {}",
+          "data.txt": "no functions"
+        }
+      }
+    },
+    {
+      "id": "grep-003",
+      "description": "Case-insensitive search",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "case-insensitive"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "error",
+          "path": ".",
+          "options": {
+            "caseInsensitive": true
+          }
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "log.txt"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "log.txt": "ERROR: Failed",
+          "test.txt": "success"
+        }
+      }
+    },
+    {
+      "id": "grep-004",
+      "description": "Search with file type filter",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "filter", "type"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "import",
+          "path": ".",
+          "options": {
+            "filePattern": "*.ts"
+          }
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "import { test } from './test'",
+          "app.js": "import test from './test'",
+          "data.txt": "import nothing"
+        }
+      }
+    },
+    {
+      "id": "grep-005",
+      "description": "Search with context lines",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "context"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "pattern": "target",
+          "path": ".",
+          "options": {
+            "contextLines": 1
+          }
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "target"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "line 1\ntarget line\nline 3"
+        }
+      }
+    },
+    {
+      "id": "grep-006",
+      "description": "Multi-file search",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "multi-file"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "TODO",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "app.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "app.ts": "// TODO: implement",
+          "util.ts": "// TODO: refactor",
+          "test.ts": "// complete"
+        }
+      }
+    },
+    {
+      "id": "grep-007",
+      "description": "Whole word match",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "word"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "\\btest\\b",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "code.ts"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "code.ts": "run test now",
+          "other.ts": "testing continues"
+        }
+      }
+    },
+    {
+      "id": "grep-008",
+      "description": "No matches found",
+      "tool": "grep",
+      "category": "edge_case",
+      "tags": ["grep", "no-match"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "pattern": "nonexistent",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": []
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "grep-009",
+      "description": "Search in empty directory",
+      "tool": "grep",
+      "category": "edge_case",
+      "tags": ["grep", "empty"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "pattern": "anything",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": []
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "grep-010",
+      "description": "Search with line numbers",
+      "tool": "grep",
+      "category": "happy_path",
+      "tags": ["grep", "line-numbers"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "error",
+          "path": ".",
+          "options": {
+            "lineNumbers": true
+          }
+        }
+      },
+      "expected": {
+        "success": true,
+        "pattern": ":\\d+:"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "log.txt": "info\nerror occurred\nwarning"
+        }
+      }
+    },
+    {
+      "id": "grep-011",
+      "description": "Invalid regex pattern",
+      "tool": "grep",
+      "category": "error_handling",
+      "tags": ["grep", "error", "invalid-regex"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "[[["
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PATTERN"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "grep-012",
+      "description": "Missing pattern parameter",
+      "tool": "grep",
+      "category": "error_handling",
+      "tags": ["grep", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "grep-013",
+      "description": "Search in non-existent directory",
+      "tool": "grep",
+      "category": "error_handling",
+      "tags": ["grep", "error", "not-found"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "test",
+          "path": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "PATH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "grep-014",
+      "description": "Large codebase search (performance)",
+      "tool": "grep",
+      "category": "performance",
+      "tags": ["grep", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "pattern": "TODO",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 1000
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "{{repeat:file{{i}}.ts:100}}": "// TODO: implement\nexport {}"
+        }
+      }
+    },
+    {
+      "id": "grep-015",
+      "description": "Search with unicode pattern",
+      "tool": "grep",
+      "category": "edge_case",
+      "tags": ["grep", "unicode"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "pattern": "🚀",
+          "path": "."
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "README.md"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "README.md": "# Project 🚀"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,372 @@
+{
+  "tool": "edit_file",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for edit_file tool",
+  "cases": [
+    {
+      "id": "edit-001",
+      "description": "Simple string replacement",
+      "tool": "edit_file",
+      "category": "happy_path",
+      "tags": ["edit", "replace", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "old",
+          "new_string": "new"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "This is old content"
+        }
+      }
+    },
+    {
+      "id": "edit-002",
+      "description": "Replace multi-line text",
+      "tool": "edit_file",
+      "category": "happy_path",
+      "tags": ["edit", "multiline"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "code.ts",
+          "old_string": "function old() {\n  return 1;\n}",
+          "new_string": "function newer() {\n  return 2;\n}"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "code.ts": "function old() {\n  return 1;\n}\n\nconsole.log('test');"
+        }
+      }
+    },
+    {
+      "id": "edit-003",
+      "description": "Replace with indentation preserved",
+      "tool": "edit_file",
+      "category": "happy_path",
+      "tags": ["edit", "indentation", "whitespace"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "code.ts",
+          "old_string": "  console.log('old');",
+          "new_string": "  console.log('new');"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "code.ts": "function test() {\n  console.log('old');\n}"
+        }
+      }
+    },
+    {
+      "id": "edit-004",
+      "description": "Replace entire file content",
+      "tool": "edit_file",
+      "category": "happy_path",
+      "tags": ["edit", "full-replace"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "old content",
+          "new_string": "completely new content"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "old content"
+        }
+      }
+    },
+    {
+      "id": "edit-005",
+      "description": "Delete text (replace with empty)",
+      "tool": "edit_file",
+      "category": "happy_path",
+      "tags": ["edit", "delete"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": " extra",
+          "new_string": ""
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "text extra text"
+        }
+      }
+    },
+    {
+      "id": "edit-006",
+      "description": "Insert text (replace empty with content)",
+      "tool": "edit_file",
+      "category": "edge_case",
+      "tags": ["edit", "insert"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "",
+          "new_string": "inserted"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "edit-007",
+      "description": "Replace special characters",
+      "tool": "edit_file",
+      "category": "edge_case",
+      "tags": ["edit", "special-chars"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "@#$%",
+          "new_string": "safe"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "Special: @#$% chars"
+        }
+      }
+    },
+    {
+      "id": "edit-008",
+      "description": "Replace first occurrence only (default)",
+      "tool": "edit_file",
+      "category": "happy_path",
+      "tags": ["edit", "occurrence", "first"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "foo",
+          "new_string": "bar"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "foo and foo"
+        }
+      }
+    },
+    {
+      "id": "edit-009",
+      "description": "Edit non-existent file",
+      "tool": "edit_file",
+      "category": "error_handling",
+      "tags": ["edit", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "missing.txt",
+          "old_string": "old",
+          "new_string": "new"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "FILE_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "edit-010",
+      "description": "Replace string not found in file",
+      "tool": "edit_file",
+      "category": "error_handling",
+      "tags": ["edit", "error", "not-found"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "nonexistent",
+          "new_string": "new"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "STRING_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "some content"
+        }
+      }
+    },
+    {
+      "id": "edit-011",
+      "description": "Edit with missing old_string parameter",
+      "tool": "edit_file",
+      "category": "error_handling",
+      "tags": ["edit", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "new_string": "new"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "content"
+        }
+      }
+    },
+    {
+      "id": "edit-012",
+      "description": "Edit with missing new_string parameter",
+      "tool": "edit_file",
+      "category": "error_handling",
+      "tags": ["edit", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "old"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "old content"
+        }
+      }
+    },
+    {
+      "id": "edit-013",
+      "description": "Edit identical strings (old == new)",
+      "tool": "edit_file",
+      "category": "error_handling",
+      "tags": ["edit", "error", "validation"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "test.txt",
+          "old_string": "same",
+          "new_string": "same"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "same content"
+        }
+      }
+    },
+    {
+      "id": "edit-014",
+      "description": "Large file edit (performance)",
+      "tool": "edit_file",
+      "category": "performance",
+      "tags": ["edit", "performance", "large"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "path": "large.txt",
+          "old_string": "line 5000",
+          "new_string": "LINE 5000"
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 300
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "large.txt": "{{repeat:line {{i}}\n:10000}}"
+        }
+      }
+    },
+    {
+      "id": "edit-015",
+      "description": "Edit file with unicode content",
+      "tool": "edit_file",
+      "category": "edge_case",
+      "tags": ["edit", "unicode"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "unicode.txt",
+          "old_string": "🔴",
+          "new_string": "🟢"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "unicode.txt": "Status: 🔴 Error"
+        }
+      }
+    }
+  ]
+}

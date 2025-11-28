@@ -1,0 +1,314 @@
+{
+  "tool": "kill_bash",
+  "version": "1.0",
+  "description": "Comprehensive evaluation dataset for kill_bash tool",
+  "cases": [
+    {
+      "id": "kill-001",
+      "description": "Kill running background process",
+      "tool": "kill_bash",
+      "category": "happy_path",
+      "tags": ["kill", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "bashId": "test-bash-001"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-002",
+      "description": "Kill long-running process",
+      "tool": "kill_bash",
+      "category": "happy_path",
+      "tags": ["kill", "long-running"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-002"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-003",
+      "description": "Kill already completed process",
+      "tool": "kill_bash",
+      "category": "edge_case",
+      "tags": ["kill", "completed"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-003"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "already"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-004",
+      "description": "Invalid bash ID",
+      "tool": "kill_bash",
+      "category": "error_handling",
+      "tags": ["kill", "error", "not-found"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "bashId": "nonexistent"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "BASH_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-005",
+      "description": "Missing bashId parameter",
+      "tool": "kill_bash",
+      "category": "error_handling",
+      "tags": ["kill", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {}
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-006",
+      "description": "Kill process with children",
+      "tool": "kill_bash",
+      "category": "happy_path",
+      "tags": ["kill", "children"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "bashId": "test-bash-006"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-007",
+      "description": "Kill immediately after start",
+      "tool": "kill_bash",
+      "category": "edge_case",
+      "tags": ["kill", "immediate"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-007"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-008",
+      "description": "Empty bash ID",
+      "tool": "kill_bash",
+      "category": "error_handling",
+      "tags": ["kill", "error", "validation"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "bashId": ""
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-009",
+      "description": "Kill process writing to file",
+      "tool": "kill_bash",
+      "category": "happy_path",
+      "tags": ["kill", "file-io"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-009"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-010",
+      "description": "Kill multiple processes sequentially",
+      "tool": "kill_bash",
+      "category": "happy_path",
+      "tags": ["kill", "sequential"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-010"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-011",
+      "description": "Double kill (already killed)",
+      "tool": "kill_bash",
+      "category": "edge_case",
+      "tags": ["kill", "double-kill"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-011"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "ALREADY_KILLED"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-012",
+      "description": "Kill process in infinite loop",
+      "tool": "kill_bash",
+      "category": "happy_path",
+      "tags": ["kill", "infinite-loop"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "bashId": "test-bash-012"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-013",
+      "description": "Kill with special bash ID characters",
+      "tool": "kill_bash",
+      "category": "edge_case",
+      "tags": ["kill", "special-chars"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-@#$"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "INVALID_PARAMS"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-014",
+      "description": "Performance test",
+      "tool": "kill_bash",
+      "category": "performance",
+      "tags": ["kill", "performance"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "bashId": "test-bash-014"
+        }
+      },
+      "expected": {
+        "success": true,
+        "performance": {
+          "maxTimeMs": 500
+        }
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    },
+    {
+      "id": "kill-015",
+      "description": "Kill process with cleanup",
+      "tool": "kill_bash",
+      "category": "happy_path",
+      "tags": ["kill", "cleanup"],
+      "difficulty": 3,
+      "input": {
+        "params": {
+          "bashId": "test-bash-015"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    }
+  ]
+}

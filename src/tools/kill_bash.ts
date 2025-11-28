@@ -26,7 +26,7 @@ export const killBashTool: Tool = {
       return {
         success: false,
         error: {
-          code: 'VALIDATION_ERROR',
+          code: 'INVALID_PARAMS',
           message: 'bash_id is required and must be a string'
         }
       };
