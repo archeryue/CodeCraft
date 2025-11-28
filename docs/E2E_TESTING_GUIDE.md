@@ -1,6 +1,6 @@
 # Comprehensive End-to-End Testing Guide
 
-**Last Updated:** 2025-11-26
+**Last Updated:** 2025-11-27
 **Purpose:** Manual and automated E2E testing procedures for CodeCraft
 
 ## Quick Start
@@ -13,13 +13,41 @@ npm run build  # Build Rust engine
 
 ### Run Automated E2E Tests
 ```bash
-npm test -- e2e-comprehensive.test.ts
+npm run test:e2e  # Run all E2E tests
+```
+
+### Run All Tests (Unit + E2E)
+```bash
+npm run test:all
 ```
 
 ### Run Manual Interactive Testing
 ```bash
 npx tsx index.ts
 ```
+
+## E2E Test Infrastructure
+
+### Directory Structure
+```
+tests/e2e/
+├── helper.ts              # Shared utilities (runCLI, cleanup, retry)
+├── file_tools.test.ts     # File operation tests (glob, grep, list_directory)
+└── code_analysis.test.ts  # Code analysis tests (inspect_symbol, get_imports_exports)
+```
+
+### Helper Utilities (`tests/e2e/helper.ts`)
+- `runCLI(query, timeoutMs)` - Execute CLI with query and capture output
+- `runCLIWithRetry(query, retries, timeoutMs)` - Retry for flaky LLM responses
+- `cleanupProcesses()` - Kill all spawned CLI processes
+- `skipIfNoAPIKey()` - Skip tests when GEMINI_API_KEY not set
+- `hasAPIKey()` - Check if API key is available
+
+### Configuration (`vitest.e2e.config.ts`)
+- Test timeout: 120 seconds per test
+- Hook timeout: 60 seconds
+- Sequential execution (no parallel tests)
+- Longer teardown timeout for process cleanup
 
 ## Manual Testing Scenarios
 
@@ -378,17 +406,17 @@ Verify:
 
 ### Run All E2E Tests
 ```bash
-npm test -- e2e-comprehensive.test.ts
+npm run test:e2e
 ```
 
-### Run Specific Test Suite
+### Run Specific Test File
 ```bash
-npm test -- e2e-comprehensive.test.ts -t "File Operations"
+npx vitest run --config vitest.e2e.config.ts tests/e2e/file_tools.test.ts
 ```
 
-### Run Single Test
+### Run Single Test by Name
 ```bash
-npm test -- e2e-comprehensive.test.ts -t "should read files"
+npx vitest run --config vitest.e2e.config.ts -t "should find test files"
 ```
 
 ## Performance Testing
@@ -513,11 +541,14 @@ E2E testing is successful when:
 
 Add to CI pipeline:
 ```yaml
+- name: Unit Tests
+  run: npm test
+
 - name: E2E Tests
   run: |
     export GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
     npm run build
-    npm test -- e2e-comprehensive.test.ts
+    npm run test:e2e
 ```
 
 ---

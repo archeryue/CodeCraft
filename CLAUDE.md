@@ -21,14 +21,21 @@ This builds the Rust engine and copies the compiled `.node` addon to the project
 
 ### Testing
 ```bash
-npm test
+npm test          # Run unit tests (excludes E2E)
+npm run test:e2e  # Run E2E tests separately
+npm run test:all  # Run both unit and E2E tests
 ```
-Runs the full test suite using Vitest.
+Runs the test suite using Vitest.
 
 **Running Tests in Watch Mode:**
 ```bash
 npx vitest
 ```
+
+**Test Configuration:**
+- `vitest.config.ts` - Main config for unit tests (excludes `tests/e2e/`)
+- `vitest.e2e.config.ts` - E2E test config with longer timeouts
+- `vitest.setup.ts` - Global setup with force-exit on completion
 
 ### Running the CLI
 ```bash
@@ -239,10 +246,22 @@ The agent uses three framework modules for intelligent behavior:
 
 ### Test Guidelines:
 - Tests are in `tests/` directory using Vitest
+- E2E tests are in `tests/e2e/` directory (run separately)
 - Test files mirror source structure (e.g., `tools.test.ts` tests `src/tools.ts`)
 - Use mocking for external dependencies (fs, API calls, etc.)
 - Each test should be isolated and independent
 - **Write tests BEFORE implementation** (RED → GREEN → REFACTOR)
+
+### E2E Test Infrastructure:
+- **Location**: `tests/e2e/` directory
+- **Helper**: `tests/e2e/helper.ts` - utilities for CLI process management
+- **Test Files**: Split by feature (e.g., `file_tools.test.ts`, `code_analysis.test.ts`)
+- **Run Command**: `npm run test:e2e`
+- **Features**:
+  - Automatic process cleanup on test exit
+  - Retry logic for flaky LLM responses
+  - Longer timeouts (120s per test)
+  - API key validation with skip support
 
 ### End-to-End Testing:
 **MANDATORY:** After implementing or modifying features, you MUST test the interactive CLI exactly as a user would:
@@ -282,8 +301,8 @@ npx tsx index.ts
 - Tools are called when expected
 - User can type multiple queries in one session
 
-See `TESTING.md` for detailed testing instructions.
-See `TEST_PLANS.md` for all feature test plans and the TDD process.
+See `docs/E2E_TESTING_GUIDE.md` for comprehensive E2E testing procedures.
+See `docs/TEST_PLAN_TEMPLATE.md` for test plan templates.
 
 ## Common Patterns
 

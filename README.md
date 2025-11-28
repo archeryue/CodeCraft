@@ -81,13 +81,16 @@ npx tsx index.ts
 
 ## Development
 
-*   **Testing**: Run `npm test` (uses Vitest)
+*   **Testing**:
+    - `npm test` - Run unit tests (525 tests)
+    - `npm run test:e2e` - Run E2E tests (requires GEMINI_API_KEY)
+    - `npm run test:all` - Run both unit and E2E tests
 *   **TDD**: We strictly follow Test-Driven Development. See `CLAUDE.md` for development rules
-*   **Documentation**: See `docs/` folder for development plans, testing guides, and workflow documentation
-    - `docs/MASTER_PLAN.md` - 6-week development roadmap
-    - `docs/TEST_PLANS.md` - Test plans and TDD tracking
-    - `docs/TESTING.md` - Testing guidelines
+*   **Documentation**: See `docs/` folder for architecture, testing guides, and workflow documentation
+    - `docs/README.md` - Documentation index
+    - `docs/E2E_TESTING_GUIDE.md` - Comprehensive E2E testing procedures
     - `docs/WORKFLOW.md` - Agent workflow documentation
+    - `docs/PLUGGABLE_TOOLS_ARCHITECTURE.md` - Tools architecture
 
 ## License
 MIT
