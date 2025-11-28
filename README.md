@@ -1,5 +1,14 @@
 # CodeCraft
 
+CodeCraft aims to combine the strengths of both **Claude Code** and **Augment Code**:
+
+- **Claude Code's Advantage**: Direct command-line operation with an agentic workflow that can read, write, and execute code autonomously
+- **Augment Code's Advantage**: Real-time code analysis and indexing capabilities for large codebases
+
+The goal is to create a CLI coding assistant that operates directly in the terminal (like Claude Code) while also providing deep, real-time understanding of large codebases through AST-based indexing and analysis (like Augment Code).
+
+---
+
 CodeCraft is a high-performance, agentic CLI coding assistant that combines the interactive capabilities of an AI agent with deep, local codebase understanding powered by Rust. It allows you to explore, edit, and understand your code through a natural language interface.
 
 ## Key Features
