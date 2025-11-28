@@ -102,22 +102,15 @@ Current E2E test coverage and roadmap:
 - Performance optimizations and lessons learned
 
 ### 📝 [Test Plans](testing/test-plans/)
-Detailed test plans for all features:
+**Active test plans for in-progress features**
 
-**Evaluation System:**
+Evaluation System (currently at 53.7% tool evals, 65.3% LLM evals):
 - `eval-types.test-plan.md` - Type definitions
 - `dataset-loader.test-plan.md` - Dataset loading
 - `fixture-manager.test-plan.md` - Fixture isolation
 - `scorer.test-plan.md` - Result scoring
 
-**Tool Optimization:**
-- `init-command.md` - /init slash command
-- `inspect-symbol.md` - Symbol inspection tool
-- `bash-tools.md` - Background process management
-- `remove-analysis-tools.md` - Registry cleanup
-- `pluggable-tools-architecture.md` - Migration plan
-- `IMPLEMENTATION_SUMMARY.md` - Overall summary
-- `README.md` - Test plans index
+Completed test plans moved to [archive/](#archive)
 
 ---
 
@@ -157,21 +150,21 @@ Detailed analysis of 139 failed tests:
 
 Historical documents and completed work.
 
-### 📚 [Tools Optimization History](archive/TOOLS_OPTIMIZATION_HISTORY.md)
-Complete history of tools optimization (19 → 17 tools):
-- Phase 1: /init command ✅
-- Phase 2: inspect_symbol merge ✅
-- Phase 3: Analysis tools cleanup ✅
-- Phase 4: Bash tools expansion ✅
-- Final statistics and achievements
+### Completed Features & Implementations
 
-### 📄 [Commit Summary](archive/COMMIT_SUMMARY.md)
-Git commit message helper (single-use, archived)
+**Architecture & Tools:**
+- `TOOLS_OPTIMIZATION_HISTORY.md` - Tools optimization (19 → 17 tools)
+- `pluggable-tools-architecture.md` - Pluggable tools migration
+- `bash-tools.md` - Background process management
+- `init-command.md` - /init slash command implementation
+- `inspect-symbol.md` - Symbol inspection tool
+- `remove-analysis-tools.md` - Tool registry cleanup
+- `llm-eval-runner.md` - LLM evaluation infrastructure
 
-### 📄 [Test Results Final](archive/TEST_RESULTS_FINAL.md)
-Historical test results from pluggable tools migration
-- Note: Now at 428 tests (was 464)
-- Document references old architecture
+**Test Results & Summaries:**
+- `TEST_RESULTS_FINAL.md` - Historical test results (references old architecture)
+- `IMPLEMENTATION_SUMMARY.md` - Overall implementation summary
+- `COMMIT_SUMMARY.md` - Git commit message helper (single-use)
 
 ---
 

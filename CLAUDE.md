@@ -30,20 +30,25 @@ This builds the Rust engine and copies the compiled `.node` addon to the project
 
 ### Testing
 ```bash
-npm test          # Run unit tests (excludes E2E)
-npm run test:e2e  # Run E2E tests separately
-npm run test:all  # Run both unit and E2E tests
+npm test          # Run unit tests (527 tests, 100% pass rate, <1 min)
+npm run test:e2e  # Run E2E tests (20 tests, 100% pass rate, ~5 min)
+npm run test:all  # Run both unit and E2E tests (547 total)
 ```
-Runs the test suite using Vitest.
 
 **Running Tests in Watch Mode:**
 ```bash
 npx vitest
 ```
 
+**Running Evaluations:**
+```bash
+npx tsx run-all-evals.ts   # Tool evaluations (161/300 passing, 53.7%)
+npx tsx run-llm-evals.ts   # LLM evaluations (47/72 passing, 65.3%)
+```
+
 **Test Configuration:**
 - `vitest.config.ts` - Main config for unit tests (excludes `tests/e2e/`)
-- `vitest.e2e.config.ts` - E2E test config with longer timeouts
+- `vitest.e2e.config.ts` - E2E test config with 90s timeout
 - `vitest.setup.ts` - Global setup with force-exit on completion
 
 ### Running the CLI
@@ -196,6 +201,56 @@ The agent uses three framework modules for intelligent behavior:
 - Suggests alternative strategies when stuck
 - Shows `[Loop Detected]` and `[Suggestion]` warnings
 
+## Testing Strategy
+
+CodeCraft uses a **three-layer testing approach** to ensure both functional correctness and AI intelligence quality:
+
+### 1. Unit Tests (527 tests, 100% pass rate, <1 min)
+**Purpose**: Verify functional correctness of individual components
+
+- Test pure functions and deterministic logic
+- Mock external dependencies (filesystem, LLM, etc.)
+- Cover edge cases and error conditions
+- Fast execution for rapid feedback
+
+**Location**: `tests/` directory (excludes `tests/e2e/`)
+
+### 2. End-to-End Tests (20 tests, 100% pass rate, ~5 min)
+**Purpose**: Verify system integration and real-world workflows
+
+- Test actual CLI with real LLM interactions
+- Verify tools are called correctly
+- Ensure system doesn't crash or hang
+- Cover 12/17 registered tools (71% coverage)
+
+**Philosophy**: We test that the LLM **responds normally**, not that it's **smart**.
+- ✅ Verify basic tool calling works
+- ✅ Check system produces output
+- ❌ Don't test if LLM chose the "best" tool
+- ❌ Don't test quality of explanations
+
+**Location**: `tests/e2e/` directory
+
+### 3. Evaluation System (161/300 tool evals, 47/72 LLM evals)
+**Purpose**: Measure AI intelligence quality - "how well does it work?"
+
+**Tool Evaluations** (53.7% pass rate):
+- Verify tools produce correct/high-quality results
+- 15 test cases per tool (300 total)
+- Validate data transformations and edge cases
+
+**LLM Evaluations** (65.3% pass rate):
+- Verify LLM makes smart decisions
+- Test tool selection intelligence
+- Measure reasoning quality
+- Track performance over time
+
+**Key Distinction**:
+- **E2E Tests**: "Does it work?" → System produces output
+- **Evaluations**: "How well does it work?" → Correct tool, good reasoning
+
+See `docs/testing/TESTING_STRATEGY.md` for comprehensive testing philosophy.
+
 ## Development Rules
 
 **CRITICAL: This project strictly follows Test-Driven Development (TDD).**
@@ -244,15 +299,33 @@ The agent uses three framework modules for intelligent behavior:
 - **Write tests BEFORE implementation** (RED → GREEN → REFACTOR)
 
 ### E2E Test Infrastructure:
+**Current Status**: 20 tests passing (100%), 12/17 tools covered (71%)
+
 - **Location**: `tests/e2e/` directory
 - **Helper**: `tests/e2e/helper.ts` - utilities for CLI process management
-- **Test Files**: Split by feature (e.g., `file_tools.test.ts`, `code_analysis.test.ts`)
+- **Test Files**: 7 focused files (2-4 tests each):
+  - `file-tools.test.ts` - Glob, Grep, ListDirectory
+  - `file-read-operations.test.ts` - ReadFile, ListDirectory
+  - `search-operations.test.ts` - Search workflows
+  - `code-analysis.test.ts` - InspectSymbol, GetImportsExports
+  - `advanced-code-analysis.test.ts` - GetCodebaseMap, SearchCode
+  - `multi-step-workflows.test.ts` - Complex workflows
+  - `integration-scenarios.test.ts` - Real-world scenarios
 - **Run Command**: `npm run test:e2e`
 - **Features**:
   - Automatic process cleanup on test exit
-  - Retry logic for flaky LLM responses
-  - Longer timeouts (120s per test)
+  - Retry logic for flaky LLM responses (1 retry = 2 attempts)
+  - Optimized timeouts (90s per test, 45s per attempt)
+  - Sequential execution (no parallel)
+  - 2-second delay between retries
   - API key validation with skip support
+
+**Performance**:
+- Fast execution: ~5.2 minutes for full suite
+- 100% pass rate (20/20 tests)
+- No thread hanging issues
+
+See `docs/testing/E2E_TESTING_GUIDE.md` and `docs/testing/E2E_TEST_COVERAGE_PLAN.md` for details.
 
 ### End-to-End Testing:
 **MANDATORY:** After implementing or modifying features, you MUST test the interactive CLI exactly as a user would:
@@ -292,8 +365,10 @@ npx tsx index.ts
 - Tools are called when expected
 - User can type multiple queries in one session
 
-See `docs/E2E_TESTING_GUIDE.md` for comprehensive E2E testing procedures.
-See `docs/TEST_PLAN_TEMPLATE.md` for test plan templates.
+**Documentation**:
+- `docs/testing/E2E_TESTING_GUIDE.md` - Comprehensive E2E testing procedures
+- `docs/testing/TESTING_STRATEGY.md` - Three-layer testing philosophy
+- `docs/development/TEST_PLAN_TEMPLATE.md` - Test plan templates
 
 ## Common Patterns
 
@@ -312,6 +387,25 @@ See `docs/TEST_PLAN_TEMPLATE.md` for test plan templates.
 3. Test changes by running the CLI or via `npm test`
 
 **Important:** The Rust code must be recompiled after any changes. The Node.js code loads the compiled `.node` file, not the source.
+
+## Code Conventions
+
+### File Naming
+- **All files use `snake_case`**: `read_file.ts`, `tool_executor.ts`, `dataset_loader.ts`
+- Test files mirror source structure: `src/tools/read_file.ts` → `tests/tools/read_file.test.ts`
+- E2E test files use kebab-case: `file-tools.test.ts`, `code-analysis.test.ts`
+
+### Code Style
+- **Classes**: PascalCase (`Agent`, `ToolExecutor`, `FixtureManager`)
+- **Functions/Methods**: camelCase (`executeTool()`, `runCase()`, `confirmChange()`)
+- **Interfaces/Types**: PascalCase (`EvalCase`, `ToolResult`, `RunOptions`)
+- **Variables**: camelCase (`fixtureManager`, `evalCase`, `testResults`)
+- **Constants**: UPPER_SNAKE_CASE for true constants, camelCase for config objects
+
+### Import Style
+- Use ES Modules (`import`/`export`)
+- Group imports: external packages first, then internal modules
+- Use type imports where applicable: `import type { ToolResult } from './types'`
 
 ## File Structure Notes
 

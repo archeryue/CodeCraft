@@ -90,16 +90,66 @@ npx tsx index.ts
 
 ## Development
 
-*   **Testing**:
-    - `npm test` - Run unit tests (525 tests)
-    - `npm run test:e2e` - Run E2E tests (requires GEMINI_API_KEY)
-    - `npm run test:all` - Run both unit and E2E tests
-*   **TDD**: We strictly follow Test-Driven Development. See `CLAUDE.md` for development rules
-*   **Documentation**: See `docs/` folder for architecture, testing guides, and workflow documentation
-    - `docs/README.md` - Documentation index
-    - `docs/E2E_TESTING_GUIDE.md` - Comprehensive E2E testing procedures
-    - `docs/WORKFLOW.md` - Agent workflow documentation
-    - `docs/PLUGGABLE_TOOLS_ARCHITECTURE.md` - Tools architecture
+### Testing Strategy
+
+CodeCraft uses a three-layer testing approach:
+
+1. **Unit Tests** (527 tests) - Verify functional correctness of individual components
+2. **E2E Tests** (20 tests) - Verify system integration and real-world workflows
+3. **Evaluation System** - Measure AI intelligence quality (53.7% tool evals, 65.3% LLM evals)
+
+**Philosophy**: "Test that it works, then measure how well it works"
+- Unit + E2E tests answer: "Does it work?"
+- Evaluations answer: "How well does it work?"
+
+### Running Tests
+
+```bash
+npm test          # Run unit tests (527 tests, 100% pass rate)
+npm run test:e2e  # Run E2E tests (20 tests, ~5 min, requires GEMINI_API_KEY)
+npm run test:all  # Run both unit and E2E tests (547 total)
+```
+
+### Test-Driven Development
+
+We strictly follow TDD (RED → GREEN → REFACTOR):
+1. Write test plan before any code
+2. Write tests (they fail - RED)
+3. Implement feature (tests pass - GREEN)
+4. Refactor while keeping tests green
+5. Test end-to-end with actual CLI
+
+See `CLAUDE.md` for complete development rules.
+
+### Documentation
+
+Comprehensive documentation in `docs/` directory:
+
+**Quick Links**:
+- **[docs/README.md](docs/README.md)** - Documentation index and navigation
+- **[CLAUDE.md](CLAUDE.md)** - Development rules and conventions
+
+**Architecture**:
+- [Pluggable Tools Architecture](docs/architecture/PLUGGABLE_TOOLS_ARCHITECTURE.md) - 17 modular tools
+- [Tools Philosophy](docs/architecture/TOOLS_SIMPLIFIED.md) - Design principles
+
+**Testing**:
+- [Testing Strategy](docs/testing/TESTING_STRATEGY.md) - Three-layer testing philosophy
+- [E2E Testing Guide](docs/testing/E2E_TESTING_GUIDE.md) - Comprehensive E2E procedures
+- [E2E Test Coverage Plan](docs/testing/E2E_TEST_COVERAGE_PLAN.md) - Current coverage status
+
+**Development**:
+- [Agent Workflow](docs/development/WORKFLOW.md) - Execution patterns
+- [Bad Cases](docs/development/BADCASES.md) - Known issues and edge cases
+
+### Current Status
+
+**Architecture**: ✅ 17 pluggable tools
+**Test Coverage**: ✅ 547 tests passing (100%)
+- Unit Tests: 527 tests
+- E2E Tests: 20 tests (71% tool coverage, ~5 min runtime)
+**Evaluation**: 🚧 Tool Evals: 53.7% (161/300) | LLM Evals: 65.3% (47/72)
+**Documentation**: ✅ Organized in docs/ directory
 
 ## License
 MIT
