@@ -2,8 +2,8 @@
 
 This directory contains all project documentation except for the root-level `README.md` and `CLAUDE.md`.
 
-**Last Updated:** 2025-11-27
-**Project Status:** 17 tools, 428 tests passing (100%)
+**Last Updated:** 2025-11-28
+**Project Status:** 17 tools, 527 unit tests + 20 E2E tests passing (100%)
 
 ---
 
@@ -74,6 +74,16 @@ Documented edge cases and known issues:
 
 Testing infrastructure, guides, and test plans.
 
+### 🎯 [Testing Strategy](testing/TESTING_STRATEGY.md)
+**Philosophy:** Test that it works, then measure how well it works
+
+Comprehensive testing strategy and philosophy:
+- Unit Tests + E2E: Verify "does it work?" (functional correctness)
+- Evaluations: Verify "how well does it work?" (quality/intelligence)
+- Decision matrix for choosing test types
+- Guidelines for writing each test type
+- Current metrics and coverage status
+
 ### 🧪 [E2E Testing Guide](testing/E2E_TESTING_GUIDE.md)
 Comprehensive end-to-end testing procedures:
 - Manual testing scenarios (50+ test cases)
@@ -81,6 +91,15 @@ Comprehensive end-to-end testing procedures:
 - Helper utilities and configuration
 - Performance testing
 - Debugging guide
+
+### 📊 [E2E Test Coverage Plan](testing/E2E_TEST_COVERAGE_PLAN.md)
+**Status:** ✅ 20 tests passing (100%) across 7 files
+
+Current E2E test coverage and roadmap:
+- 20/20 tests passing (100% pass rate)
+- 12/17 tools covered (71% coverage)
+- ~5.2 minutes execution time
+- Performance optimizations and lessons learned
 
 ### 📝 [Test Plans](testing/test-plans/)
 Detailed test plans for all features:
@@ -159,8 +178,10 @@ Historical test results from pluggable tools migration
 ## Current Status
 
 **Architecture:** ✅ Pluggable tools complete (17 tools)
-**Test Coverage:** ✅ 428 tests passing (100%)
-**Evaluation:** 🚧 53.7% pass rate (161/300), Phase 2 complete
+**Test Coverage:** ✅ 547 tests passing (100%)
+  - Unit Tests: 527 tests
+  - E2E Tests: 20 tests (71% tool coverage)
+**Evaluation:** 🚧 Tool Evals: 53.7% (161/300) | LLM Evals: 65.3% (47/72)
 **Documentation:** ✅ Organized and up-to-date
 
 ### Tool Breakdown (17 tools)
