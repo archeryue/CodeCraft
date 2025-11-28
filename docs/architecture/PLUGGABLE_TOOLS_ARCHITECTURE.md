@@ -26,16 +26,16 @@ The previous `src/tools.ts` implementation had several limitations (all now reso
 
 6. **No Versioning**: Tools cannot be versioned independently.
 
-### Current Tool Categories
+### Current Tool Categories (17 tools total)
 
 | Category | Tools | Characteristics |
 |----------|-------|-----------------|
-| File Operations | read_file, write_file, edit_file, delete_file | Side effects on filesystem |
-| Search & Discovery | glob, grep, list_directory | Read-only, filesystem access |
-| AST-Based (Rust) | search_code, get_codebase_map, get_symbol_info, get_imports_exports, build_dependency_graph, resolve_symbol, find_references | Depends on Rust engine |
-| Project Analysis | detect_project_type, extract_conventions, get_project_overview | Read-only, aggregates data |
-| Execution | run_command | Side effects, security sensitive |
-| State Management | todo_write | In-memory state |
+| File Operations (4) | read_file, write_file, edit_file, delete_file | Side effects on filesystem |
+| Search & Discovery (5) | glob, grep, list_directory, get_codebase_map, search_code | Read-only, filesystem access |
+| AST-Based Tools (4) | inspect_symbol, get_imports_exports, build_dependency_graph, find_references | Depends on Rust engine |
+| Execution & Process (4) | bash, bash_output, kill_bash, todo_write | Side effects, process management |
+
+**Note:** Project analysis tools (detect_project_type, extract_conventions, get_project_overview) are used only by the `/init` command and are not registered in the LLM-accessible tool registry.
 
 ---
 

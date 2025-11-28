@@ -2,46 +2,205 @@
 
 This directory contains all project documentation except for the root-level `README.md` and `CLAUDE.md`.
 
-## Quick Links
+**Last Updated:** 2025-11-27
+**Project Status:** 17 tools, 428 tests passing (100%)
 
-### Architecture
-- **[Pluggable Tools Architecture](PLUGGABLE_TOOLS_ARCHITECTURE.md)** - Core architecture overview
-- **[Tools Simplified](TOOLS_SIMPLIFIED.md)** - Philosophy: Simple tools + Smart agent
-- **[Tools Optimization Summary](TOOLS_OPTIMIZATION_COMPLETE.md)** - Final implementation summary
+---
 
-### Workflow & Development
-- **[Workflow](WORKFLOW.md)** - Agent workflow and execution patterns
-- **[Test Plan Template](TEST_PLAN_TEMPLATE.md)** - Template for writing test plans (TDD)
+## Quick Start
 
-### Testing
-- **[E2E Testing Guide](E2E_TESTING_GUIDE.md)** - Comprehensive testing procedures (manual + automated)
-- **[Test Results](TEST_RESULTS_FINAL.md)** - Latest test results and statistics
+- **New to CodeCraft?** Start with [root README.md](../README.md)
+- **Contributing code?** Read [CLAUDE.md](../CLAUDE.md) for development rules
+- **Running tests?** See [Testing Guide](testing/E2E_TESTING_GUIDE.md)
+- **Understanding the architecture?** See [Architecture](#architecture)
 
-### Evaluation System
-- **[Tools Evaluation Implementation Plan](TOOLS_EVALUATION_IMPLEMENTATION_PLAN.md)** - Evaluation framework implementation
-- **Test Plans**: `docs/test-plans/` - Individual test plans for evaluation components
+---
 
-### Reference
-- **[Bad Cases](BADCASES.md)** - Edge cases and known issues to handle
+## Architecture
 
-## Test Commands
+Core system architecture and design philosophy.
 
-```bash
-npm test          # Run unit tests (525 tests, excludes E2E)
-npm run test:e2e  # Run E2E tests (requires GEMINI_API_KEY)
-npm run test:all  # Run both unit and E2E tests
-```
+### 📐 [Pluggable Tools Architecture](architecture/PLUGGABLE_TOOLS_ARCHITECTURE.md)
+**Status:** ✅ Implemented (17 tools)
 
-## Document Organization
+Comprehensive overview of the pluggable tools architecture:
+- Tool interface design
+- Registry and executor pattern
+- Context injection and isolation
+- Testing infrastructure
+- Migration from monolithic system
 
-All documentation files must be placed in this directory, with only two exceptions:
-- `README.md` - Project overview (stays in repository root)
-- `CLAUDE.md` - Instructions for Claude Code (stays in repository root)
+### 🎯 [Tools Philosophy](architecture/TOOLS_SIMPLIFIED.md)
+**Principle:** Simple Tools + Smart Agent = Complex Capabilities
+
+Core design philosophy:
+- Why we have 17 tools, not 40+
+- Composability over specialization
+- Examples of tool orchestration
+- Comparison with over-engineered approaches
+
+---
+
+## Development
+
+Guides for developing and contributing to CodeCraft.
+
+### 🔄 [Agent Workflow](development/WORKFLOW.md)
+Agent execution patterns and workflows:
+- Intent classification
+- Task planning
+- Execution patterns
+- Verification requirements
+- Quality standards
+
+### 📋 [Test Plan Template](development/TEST_PLAN_TEMPLATE.md)
+Template for writing test plans (TDD methodology):
+- Happy path tests
+- Edge cases
+- Error handling
+- Integration tests
+- E2E verification steps
+
+### 🐛 [Bad Cases](development/BADCASES.md)
+Documented edge cases and known issues:
+- BC-001: Empty prompt handling ✅ Fixed
+- BC-002: Code search results ✅ Fixed
+- BC-003: Project type detection ⚠️ Partially fixed
+- BC-004: Tool call loops ✅ Fixed
+
+---
+
+## Testing
+
+Testing infrastructure, guides, and test plans.
+
+### 🧪 [E2E Testing Guide](testing/E2E_TESTING_GUIDE.md)
+Comprehensive end-to-end testing procedures:
+- Manual testing scenarios (50+ test cases)
+- Automated E2E test infrastructure
+- Helper utilities and configuration
+- Performance testing
+- Debugging guide
+
+### 📝 [Test Plans](testing/test-plans/)
+Detailed test plans for all features:
+
+**Evaluation System:**
+- `eval-types.test-plan.md` - Type definitions
+- `dataset-loader.test-plan.md` - Dataset loading
+- `fixture-manager.test-plan.md` - Fixture isolation
+- `scorer.test-plan.md` - Result scoring
+
+**Tool Optimization:**
+- `init-command.md` - /init slash command
+- `inspect-symbol.md` - Symbol inspection tool
+- `bash-tools.md` - Background process management
+- `remove-analysis-tools.md` - Registry cleanup
+- `pluggable-tools-architecture.md` - Migration plan
+- `IMPLEMENTATION_SUMMARY.md` - Overall summary
+- `README.md` - Test plans index
+
+---
+
+## Evaluation
+
+Tool evaluation system and results.
+
+### 📊 [Evaluation System Plan](evaluation/TOOLS_EVALUATION_IMPLEMENTATION_PLAN.md)
+**Status:** 🚧 Phase 2 Complete (53.7% pass rate)
+
+Comprehensive evaluation framework:
+- Phase 1: Core infrastructure ✅ Complete
+- Phase 2: Unit tool evaluation ✅ Complete (161/300 passing)
+- Phase 3: LLM evaluation 📋 Planned
+- Phase 4: Chain & E2E evaluation 📋 Planned
+- Phase 5: CLI, reporting, CI 📋 Planned
+
+### 📈 [Evaluation Improvement Summary](evaluation/EVALUATION_IMPROVEMENT_SUMMARY.md)
+Results from improving evaluation pass rate:
+- Initial: 22.3% → Final: 53.7%
+- Key fixes applied
+- Results by category
+- Known limitations
+- Performance metrics
+
+### 🔍 [Failure Analysis](evaluation/FAILURE_ANALYSIS.md)
+Detailed analysis of 139 failed tests:
+- Path resolution issues (27 failures)
+- Background process dependencies (27 failures)
+- Validation/edge cases (31 failures)
+- Scorer logic issues (15+ failures)
+- Priority fix recommendations
+
+---
+
+## Archive
+
+Historical documents and completed work.
+
+### 📚 [Tools Optimization History](archive/TOOLS_OPTIMIZATION_HISTORY.md)
+Complete history of tools optimization (19 → 17 tools):
+- Phase 1: /init command ✅
+- Phase 2: inspect_symbol merge ✅
+- Phase 3: Analysis tools cleanup ✅
+- Phase 4: Bash tools expansion ✅
+- Final statistics and achievements
+
+### 📄 [Commit Summary](archive/COMMIT_SUMMARY.md)
+Git commit message helper (single-use, archived)
+
+### 📄 [Test Results Final](archive/TEST_RESULTS_FINAL.md)
+Historical test results from pluggable tools migration
+- Note: Now at 428 tests (was 464)
+- Document references old architecture
+
+---
 
 ## Current Status
 
-**Architecture:** ✅ Pluggable tools architecture complete (17 tools, optimized from 19)
-**Test Coverage:** ✅ 525 unit tests passing (100%)
-**E2E Tests:** ✅ Separate test infrastructure in `tests/e2e/`
-**Evaluation:** ✅ Comprehensive evaluation system (53.7% pass rate)
-**Documentation:** ✅ Up to date as of 2025-11-27
+**Architecture:** ✅ Pluggable tools complete (17 tools)
+**Test Coverage:** ✅ 428 tests passing (100%)
+**Evaluation:** 🚧 53.7% pass rate (161/300), Phase 2 complete
+**Documentation:** ✅ Organized and up-to-date
+
+### Tool Breakdown (17 tools)
+- **File Operations (4):** read_file, write_file, edit_file, delete_file
+- **Search & Discovery (5):** glob, grep, list_directory, get_codebase_map, search_code
+- **AST-Based Tools (4):** inspect_symbol, get_imports_exports, build_dependency_graph, find_references
+- **Execution & Process (4):** bash, bash_output, kill_bash, todo_write
+
+**Note:** 3 project analysis tools (detect_project_type, extract_conventions, get_project_overview) exist but are only used by `/init` command, not in LLM registry.
+
+---
+
+## Document Organization Rules
+
+All documentation must be placed in `docs/`, with only two exceptions:
+- `README.md` - Project overview (stays in repository root)
+- `CLAUDE.md` - Instructions for Claude Code (stays in repository root)
+
+### Directory Structure
+```
+docs/
+├── README.md (this file)
+├── architecture/     - System design and architecture
+├── development/      - Development guides and workflows
+├── testing/          - Testing guides and test plans
+├── evaluation/       - Evaluation system and results
+└── archive/          - Historical and completed documents
+```
+
+---
+
+## Contributing to Documentation
+
+When adding new documentation:
+1. Place in appropriate subdirectory
+2. Update this README.md index
+3. Follow naming convention: lowercase with hyphens
+4. Include status and date at top of document
+5. Cross-reference related documents
+
+---
+
+**For the most up-to-date project information, see [CLAUDE.md](../CLAUDE.md)**
