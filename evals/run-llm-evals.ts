@@ -1,34 +1,34 @@
 // run-llm-evals.ts - LLM tool selection evaluation runner
 
-import { DatasetLoader } from './src/eval/dataset-loader';
-import { EvalScorer } from './src/eval/scorer';
-import { LLMEvalRunner, type LLMEvalCase } from './src/eval/llm-runner';
-import { DefaultToolRegistry } from './src/tool-registry';
-import type { EvalResult, EvalSummary } from './src/eval/types';
+import { DatasetLoader } from '../src/eval/dataset-loader';
+import { EvalScorer } from '../src/eval/scorer';
+import { LLMEvalRunner, type LLMEvalCase } from '../src/eval/llm-runner';
+import { DefaultToolRegistry } from '../src/tool-registry';
+import type { EvalResult, EvalSummary } from '../src/eval/types';
 import * as fs from 'fs';
 import * as path from 'path';
 
 // Import all tools
-import { readFileTool } from './src/tools/read-file';
-import { writeFileTool } from './src/tools/write-file';
-import { editFileTool } from './src/tools/edit-file';
-import { deleteFileTool } from './src/tools/delete-file';
-import { listDirectoryTool } from './src/tools/list-directory';
-import { globTool } from './src/tools/glob';
-import { grepTool } from './src/tools/grep';
-import { getCodebaseMapTool } from './src/tools/get-codebase-map';
-import { searchCodeTool } from './src/tools/search-code';
-import { inspectSymbolTool } from './src/tools/inspect-symbol';
-import { getImportsExportsTool } from './src/tools/get-imports-exports';
-import { buildDependencyGraphTool } from './src/tools/build-dependency-graph';
-import { findReferencesTool } from './src/tools/find-references';
-import { detectProjectTypeTool } from './src/tools/detect-project-type';
-import { extractConventionsTool } from './src/tools/extract-conventions';
-import { getProjectOverviewTool } from './src/tools/get-project-overview';
-import { bashTool } from './src/tools/bash';
-import { bashOutputTool } from './src/tools/bash-output';
-import { killBashTool } from './src/tools/kill-bash';
-import { todoWriteTool } from './src/tools/todo-write';
+import { readFileTool } from '../src/tools/read-file';
+import { writeFileTool } from '../src/tools/write-file';
+import { editFileTool } from '../src/tools/edit-file';
+import { deleteFileTool } from '../src/tools/delete-file';
+import { listDirectoryTool } from '../src/tools/list-directory';
+import { globTool } from '../src/tools/glob';
+import { grepTool } from '../src/tools/grep';
+import { getCodebaseMapTool } from '../src/tools/get-codebase-map';
+import { searchCodeTool } from '../src/tools/search-code';
+import { inspectSymbolTool } from '../src/tools/inspect-symbol';
+import { getImportsExportsTool } from '../src/tools/get-imports-exports';
+import { buildDependencyGraphTool } from '../src/tools/build-dependency-graph';
+import { findReferencesTool } from '../src/tools/find-references';
+import { detectProjectTypeTool } from '../src/tools/detect-project-type';
+import { extractConventionsTool } from '../src/tools/extract-conventions';
+import { getProjectOverviewTool } from '../src/tools/get-project-overview';
+import { bashTool } from '../src/tools/bash';
+import { bashOutputTool } from '../src/tools/bash-output';
+import { killBashTool } from '../src/tools/kill-bash';
+import { todoWriteTool } from '../src/tools/todo-write';
 
 interface LLMEvalDataset {
   tool: string;
