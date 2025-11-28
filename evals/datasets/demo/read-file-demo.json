@@ -1,0 +1,74 @@
+{
+  "tool": "read_file",
+  "version": "1.0",
+  "description": "Demo evaluation dataset for read_file tool",
+  "cases": [
+    {
+      "id": "demo-read-001",
+      "description": "Read simple text file",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "hello.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "exact": "Hello, World!"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "hello.txt": "Hello, World!"
+        }
+      }
+    },
+    {
+      "id": "demo-read-002",
+      "description": "Read file with specific content",
+      "tool": "read_file",
+      "category": "happy_path",
+      "tags": ["read", "contains"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "path": "test.txt"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "CodeCraft"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "test.txt": "Welcome to CodeCraft evaluation system!"
+        }
+      }
+    },
+    {
+      "id": "demo-read-003",
+      "description": "Read non-existent file",
+      "tool": "read_file",
+      "category": "error_handling",
+      "tags": ["read", "error"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "path": "does-not-exist.txt"
+        }
+      },
+      "expected": {
+        "success": false,
+        "errorCode": "FILE_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {}
+      }
+    }
+  ]
+}
