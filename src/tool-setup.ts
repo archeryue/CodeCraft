@@ -8,13 +8,10 @@ import { DefaultToolExecutor } from './tool-executor';
 import { createDefaultContext } from './tool-context';
 import type { ToolContext } from './types/tool';
 
-// Import all tools
+// Import all tools (13 total)
 import {
   readFileTool,
-  writeFileTool,
-  deleteFileTool,
   editFileTool,
-  listDirectoryTool,
   globTool,
   grepTool,
   todoWriteTool,
@@ -25,10 +22,7 @@ import {
   getCodebaseMapTool,
   inspectSymbolTool,
   getImportsExportsTool,
-  buildDependencyGraphTool,
   findReferencesTool
-  // Note: Analysis tools (detect_project_type, extract_conventions, get_project_overview)
-  // are imported directly in agent.ts for /init command only, not registered here
 } from './tools/index';
 
 const require = createRequire(import.meta.url);
@@ -48,23 +42,24 @@ try {
 // Create and configure the registry
 const registry = new DefaultToolRegistry();
 
-// Register all tools (17 total - analysis tools moved to /init only)
+// Register all tools (13 total)
+// File operations (2)
 registry.register(readFileTool);
-registry.register(writeFileTool);
-registry.register(deleteFileTool);
 registry.register(editFileTool);
-registry.register(listDirectoryTool);
+
+// Utility tools (6)
 registry.register(globTool);
 registry.register(grepTool);
 registry.register(todoWriteTool);
 registry.register(bashTool);
 registry.register(bashOutputTool);
 registry.register(killBashTool);
+
+// Rust engine tools (5)
 registry.register(searchCodeTool);
 registry.register(getCodebaseMapTool);
 registry.register(inspectSymbolTool);
 registry.register(getImportsExportsTool);
-registry.register(buildDependencyGraphTool);
 registry.register(findReferencesTool);
 
 // Create executor

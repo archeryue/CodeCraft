@@ -182,7 +182,7 @@
       "expected": {
         "expectedTool": "GetCodebaseMap",
         "acceptableTools": [
-          "ListDirectory",
+          "Bash",
           "Glob"
         ],
         "expectedParams": {
@@ -279,7 +279,7 @@
         "expectedTool": "Glob",
         "acceptableTools": [
           "Grep",
-          "ListDirectory"
+          "Bash"
         ],
         "expectedParams": {
           "pattern": {

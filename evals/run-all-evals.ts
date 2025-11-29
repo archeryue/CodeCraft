@@ -10,23 +10,16 @@ import type { EvalResult, EvalSummary, EvalCase } from '../src/eval/types';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Import all tools
+// Import all tools (13 total)
 import { readFileTool } from '../src/tools/read-file';
-import { writeFileTool } from '../src/tools/write-file';
 import { editFileTool } from '../src/tools/edit-file';
-import { deleteFileTool } from '../src/tools/delete-file';
-import { listDirectoryTool } from '../src/tools/list-directory';
 import { globTool } from '../src/tools/glob';
 import { grepTool } from '../src/tools/grep';
 import { getCodebaseMapTool } from '../src/tools/get-codebase-map';
 import { searchCodeTool } from '../src/tools/search-code';
 import { inspectSymbolTool } from '../src/tools/inspect-symbol';
 import { getImportsExportsTool } from '../src/tools/get-imports-exports';
-import { buildDependencyGraphTool } from '../src/tools/build-dependency-graph';
 import { findReferencesTool } from '../src/tools/find-references';
-import { detectProjectTypeTool } from '../src/tools/detect-project-type';
-import { extractConventionsTool } from '../src/tools/extract-conventions';
-import { getProjectOverviewTool } from '../src/tools/get-project-overview';
 import { bashTool } from '../src/tools/bash';
 import { bashOutputTool } from '../src/tools/bash-output';
 import { killBashTool } from '../src/tools/kill-bash';
@@ -40,7 +33,7 @@ interface ToolEvalSummary extends EvalSummary {
 async function runAllEvaluations() {
   console.log('🚀 CodeCraft Comprehensive Tool Evaluation\n');
   console.log('='.repeat(80));
-  console.log('Running evaluations for all 20 tools with 300 test cases\n');
+  console.log('Running evaluations for all 13 tools\n');
 
   // Initialize components
   const loader = new DatasetLoader();
@@ -48,24 +41,17 @@ async function runAllEvaluations() {
   const scorer = new EvalScorer();
   const registry = new DefaultToolRegistry();
 
-  // Register all tools
+  // Register all tools (13 total)
   const tools = [
     readFileTool,
-    writeFileTool,
     editFileTool,
-    deleteFileTool,
-    listDirectoryTool,
     globTool,
     grepTool,
     getCodebaseMapTool,
     searchCodeTool,
     inspectSymbolTool,
     getImportsExportsTool,
-    buildDependencyGraphTool,
     findReferencesTool,
-    detectProjectTypeTool,
-    extractConventionsTool,
-    getProjectOverviewTool,
     bashTool,
     bashOutputTool,
     killBashTool,
@@ -187,10 +173,9 @@ async function runAllEvaluations() {
   console.log('\n📋 Results by Category:');
 
   const categories = {
-    'File Operations': ['read_file', 'write_file', 'edit_file', 'delete_file', 'list_directory'],
+    'File Operations': ['read_file', 'edit_file'],
     'Search & Discovery': ['glob', 'grep', 'get_codebase_map', 'search_code'],
-    'AST-Based Tools': ['inspect_symbol', 'get_imports_exports', 'build_dependency_graph', 'find_references'],
-    'Project Analysis': ['detect_project_type', 'extract_conventions', 'get_project_overview'],
+    'AST-Based Tools': ['inspect_symbol', 'get_imports_exports', 'find_references'],
     'Execution & Process': ['bash', 'bash_output', 'kill_bash', 'todo_write']
   };
 
@@ -200,12 +185,16 @@ async function runAllEvaluations() {
     const categoryTotal = categorySummaries.reduce((sum, s) => sum + s.totalCases, 0);
 
     console.log(`\n  ${category}:`);
-    console.log(`    Total: ${categoryTotal} cases, Passed: ${categoryPassed} (${(categoryPassed/categoryTotal*100).toFixed(1)}%)`);
+    if (categoryTotal > 0) {
+      console.log(`    Total: ${categoryTotal} cases, Passed: ${categoryPassed} (${(categoryPassed/categoryTotal*100).toFixed(1)}%)`);
 
-    categorySummaries.forEach(s => {
-      const icon = s.passedCases === s.totalCases ? '✅' : '⚠️';
-      console.log(`    ${icon} ${s.toolName}: ${s.passedCases}/${s.totalCases}`);
-    });
+      categorySummaries.forEach(s => {
+        const icon = s.passedCases === s.totalCases ? '✅' : '⚠️';
+        console.log(`    ${icon} ${s.toolName}: ${s.passedCases}/${s.totalCases}`);
+      });
+    } else {
+      console.log('    No tools in this category');
+    }
   }
 
   // Show failed tools
@@ -224,10 +213,12 @@ async function runAllEvaluations() {
 
   // Performance summary
   console.log('\n⚡ Performance Summary:');
-  const avgTime = allSummaries.reduce((sum, s) => sum + s.performance.avgExecutionTimeMs, 0) / allSummaries.length;
-  const maxTime = Math.max(...allSummaries.map(s => s.performance.maxExecutionTimeMs));
-  console.log(`   Average execution time: ${avgTime.toFixed(0)}ms`);
-  console.log(`   Max execution time: ${maxTime.toFixed(0)}ms`);
+  if (allSummaries.length > 0) {
+    const avgTime = allSummaries.reduce((sum, s) => sum + s.performance.avgExecutionTimeMs, 0) / allSummaries.length;
+    const maxTime = Math.max(...allSummaries.map(s => s.performance.maxExecutionTimeMs));
+    console.log(`   Average execution time: ${avgTime.toFixed(0)}ms`);
+    console.log(`   Max execution time: ${maxTime.toFixed(0)}ms`);
+  }
 
   console.log('\n' + '='.repeat(80));
   if (totalFailed === 0) {

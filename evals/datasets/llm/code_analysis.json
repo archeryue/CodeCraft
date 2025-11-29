@@ -100,7 +100,7 @@
     },
     {
       "id": "llm-analysis-005",
-      "description": "Build dependency graph",
+      "description": "Analyze project dependencies",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -109,12 +109,15 @@
       ],
       "difficulty": 3,
       "input": {
-        "query": "Show me the dependency graph for the project"
+        "query": "Show me the dependencies in the project"
       },
       "expected": {
-        "expectedTool": "BuildDependencyGraph",
+        "expectedTool": "GetImportsExports",
+        "acceptableTools": [
+          "Grep"
+        ],
         "expectedParams": {
-          "path": {
+          "file": {
             "type": "string"
           }
         }
@@ -134,13 +137,12 @@
         "query": "What files depend on src/agent.ts?"
       },
       "expected": {
-        "expectedTool": "BuildDependencyGraph",
+        "expectedTool": "FindReferences",
         "acceptableTools": [
-          "Grep",
-          "FindReferences"
+          "Grep"
         ],
         "expectedParams": {
-          "path": {
+          "symbol": {
             "type": "string"
           }
         }
@@ -315,7 +317,7 @@
       "expected": {
         "expectedTool": "GetCodebaseMap",
         "acceptableTools": [
-          "ListDirectory"
+          "Bash"
         ],
         "expectedParams": {
           "path": {
@@ -340,7 +342,7 @@
       "expected": {
         "expectedTool": "GetImportsExports",
         "acceptableTools": [
-          "BuildDependencyGraph"
+          "Grep"
         ],
         "expectedParams": {
           "file": {

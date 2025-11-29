@@ -1,5 +1,5 @@
 // E2E Tests for File Reading Operations
-// Tests: read_file, list_directory
+// Tests: read_file, bash (for directory listing)
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { runCLIWithRetry, cleanupProcesses, skipIfNoAPIKey } from './helper';
@@ -22,12 +22,13 @@ describe('E2E: File Reading Operations', () => {
     expect(result.output).toMatch(/package\.json|codecraft|name/i);
   }, 90000);
 
-  it('should list directory contents with ListDirectory', async () => {
+  it('should list directory contents with Bash', async () => {
     const result = await runCLIWithRetry(
       'list files in the src directory'
     );
 
-    expect(result.output).toMatch(/Tool Call.*ListDirectory/i);
+    // Uses Bash (ls) or Glob for directory listing
+    expect(result.output).toMatch(/Tool Call.*(Bash|Glob)/i);
     expect(result.output).toMatch(/agent\.ts|tool-setup\.ts/i);
   }, 90000);
 

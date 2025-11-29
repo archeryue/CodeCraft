@@ -18,8 +18,8 @@ describe('E2E: Multi-Step Workflows', () => {
       'first list files in src, then read agent.ts'
     );
 
-    // Should call both tools
-    expect(result.output).toMatch(/Tool Call.*ListDirectory/i);
+    // Should call both tools (Bash/Glob for listing, ReadFile for reading)
+    expect(result.output).toMatch(/Tool Call.*(Bash|Glob)/i);
     expect(result.output).toMatch(/Tool Call.*ReadFile/i);
     expect(result.output).toMatch(/agent\.ts/i);
   }, 90000);

@@ -8,25 +8,16 @@
       "description": "Read specific file",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "read"
-      ],
+      "tags": ["file_ops", "read"],
       "difficulty": 1,
       "input": {
         "query": "Show me the contents of package.json"
       },
       "expected": {
         "expectedTool": "ReadFile",
-        "forbiddenTools": [
-          "WriteFile",
-          "EditFile",
-          "DeleteFile"
-        ],
+        "forbiddenTools": ["EditFile"],
         "expectedParams": {
-          "path": {
-            "pattern": "package\\.json"
-          }
+          "path": { "pattern": "package\\.json" }
         }
       }
     },
@@ -35,24 +26,15 @@
       "description": "Read file with extension",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "read"
-      ],
+      "tags": ["file_ops", "read"],
       "difficulty": 1,
       "input": {
         "query": "Can you read the README.md file?"
       },
       "expected": {
         "expectedTool": "ReadFile",
-        "forbiddenTools": [
-          "WriteFile",
-          "DeleteFile"
-        ],
         "expectedParams": {
-          "path": {
-            "pattern": "README"
-          }
+          "path": { "pattern": "README" }
         }
       }
     },
@@ -61,10 +43,7 @@
       "description": "Read file from subdirectory",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "read"
-      ],
+      "tags": ["file_ops", "read"],
       "difficulty": 2,
       "input": {
         "query": "Show me src/agent.ts"
@@ -72,63 +51,42 @@
       "expected": {
         "expectedTool": "ReadFile",
         "expectedParams": {
-          "path": {
-            "pattern": "src.*agent"
-          }
+          "path": { "pattern": "src.*agent" }
         }
       }
     },
     {
       "id": "llm-file-004",
-      "description": "Create new file",
+      "description": "Create new file (use Bash)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "write"
-      ],
+      "tags": ["file_ops", "write"],
       "difficulty": 1,
       "input": {
         "query": "Create a file called test.txt with the content 'Hello World'"
       },
       "expected": {
-        "expectedTool": "WriteFile",
-        "forbiddenTools": [
-          "ReadFile",
-          "DeleteFile"
-        ],
+        "expectedTool": "Bash",
+        "forbiddenTools": ["ReadFile"],
         "expectedParams": {
-          "path": {
-            "contains": "test"
-          },
-          "content": {
-            "contains": "Hello"
-          }
+          "command": { "type": "string" }
         }
       }
     },
     {
       "id": "llm-file-005",
-      "description": "Write configuration file",
+      "description": "Write configuration file (use Bash)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "write"
-      ],
+      "tags": ["file_ops", "write"],
       "difficulty": 2,
       "input": {
         "query": "Create a config.json file with empty object"
       },
       "expected": {
-        "expectedTool": "WriteFile",
+        "expectedTool": "Bash",
         "expectedParams": {
-          "path": {
-            "contains": "config"
-          },
-          "content": {
-            "type": "string"
-          }
+          "command": { "type": "string" }
         }
       }
     },
@@ -137,29 +95,17 @@
       "description": "Edit file - replace text",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "edit"
-      ],
+      "tags": ["file_ops", "edit"],
       "difficulty": 2,
       "input": {
         "query": "In test.txt, replace 'Hello' with 'Hi'"
       },
       "expected": {
         "expectedTool": "EditFile",
-        "forbiddenTools": [
-          "DeleteFile"
-        ],
         "expectedParams": {
-          "path": {
-            "contains": "test"
-          },
-          "old_string": {
-            "contains": "Hello"
-          },
-          "new_string": {
-            "contains": "Hi"
-          }
+          "path": { "contains": "test" },
+          "old_string": { "contains": "Hello" },
+          "new_string": { "contains": "Hi" }
         }
       }
     },
@@ -168,140 +114,101 @@
       "description": "Edit file - update variable",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "edit"
-      ],
+      "tags": ["file_ops", "edit"],
       "difficulty": 2,
       "input": {
         "query": "Change the version in package.json from 1.0.0 to 1.1.0"
       },
       "expected": {
         "expectedTool": "EditFile",
-        "acceptableTools": [
-          "WriteFile"
-        ],
         "expectedParams": {
-          "path": {
-            "contains": "package"
-          }
+          "path": { "contains": "package" }
         }
       }
     },
     {
       "id": "llm-file-008",
-      "description": "Delete file",
+      "description": "Delete file (use Bash rm)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "delete"
-      ],
+      "tags": ["file_ops", "delete"],
       "difficulty": 1,
       "input": {
         "query": "Delete the file temp.txt"
       },
       "expected": {
-        "expectedTool": "DeleteFile",
-        "forbiddenTools": [
-          "WriteFile",
-          "EditFile"
-        ],
+        "expectedTool": "Bash",
+        "forbiddenTools": ["EditFile"],
         "expectedParams": {
-          "path": {
-            "contains": "temp"
-          }
+          "command": { "pattern": "rm" }
         }
       }
     },
     {
       "id": "llm-file-009",
-      "description": "Remove test file",
+      "description": "Remove test file (use Bash)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "delete"
-      ],
+      "tags": ["file_ops", "delete"],
       "difficulty": 1,
       "input": {
         "query": "Remove test.log"
       },
       "expected": {
-        "expectedTool": "DeleteFile",
+        "expectedTool": "Bash",
         "expectedParams": {
-          "path": {
-            "pattern": "test.*log"
-          }
+          "command": { "pattern": "rm.*test.*log" }
         }
       }
     },
     {
       "id": "llm-file-010",
-      "description": "List directory contents",
+      "description": "List directory contents (use Bash ls)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "list"
-      ],
+      "tags": ["file_ops", "list"],
       "difficulty": 1,
       "input": {
         "query": "What files are in the src directory?"
       },
       "expected": {
-        "expectedTool": "ListDirectory",
+        "expectedTool": "Bash",
         "expectedParams": {
-          "path": {
-            "contains": "src"
-          }
+          "command": { "pattern": "ls.*src" }
         }
       }
     },
     {
       "id": "llm-file-011",
-      "description": "List current directory",
+      "description": "List current directory (use Bash)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "list"
-      ],
+      "tags": ["file_ops", "list"],
       "difficulty": 1,
       "input": {
         "query": "Show me what's in this directory"
       },
       "expected": {
-        "expectedTool": "ListDirectory",
-        "acceptableTools": [
-          "Bash"
-        ],
+        "expectedTool": "Bash",
         "expectedParams": {
-          "path": {
-            "type": "string"
-          }
+          "command": { "pattern": "ls" }
         }
       }
     },
     {
       "id": "llm-file-012",
-      "description": "Browse project structure",
+      "description": "Browse project structure (use Bash)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "list"
-      ],
+      "tags": ["file_ops", "list"],
       "difficulty": 2,
       "input": {
         "query": "List all files in the tests folder"
       },
       "expected": {
-        "expectedTool": "ListDirectory",
+        "expectedTool": "Bash",
         "expectedParams": {
-          "path": {
-            "pattern": "tests?"
-          }
+          "command": { "pattern": "ls.*tests?" }
         }
       }
     },
@@ -310,11 +217,7 @@
       "description": "Read partial file",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "read",
-        "advanced"
-      ],
+      "tags": ["file_ops", "read", "advanced"],
       "difficulty": 3,
       "input": {
         "query": "Show me the first 10 lines of index.ts"
@@ -322,12 +225,8 @@
       "expected": {
         "expectedTool": "ReadFile",
         "expectedParams": {
-          "path": {
-            "contains": "index"
-          },
-          "limit": {
-            "type": "number"
-          }
+          "path": { "contains": "index" },
+          "limit": { "type": "number" }
         }
       }
     },
@@ -336,11 +235,7 @@
       "description": "Edit code file",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "edit",
-        "code"
-      ],
+      "tags": ["file_ops", "edit", "code"],
       "difficulty": 2,
       "input": {
         "query": "In src/agent.ts, change the timeout from 30000 to 60000"
@@ -348,41 +243,26 @@
       "expected": {
         "expectedTool": "EditFile",
         "expectedParams": {
-          "path": {
-            "pattern": "agent"
-          },
-          "old_string": {
-            "contains": "30000"
-          },
-          "new_string": {
-            "contains": "60000"
-          }
+          "path": { "pattern": "agent" },
+          "old_string": { "contains": "30000" },
+          "new_string": { "contains": "60000" }
         }
       }
     },
     {
       "id": "llm-file-015",
-      "description": "Create script file",
+      "description": "Create script file (use Bash)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "write",
-        "script"
-      ],
+      "tags": ["file_ops", "write", "script"],
       "difficulty": 2,
       "input": {
         "query": "Create a script.sh file that echoes 'Hello'"
       },
       "expected": {
-        "expectedTool": "WriteFile",
+        "expectedTool": "Bash",
         "expectedParams": {
-          "path": {
-            "contains": "script"
-          },
-          "content": {
-            "type": "string"
-          }
+          "command": { "type": "string" }
         }
       }
     },
@@ -391,23 +271,16 @@
       "description": "Ambiguous read vs list",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "ambiguous"
-      ],
+      "tags": ["file_ops", "ambiguous"],
       "difficulty": 2,
       "input": {
         "query": "What's in package.json?"
       },
       "expected": {
         "expectedTool": "ReadFile",
-        "acceptableTools": [
-          "ListDirectory"
-        ],
+        "acceptableTools": ["Bash"],
         "expectedParams": {
-          "path": {
-            "contains": "package"
-          }
+          "path": { "contains": "package" }
         }
       }
     },
@@ -416,23 +289,14 @@
       "description": "Should NOT delete for edit",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "safety"
-      ],
+      "tags": ["file_ops", "safety"],
       "difficulty": 2,
       "input": {
         "query": "Update the title in README.md"
       },
       "expected": {
         "expectedTool": "EditFile",
-        "acceptableTools": [
-          "WriteFile",
-          "ReadFile"
-        ],
-        "forbiddenTools": [
-          "DeleteFile"
-        ]
+        "acceptableTools": ["ReadFile"]
       }
     },
     {
@@ -440,21 +304,14 @@
       "description": "Should NOT write for read",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "safety"
-      ],
+      "tags": ["file_ops", "safety"],
       "difficulty": 1,
       "input": {
         "query": "Display the contents of config.json"
       },
       "expected": {
         "expectedTool": "ReadFile",
-        "forbiddenTools": [
-          "WriteFile",
-          "EditFile",
-          "DeleteFile"
-        ]
+        "forbiddenTools": ["EditFile"]
       }
     },
     {
@@ -462,10 +319,7 @@
       "description": "Read with offset parameter",
       "tool": "llm_evaluation",
       "category": "llm_params",
-      "tags": [
-        "file_ops",
-        "params"
-      ],
+      "tags": ["file_ops", "params"],
       "difficulty": 3,
       "input": {
         "query": "Show me lines 50-100 of src/agent.ts"
@@ -473,40 +327,26 @@
       "expected": {
         "expectedTool": "ReadFile",
         "expectedParams": {
-          "path": {
-            "contains": "agent"
-          },
-          "offset": {
-            "type": "number"
-          },
-          "limit": {
-            "type": "number"
-          }
+          "path": { "contains": "agent" },
+          "offset": { "type": "number" },
+          "limit": { "type": "number" }
         }
       }
     },
     {
       "id": "llm-file-020",
-      "description": "Create file in subdirectory",
+      "description": "Create file in subdirectory (use Bash)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "write"
-      ],
+      "tags": ["file_ops", "write"],
       "difficulty": 2,
       "input": {
         "query": "Create a new file at src/utils/helper.ts"
       },
       "expected": {
-        "expectedTool": "WriteFile",
+        "expectedTool": "Bash",
         "expectedParams": {
-          "path": {
-            "pattern": "src.*utils.*helper"
-          },
-          "content": {
-            "type": "string"
-          }
+          "command": { "type": "string" }
         }
       }
     },
@@ -515,11 +355,7 @@
       "description": "View this file (implicit current)",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "read",
-        "context"
-      ],
+      "tags": ["file_ops", "read", "context"],
       "difficulty": 2,
       "input": {
         "query": "Show me this file"
@@ -527,9 +363,7 @@
       "expected": {
         "expectedTool": "ReadFile",
         "expectedParams": {
-          "path": {
-            "type": "string"
-          }
+          "path": { "type": "string" }
         }
       }
     },
@@ -538,10 +372,7 @@
       "description": "Edit multiple occurrences",
       "tool": "llm_evaluation",
       "category": "llm_selection",
-      "tags": [
-        "file_ops",
-        "edit"
-      ],
+      "tags": ["file_ops", "edit"],
       "difficulty": 3,
       "input": {
         "query": "In test.ts, replace all occurrences of 'foo' with 'bar'"
@@ -549,15 +380,9 @@
       "expected": {
         "expectedTool": "EditFile",
         "expectedParams": {
-          "path": {
-            "contains": "test"
-          },
-          "old_string": {
-            "contains": "foo"
-          },
-          "new_string": {
-            "contains": "bar"
-          }
+          "path": { "contains": "test" },
+          "old_string": { "contains": "foo" },
+          "new_string": { "contains": "bar" }
         }
       }
     }
