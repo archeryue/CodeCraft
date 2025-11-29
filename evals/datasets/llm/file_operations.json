@@ -85,7 +85,7 @@
       },
       "expected": {
         "expectedTool": "Bash",
-        "acceptableTools": ["EditFile"]
+        "forbiddenTools": ["EditFile"]
       }
     },
     {
@@ -253,7 +253,7 @@
       },
       "expected": {
         "expectedTool": "Bash",
-        "acceptableTools": ["EditFile"]
+        "forbiddenTools": ["EditFile"]
       }
     },
     {
@@ -335,7 +335,7 @@
       },
       "expected": {
         "expectedTool": "Bash",
-        "acceptableTools": ["EditFile"]
+        "forbiddenTools": ["EditFile"]
       }
     },
     {

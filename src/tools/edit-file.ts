@@ -5,7 +5,7 @@ import { SchemaType } from '@google/generative-ai';
 
 export const editFileTool: Tool = {
   name: 'EditFile',
-  description: 'Edits a file by replacing old_string with new_string. Replaces only the first occurrence.',
+  description: 'Edits an existing file by replacing old_string with new_string. Cannot create new files - use Bash for that. Replaces only the first occurrence.',
   version: '1.0.0',
 
   parameters: {
