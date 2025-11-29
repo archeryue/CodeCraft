@@ -12,8 +12,8 @@ CodeCraft is a terminal-based AI coding assistant designed to bridge the gap bet
 By combining these approaches, CodeCraft delivers an assistant that can both *act* autonomously and *understand* code deeply.
 
 **Key Metrics:**
-- 17 registered tools + 3 analysis tools
-- 527 unit tests (100% pass rate)
+- 9 registered tools + 3 analysis tools
+- 450 unit tests (100% pass rate)
 - 20 E2E tests (100% pass rate)
 - Hybrid Node.js + Rust architecture for performance
 
@@ -103,7 +103,7 @@ CodeCraft combines both:
 │                        Tool Execution Layer                             │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────────────┐│
 │  │  Tool Registry  │  │  Tool Executor  │  │  Tool Context           ││
-│  │  (17 tools)     │──▶│  (validation)   │──▶│  (fs, rustEngine, cwd) ││
+│  │  (9 tools)      │──▶│  (validation)   │──▶│  (fs, rustEngine, cwd) ││
 │  └─────────────────┘  └─────────────────┘  └─────────────────────────┘│
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
@@ -480,33 +480,30 @@ The agent implements an enhanced ReAct (Reasoning + Acting) loop:
 
 ### Tool Catalog
 
-#### File Operations (5 tools)
+#### File Operations (2 tools)
 
 | Tool | Description | Key Parameters |
 |------|-------------|----------------|
 | `read_file` | Read file contents | `path`, `offset?`, `limit?` |
-| `write_file` | Write/create file | `path`, `content` |
 | `edit_file` | String replacement | `path`, `old_string`, `new_string` |
-| `delete_file` | Delete file | `path` |
-| `list_directory` | List directory | `path` |
 
-#### Search & Discovery (4 tools)
+#### Search & Discovery (2 tools)
 
 | Tool | Description | Key Parameters |
 |------|-------------|----------------|
 | `glob` | Pattern matching | `pattern`, `path?` |
 | `grep` | Content search | `pattern`, `path?`, `options?` |
-| `get_codebase_map` | AST skeleton | `path` |
-| `search_code` | Fuzzy symbol search | `query`, `path?` |
 
-#### AST-Based Analysis (4 tools)
+#### Code Intelligence (1 tool - Consolidated)
 
 | Tool | Description | Key Parameters |
 |------|-------------|----------------|
-| `inspect_symbol` | Symbol info/resolution | `symbol`, `file`, `mode?` |
-| `get_imports_exports` | Module dependencies | `file` |
-| `build_dependency_graph` | Project dependency map | `path` |
-| `find_references` | Symbol usage search | `symbol`, `path` |
+| `code_search` | Unified AST-based code search | `query`, `mode?`, `file?`, `path?` |
+
+**CodeSearch Modes:**
+- `search` (default): Fuzzy symbol search across codebase
+- `definition`: Get symbol type/signature (requires `file` parameter)
+- `references`: Find all usages of a symbol
 
 #### Execution & Process (4 tools)
 
@@ -557,8 +554,8 @@ interface ToolResult {
 │                                                                          │
 │  Layer 3: EVALUATIONS (Intelligence Quality)                            │
 │  "How well does it work?"                                               │
-│  ├── Tool Evals: 161/300 passing (53.7%)                                │
-│  └── LLM Evals: 47/72 passing (65.3%)                                   │
+│  ├── Tool Evals: 71/135 passing (52.6%)                                 │
+│  └── LLM Evals: 46/72 passing (63.9%)                                   │
 │                                                                          │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
@@ -572,7 +569,7 @@ interface ToolResult {
 │                                                                          │
 │  Layer 1: UNIT TESTS (Functional Correctness)                           │
 │  "Does each piece work correctly?"                                      │
-│  ├── 527 tests, 100% pass rate                                          │
+│  ├── 450 tests, 100% pass rate                                          │
 │  ├── Mocked dependencies                                                │
 │  └── <1 minute execution time                                           │
 │                                                                          │
@@ -609,8 +606,8 @@ npx vitest         # Watch mode
 | `file-tools.test.ts` | Glob, Grep, ListDirectory |
 | `file-read-operations.test.ts` | ReadFile, ListDirectory |
 | `search-operations.test.ts` | Search workflows |
-| `code-analysis.test.ts` | InspectSymbol, GetImportsExports |
-| `advanced-code-analysis.test.ts` | GetCodebaseMap, SearchCode |
+| `code-analysis.test.ts` | CodeSearch (definition mode) |
+| `advanced-code-analysis.test.ts` | CodeSearch (search/references modes) |
 | `multi-step-workflows.test.ts` | Complex multi-tool tasks |
 | `integration-scenarios.test.ts` | Real-world scenarios |
 
@@ -722,44 +719,24 @@ The 3 analysis tools (`detect_project_type`, `extract_conventions`, `get_project
 
 ## 8. Future Directions
 
-### Immediate Priority: Code Intelligence Consolidation
+### ✅ Completed: Code Intelligence Consolidation
 
-**Problem:** 6 AST-based tools exposed to LLM → LLM often picks wrong tool
+**Implemented 2024-11-28.** Consolidated 5 AST-based tools into 1 unified `CodeSearch` tool:
 
-**Current Tools (to consolidate):**
-- `SearchCode` - Fuzzy symbol search
-- `InspectSymbol` - Symbol info/resolution
-- `GetCodebaseMap` - Structural overview
-- `GetImportsExports` - File dependencies
-- `FindReferences` - Symbol usages
-- `BuildDependencyGraph` - Project dependencies
+| Before (5 tools) | After (1 tool) |
+|------------------|----------------|
+| `SearchCode` | `CodeSearch(mode='search')` |
+| `InspectSymbol` | `CodeSearch(mode='definition')` |
+| `GetCodebaseMap` | Removed (just read files) |
+| `GetImportsExports` | Removed (just read files) |
+| `FindReferences` | `CodeSearch(mode='references')` |
 
-**Solution:** Single `CodeSearch` tool + automatic background indexing
+**Results:**
+- Tool count: 13 → 9 tools
+- CodeSearch evals: 15/15 passing (100%)
+- LLM search_operations evals: 17/22 passing (77.3%)
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     Code Intelligence Service                            │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │  Background Indexer (auto on startup, file watcher)             │   │
-│  └──────────────────────────────┬──────────────────────────────────┘   │
-│                                 ▼                                       │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │  Code Knowledge Base (symbols, graphs, mappings)                │   │
-│  └──────────────────────────────┬──────────────────────────────────┘   │
-│                                 ▼                                       │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │  Single Tool: CodeSearch(query) → intelligent results          │   │
-│  └─────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-**Benefits:**
-- LLM can't pick wrong tool (only 1 option)
-- Pre-indexed = instant responses
-- Simpler system prompt
-- More reliable E2E tests
-
-See `docs/architecture/CODE_INTELLIGENCE_CONSOLIDATION.md` for full plan.
+See `docs/architecture/CODE_INTELLIGENCE_CONSOLIDATION.md` for details.
 
 ### Short-Term: Product Quality
 
@@ -770,9 +747,9 @@ See `docs/architecture/CODE_INTELLIGENCE_CONSOLIDATION.md` for full plan.
 - Better timeout handling and error recovery
 - Streaming output for long-running commands
 
-**After Code Intelligence Consolidation:**
-- Tool count: 17 → ~12 (remove 6 AST tools, add 1 CodeSearch)
-- System prompt: Remove tool selection guidance
+**After Code Intelligence Consolidation (✅ Done):**
+- Tool count: 13 → 9 (removed 5 AST tools, added 1 CodeSearch)
+- System prompt: Tool descriptions are self-explanatory
 - Tests: More reliable (no wrong tool selection)
 
 #### 2. Evaluation System

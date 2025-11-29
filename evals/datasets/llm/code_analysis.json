@@ -1,11 +1,11 @@
 {
   "tool": "llm_evaluation",
   "version": "1.0",
-  "description": "LLM tool selection evaluation for code analysis operations",
+  "description": "LLM tool selection evaluation for code analysis operations using CodeSearch",
   "cases": [
     {
       "id": "llm-analysis-001",
-      "description": "Inspect symbol information",
+      "description": "Get symbol definition information",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -14,16 +14,17 @@
       ],
       "difficulty": 2,
       "input": {
-        "query": "Tell me about the executeTool symbol in src/tools.ts"
+        "query": "Tell me about the executeTool symbol in src/tool-setup.ts"
       },
       "expected": {
-        "expectedTool": "InspectSymbol",
+        "expectedTool": "CodeSearch",
+        "acceptableTools": [
+          "ReadFile",
+          "Grep"
+        ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "execute"
-          },
-          "file": {
-            "contains": "tools"
           }
         }
       }
@@ -42,13 +43,12 @@
         "query": "Where is the Agent class actually defined?"
       },
       "expected": {
-        "expectedTool": "InspectSymbol",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
-          "SearchCode",
           "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "Agent"
           }
         }
@@ -56,7 +56,7 @@
     },
     {
       "id": "llm-analysis-003",
-      "description": "Get imports and exports",
+      "description": "Get imports - prefer ReadFile since imports are at top",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -65,12 +65,15 @@
       ],
       "difficulty": 2,
       "input": {
-        "query": "What does src/agent.ts import and export?"
+        "query": "What does src/agent.ts import?"
       },
       "expected": {
-        "expectedTool": "GetImportsExports",
+        "expectedTool": "ReadFile",
+        "acceptableTools": [
+          "Grep"
+        ],
         "expectedParams": {
-          "file": {
+          "path": {
             "contains": "agent"
           }
         }
@@ -87,20 +90,23 @@
       ],
       "difficulty": 2,
       "input": {
-        "query": "Show me all imports in src/tools.ts"
+        "query": "Show me all imports in src/tool-setup.ts"
       },
       "expected": {
-        "expectedTool": "GetImportsExports",
+        "expectedTool": "ReadFile",
+        "acceptableTools": [
+          "Grep"
+        ],
         "expectedParams": {
-          "file": {
-            "contains": "tools"
+          "path": {
+            "contains": "tool-setup"
           }
         }
       }
     },
     {
       "id": "llm-analysis-005",
-      "description": "Analyze project dependencies",
+      "description": "Analyze project dependencies via package.json",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -112,20 +118,20 @@
         "query": "Show me the dependencies in the project"
       },
       "expected": {
-        "expectedTool": "GetImportsExports",
+        "expectedTool": "ReadFile",
         "acceptableTools": [
           "Grep"
         ],
         "expectedParams": {
-          "file": {
-            "type": "string"
+          "path": {
+            "contains": "package"
           }
         }
       }
     },
     {
       "id": "llm-analysis-006",
-      "description": "Analyze module dependencies",
+      "description": "Find references using CodeSearch",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -134,15 +140,15 @@
       ],
       "difficulty": 3,
       "input": {
-        "query": "What files depend on src/agent.ts?"
+        "query": "What files use src/agent.ts?"
       },
       "expected": {
-        "expectedTool": "FindReferences",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "type": "string"
           }
         }
@@ -162,13 +168,12 @@
         "query": "Where is executeTool used in the codebase?"
       },
       "expected": {
-        "expectedTool": "FindReferences",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
-          "Grep",
-          "SearchCode"
+          "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "execute"
           }
         }
@@ -176,7 +181,7 @@
     },
     {
       "id": "llm-analysis-008",
-      "description": "Find usages of function",
+      "description": "Find usages of class",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -188,12 +193,12 @@
         "query": "Find all places that call the Agent class"
       },
       "expected": {
-        "expectedTool": "FindReferences",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "Agent"
           }
         }
@@ -213,13 +218,13 @@
         "query": "What type is the TOOLS constant?"
       },
       "expected": {
-        "expectedTool": "InspectSymbol",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "ReadFile",
-          "SearchCode"
+          "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "TOOLS"
           }
         }
@@ -227,7 +232,7 @@
     },
     {
       "id": "llm-analysis-010",
-      "description": "Get export information",
+      "description": "Get export information - read the file",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -239,9 +244,12 @@
         "query": "What does index.ts export?"
       },
       "expected": {
-        "expectedTool": "GetImportsExports",
+        "expectedTool": "ReadFile",
+        "acceptableTools": [
+          "Grep"
+        ],
         "expectedParams": {
-          "file": {
+          "path": {
             "contains": "index"
           }
         }
@@ -261,17 +269,14 @@
         "query": "Where does the Tool interface come from in src/agent.ts?"
       },
       "expected": {
-        "expectedTool": "InspectSymbol",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
-          "GetImportsExports",
+          "ReadFile",
           "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "Tool"
-          },
-          "file": {
-            "contains": "agent"
           }
         }
       }
@@ -290,12 +295,12 @@
         "query": "Find everywhere ToolResult is used"
       },
       "expected": {
-        "expectedTool": "FindReferences",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "ToolResult"
           }
         }
@@ -303,7 +308,7 @@
     },
     {
       "id": "llm-analysis-013",
-      "description": "Get codebase map for analysis",
+      "description": "Get codebase structure - use Glob or Bash",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -315,12 +320,13 @@
         "query": "I need to understand the codebase structure"
       },
       "expected": {
-        "expectedTool": "GetCodebaseMap",
+        "expectedTool": "Glob",
         "acceptableTools": [
-          "Bash"
+          "Bash",
+          "CodeSearch"
         ],
         "expectedParams": {
-          "path": {
+          "pattern": {
             "type": "string"
           }
         }
@@ -337,16 +343,16 @@
       ],
       "difficulty": 3,
       "input": {
-        "query": "What are all the dependencies of src/tools.ts?"
+        "query": "What are all the dependencies of src/tool-setup.ts?"
       },
       "expected": {
-        "expectedTool": "GetImportsExports",
+        "expectedTool": "ReadFile",
         "acceptableTools": [
           "Grep"
         ],
         "expectedParams": {
-          "file": {
-            "contains": "tools"
+          "path": {
+            "contains": "tool-setup"
           }
         }
       }
@@ -365,13 +371,12 @@
         "query": "Which files implement the Tool interface?"
       },
       "expected": {
-        "expectedTool": "FindReferences",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
-          "Grep",
-          "SearchCode"
+          "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "Tool"
           }
         }
@@ -379,7 +384,7 @@
     },
     {
       "id": "llm-analysis-016",
-      "description": "Symbol resolution",
+      "description": "Symbol search and resolution",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": [
@@ -388,15 +393,15 @@
       ],
       "difficulty": 3,
       "input": {
-        "query": "Resolve the definition of ToolExecutor"
+        "query": "Find the ToolExecutor class definition"
       },
       "expected": {
-        "expectedTool": "InspectSymbol",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
-          "SearchCode"
+          "Grep"
         ],
         "expectedParams": {
-          "symbol": {
+          "query": {
             "contains": "ToolExecutor"
           }
         }

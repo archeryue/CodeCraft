@@ -10,16 +10,12 @@ import type { EvalResult, EvalSummary, EvalCase } from '../src/eval/types';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Import all tools (13 total)
+// Import all tools (9 total)
 import { readFileTool } from '../src/tools/read-file';
 import { editFileTool } from '../src/tools/edit-file';
 import { globTool } from '../src/tools/glob';
 import { grepTool } from '../src/tools/grep';
-import { getCodebaseMapTool } from '../src/tools/get-codebase-map';
-import { searchCodeTool } from '../src/tools/search-code';
-import { inspectSymbolTool } from '../src/tools/inspect-symbol';
-import { getImportsExportsTool } from '../src/tools/get-imports-exports';
-import { findReferencesTool } from '../src/tools/find-references';
+import { codeSearchTool } from '../src/tools/code-search';
 import { bashTool } from '../src/tools/bash';
 import { bashOutputTool } from '../src/tools/bash-output';
 import { killBashTool } from '../src/tools/kill-bash';
@@ -33,7 +29,7 @@ interface ToolEvalSummary extends EvalSummary {
 async function runAllEvaluations() {
   console.log('🚀 CodeCraft Comprehensive Tool Evaluation\n');
   console.log('='.repeat(80));
-  console.log('Running evaluations for all 13 tools\n');
+  console.log('Running evaluations for all 9 tools\n');
 
   // Initialize components
   const loader = new DatasetLoader();
@@ -41,17 +37,13 @@ async function runAllEvaluations() {
   const scorer = new EvalScorer();
   const registry = new DefaultToolRegistry();
 
-  // Register all tools (13 total)
+  // Register all tools (9 total)
   const tools = [
     readFileTool,
     editFileTool,
     globTool,
     grepTool,
-    getCodebaseMapTool,
-    searchCodeTool,
-    inspectSymbolTool,
-    getImportsExportsTool,
-    findReferencesTool,
+    codeSearchTool,
     bashTool,
     bashOutputTool,
     killBashTool,
@@ -174,8 +166,8 @@ async function runAllEvaluations() {
 
   const categories = {
     'File Operations': ['read_file', 'edit_file'],
-    'Search & Discovery': ['glob', 'grep', 'get_codebase_map', 'search_code'],
-    'AST-Based Tools': ['inspect_symbol', 'get_imports_exports', 'find_references'],
+    'Search & Discovery': ['glob', 'grep'],
+    'Code Intelligence': ['code_search'],
     'Execution & Process': ['bash', 'bash_output', 'kill_bash', 'todo_write']
   };
 

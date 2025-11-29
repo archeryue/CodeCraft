@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TOOLS } from '../src/tool-setup';
 
 describe('Tools Registry', () => {
-  it('should have the expected tools registered (13 total)', () => {
+  it('should have the expected tools registered (9 total)', () => {
     const toolNames = TOOLS[0].functionDeclarations.map((t: any) => t.name);
 
     // File operations (2)
@@ -17,21 +17,24 @@ describe('Tools Registry', () => {
     expect(toolNames).toContain('BashOutput');
     expect(toolNames).toContain('KillBash');
 
-    // Rust engine tools (5)
-    expect(toolNames).toContain('SearchCode');
-    expect(toolNames).toContain('GetCodebaseMap');
-    expect(toolNames).toContain('InspectSymbol');
-    expect(toolNames).toContain('GetImportsExports');
-    expect(toolNames).toContain('FindReferences');
+    // Rust engine tools (1 - consolidated CodeSearch)
+    expect(toolNames).toContain('CodeSearch');
 
     // Verify total count
-    expect(toolNames.length).toBe(13);
+    expect(toolNames.length).toBe(9);
   });
 
   it('should NOT have removed tools', () => {
     const toolNames = TOOLS[0].functionDeclarations.map((t: any) => t.name);
 
-    // These tools were removed
+    // Old AST tools that were consolidated into CodeSearch
+    expect(toolNames).not.toContain('SearchCode');
+    expect(toolNames).not.toContain('GetCodebaseMap');
+    expect(toolNames).not.toContain('InspectSymbol');
+    expect(toolNames).not.toContain('GetImportsExports');
+    expect(toolNames).not.toContain('FindReferences');
+
+    // Other removed tools
     expect(toolNames).not.toContain('WriteFile');
     expect(toolNames).not.toContain('DeleteFile');
     expect(toolNames).not.toContain('ListDirectory');

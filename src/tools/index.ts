@@ -1,5 +1,5 @@
 // src/tools/index.ts
-// Export all tools from this directory (13 total)
+// Export all tools from this directory (9 total)
 
 // File operations (2 tools)
 export { readFileTool } from './read-file';
@@ -13,9 +13,5 @@ export { bashTool } from './bash';
 export { bashOutputTool } from './bash-output';
 export { killBashTool } from './kill-bash';
 
-// Rust engine tools (5 tools)
-export { searchCodeTool } from './search-code';
-export { getCodebaseMapTool } from './get-codebase-map';
-export { inspectSymbolTool } from './inspect-symbol';
-export { getImportsExportsTool } from './get-imports-exports';
-export { findReferencesTool } from './find-references';
+// Rust engine tools (1 tool - consolidated)
+export { codeSearchTool } from './code-search';

@@ -8,16 +8,12 @@ import type { EvalResult, EvalSummary } from '../src/eval/types';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Import all tools (13 total)
+// Import all tools (9 total)
 import { readFileTool } from '../src/tools/read-file';
 import { editFileTool } from '../src/tools/edit-file';
 import { globTool } from '../src/tools/glob';
 import { grepTool } from '../src/tools/grep';
-import { getCodebaseMapTool } from '../src/tools/get-codebase-map';
-import { searchCodeTool } from '../src/tools/search-code';
-import { inspectSymbolTool } from '../src/tools/inspect-symbol';
-import { getImportsExportsTool } from '../src/tools/get-imports-exports';
-import { findReferencesTool } from '../src/tools/find-references';
+import { codeSearchTool } from '../src/tools/code-search';
 import { bashTool } from '../src/tools/bash';
 import { bashOutputTool } from '../src/tools/bash-output';
 import { killBashTool } from '../src/tools/kill-bash';
@@ -31,9 +27,9 @@ interface LLMEvalDataset {
 }
 
 async function runLLMEvaluations() {
-  console.log('🚀 CodeCraft LLM Tool Selection Evaluation\\n');
+  console.log('🚀 CodeCraft LLM Tool Selection Evaluation\n');
   console.log('='.repeat(80));
-  console.log('Testing whether the AI agent selects the correct tools for natural language queries\\n');
+  console.log('Testing whether the AI agent selects the correct tools for natural language queries\n');
 
   // Check for API key
   const apiKey = process.env.GEMINI_API_KEY;
@@ -49,17 +45,13 @@ async function runLLMEvaluations() {
   const scorer = new EvalScorer();
   const registry = new DefaultToolRegistry();
 
-  // Register all tools (13 total)
+  // Register all tools (9 total)
   const tools = [
     readFileTool,
     editFileTool,
     globTool,
     grepTool,
-    getCodebaseMapTool,
-    searchCodeTool,
-    inspectSymbolTool,
-    getImportsExportsTool,
-    findReferencesTool,
+    codeSearchTool,
     bashTool,
     bashOutputTool,
     killBashTool,
@@ -85,7 +77,7 @@ async function runLLMEvaluations() {
   const llmDir = path.join(process.cwd(), 'evals/datasets/llm');
   const datasetFiles = fs.readdirSync(llmDir).filter(f => f.endsWith('.json')).sort();
 
-  console.log(`📂 Found ${datasetFiles.length} LLM evaluation datasets\\n`);
+  console.log(`📂 Found ${datasetFiles.length} LLM evaluation datasets\n`);
 
   const allResults: EvalResult[] = [];
   let totalCases = 0;
@@ -104,9 +96,9 @@ async function runLLMEvaluations() {
     const cases = dataset.cases;
 
     console.log('─'.repeat(80));
-    console.log(`\\n📝 Dataset: ${datasetFile}`);
+    console.log(`\n📝 Dataset: ${datasetFile}`);
     console.log(`   Description: ${dataset.description}`);
-    console.log(`   Test cases: ${cases.length}\\n`);
+    console.log(`   Test cases: ${cases.length}\n`);
 
     // Run all cases with progress reporting
     const results = await runner.runCases(cases, (completed, total, result) => {
@@ -157,7 +149,7 @@ async function runLLMEvaluations() {
     }
 
     const passedInDataset = results.filter(r => r.passed).length;
-    console.log(`\\n   Summary: ${passedInDataset}/${cases.length} passed (${(passedInDataset/cases.length*100).toFixed(1)}%)\\n`);
+    console.log(`\n   Summary: ${passedInDataset}/${cases.length} passed (${(passedInDataset/cases.length*100).toFixed(1)}%)\n`);
   }
 
   // Calculate parameter quality (only for correct tool selections)
@@ -175,10 +167,10 @@ async function runLLMEvaluations() {
     : 0;
 
   // Overall summary
-  console.log('\\n' + '='.repeat(80));
+  console.log('\n' + '='.repeat(80));
   console.log('📊 OVERALL LLM EVALUATION SUMMARY');
   console.log('='.repeat(80));
-  console.log(`\\nTotal Test Cases: ${totalCases}`);
+  console.log(`\nTotal Test Cases: ${totalCases}`);
   console.log(`Passed: ${totalPassed} (${(totalPassed/totalCases*100).toFixed(1)}%)`);
   console.log(`Failed: ${totalCases - totalPassed} (${((totalCases - totalPassed)/totalCases*100).toFixed(1)}%)`);
 
@@ -186,7 +178,7 @@ async function runLLMEvaluations() {
   console.log(`Average Score: ${(avgScore * 100).toFixed(1)}%`);
 
   // LLM-specific metrics
-  console.log('\\n📈 LLM-Specific Metrics:');
+  console.log('\n📈 LLM-Specific Metrics:');
   console.log(`Exact Matches:       ${exactMatches} (${(exactMatches/totalCases*100).toFixed(1)}%)    ← Selected exactly the right tool`);
   console.log(`Acceptable Matches:  ${acceptableMatches} (${(acceptableMatches/totalCases*100).toFixed(1)}%)     ← Selected acceptable alternative tool`);
   console.log(`Wrong Tool:          ${wrongTool} (${(wrongTool/totalCases*100).toFixed(1)}%)    ← Selected wrong tool`);
@@ -203,7 +195,7 @@ async function runLLMEvaluations() {
   const p99 = times[Math.floor(times.length * 0.99)];
   const maxTime = Math.max(...times);
 
-  console.log('\\n⚡ Performance:');
+  console.log('\n⚡ Performance:');
   console.log(`Total Time:     ${(totalTime / 1000).toFixed(2)}s`);
   console.log(`Avg Time/Case:  ${avgTime.toFixed(0)}ms`);
   console.log(`P50 (Median):   ${p50.toFixed(0)}ms`);
@@ -211,7 +203,7 @@ async function runLLMEvaluations() {
   console.log(`P99:            ${p99.toFixed(0)}ms`);
   console.log(`Max:            ${maxTime.toFixed(0)}ms`);
 
-  console.log('\\n' + '='.repeat(80));
+  console.log('\n' + '='.repeat(80));
   if (totalPassed === totalCases) {
     console.log('✅ ALL LLM EVALUATION TESTS PASSED! 🎉');
   } else {
@@ -258,7 +250,7 @@ async function runLLMEvaluations() {
     results: allResults
   }, null, 2));
 
-  console.log(`\\n💾 Results saved to: ${resultsPath}\\n`);
+  console.log(`\n💾 Results saved to: ${resultsPath}\n`);
 
   return {
     totalCases,
@@ -270,10 +262,10 @@ async function runLLMEvaluations() {
 // Run the evaluation
 runLLMEvaluations()
   .then((results) => {
-    console.log('✨ LLM Evaluation complete!\\n');
+    console.log('✨ LLM Evaluation complete!\n');
     process.exit(results.totalFailed > 0 ? 1 : 0);
   })
   .catch(error => {
-    console.error('\\n❌ LLM Evaluation failed:', error);
+    console.error('\n❌ LLM Evaluation failed:', error);
     process.exit(1);
   });

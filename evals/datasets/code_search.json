@@ -1,0 +1,364 @@
+{
+  "tool": "CodeSearch",
+  "version": "1.0.0",
+  "description": "Evaluation cases for the unified CodeSearch tool (search, definition, references modes)",
+  "cases": [
+    {
+      "id": "cs-search-1",
+      "description": "Search for Agent symbol",
+      "tool": "CodeSearch",
+      "category": "search",
+      "tags": ["search", "symbol", "basic"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "Agent"
+        }
+      },
+      "expected": {
+        "success": true,
+        "contains": "Agent"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/agent.ts": "export class Agent {\n  name: string;\n  run() {}\n}",
+          "src/index.ts": "import { Agent } from './agent';\nconst agent = new Agent();"
+        }
+      }
+    },
+    {
+      "id": "cs-search-2",
+      "description": "Search for Tool symbol",
+      "tool": "CodeSearch",
+      "category": "search",
+      "tags": ["search", "symbol"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "Tool",
+          "mode": "search"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/tool.ts": "export interface Tool {\n  name: string;\n  execute(): void;\n}",
+          "src/utils.ts": "import { Tool } from './tool';\nfunction useTool(t: Tool) {}"
+        }
+      }
+    },
+    {
+      "id": "cs-search-3",
+      "description": "Search for non-existent symbol",
+      "tool": "CodeSearch",
+      "category": "search",
+      "tags": ["search", "edge_case"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "NonExistentSymbol123"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/app.ts": "export function main() { console.log('hello'); }"
+        }
+      }
+    },
+    {
+      "id": "cs-search-4",
+      "description": "Search with custom path",
+      "tool": "CodeSearch",
+      "category": "search",
+      "tags": ["search", "path"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "TestCase",
+          "path": "tests"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "tests/test.ts": "interface TestCase { name: string; }",
+          "src/app.ts": "export function notInTests() {}"
+        }
+      }
+    },
+    {
+      "id": "cs-search-5",
+      "description": "Search for Executor symbol",
+      "tool": "CodeSearch",
+      "category": "search",
+      "tags": ["search", "symbol"],
+      "difficulty": 1,
+      "input": {
+        "params": {
+          "query": "Executor"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/executor.ts": "export class Executor {\n  run() {}\n}"
+        }
+      }
+    },
+    {
+      "id": "cs-def-1",
+      "description": "Get definition of TOOLS variable",
+      "tool": "CodeSearch",
+      "category": "definition",
+      "tags": ["definition", "variable"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "TOOLS",
+          "mode": "definition",
+          "file": "src/setup.ts"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/setup.ts": "export const TOOLS: string[] = ['read', 'write', 'edit'];"
+        }
+      }
+    },
+    {
+      "id": "cs-def-2",
+      "description": "Definition mode requires file parameter",
+      "tool": "CodeSearch",
+      "category": "definition",
+      "tags": ["definition", "error"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "Agent",
+          "mode": "definition"
+        }
+      },
+      "expected": {
+        "success": false,
+        "error_code": "MISSING_FILE"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/agent.ts": "export class Agent {}"
+        }
+      }
+    },
+    {
+      "id": "cs-def-3",
+      "description": "Definition for non-existent symbol",
+      "tool": "CodeSearch",
+      "category": "definition",
+      "tags": ["definition", "edge_case"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "NonExistentSymbol",
+          "mode": "definition",
+          "file": "src/agent.ts"
+        }
+      },
+      "expected": {
+        "success": false,
+        "error_code": "SYMBOL_NOT_FOUND"
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/agent.ts": "export class Agent { name: string; }"
+        }
+      }
+    },
+    {
+      "id": "cs-def-4",
+      "description": "Get definition of function",
+      "tool": "CodeSearch",
+      "category": "definition",
+      "tags": ["definition", "function"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "executeTool",
+          "mode": "definition",
+          "file": "src/tool.ts"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/tool.ts": "export function executeTool(name: string): void {\n  console.log(name);\n}"
+        }
+      }
+    },
+    {
+      "id": "cs-def-5",
+      "description": "Get class definition",
+      "tool": "CodeSearch",
+      "category": "definition",
+      "tags": ["definition", "class"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "Agent",
+          "mode": "definition",
+          "file": "src/agent.ts"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/agent.ts": "export class Agent {\n  name: string;\n  constructor(name: string) {\n    this.name = name;\n  }\n}"
+        }
+      }
+    },
+    {
+      "id": "cs-refs-1",
+      "description": "Find references to Agent",
+      "tool": "CodeSearch",
+      "category": "references",
+      "tags": ["references", "class"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "Agent",
+          "mode": "references"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/agent.ts": "export class Agent { run() {} }",
+          "src/index.ts": "import { Agent } from './agent';\nconst a = new Agent();\na.run();"
+        }
+      }
+    },
+    {
+      "id": "cs-refs-2",
+      "description": "Find references to ToolResult",
+      "tool": "CodeSearch",
+      "category": "references",
+      "tags": ["references", "type"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "ToolResult",
+          "mode": "references"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/types.ts": "export interface ToolResult { success: boolean; }",
+          "src/tool.ts": "import { ToolResult } from './types';\nfunction run(): ToolResult { return { success: true }; }"
+        }
+      }
+    },
+    {
+      "id": "cs-refs-3",
+      "description": "Find references with custom path",
+      "tool": "CodeSearch",
+      "category": "references",
+      "tags": ["references", "path"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "describe",
+          "mode": "references",
+          "path": "tests"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "tests/app.test.ts": "describe('App', () => {\n  it('works', () => {});\n});\ndescribe('More', () => {});",
+          "src/app.ts": "export function app() {}"
+        }
+      }
+    },
+    {
+      "id": "cs-refs-4",
+      "description": "Find references to non-existent symbol",
+      "tool": "CodeSearch",
+      "category": "references",
+      "tags": ["references", "edge_case"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "NonExistentSymbol123",
+          "mode": "references"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/app.ts": "export function app() { return 42; }"
+        }
+      }
+    },
+    {
+      "id": "cs-refs-5",
+      "description": "Find references to executor",
+      "tool": "CodeSearch",
+      "category": "references",
+      "tags": ["references", "function"],
+      "difficulty": 2,
+      "input": {
+        "params": {
+          "query": "executor",
+          "mode": "references"
+        }
+      },
+      "expected": {
+        "success": true
+      },
+      "fixtures": {
+        "type": "inline",
+        "files": {
+          "src/executor.ts": "export function executor() {}",
+          "src/runner.ts": "import { executor } from './executor';\nexecutor();"
+        }
+      }
+    }
+  ]
+}

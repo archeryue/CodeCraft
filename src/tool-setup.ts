@@ -8,7 +8,7 @@ import { DefaultToolExecutor } from './tool-executor';
 import { createDefaultContext } from './tool-context';
 import type { ToolContext } from './types/tool';
 
-// Import all tools (13 total)
+// Import all tools (9 total)
 import {
   readFileTool,
   editFileTool,
@@ -18,11 +18,7 @@ import {
   bashTool,
   bashOutputTool,
   killBashTool,
-  searchCodeTool,
-  getCodebaseMapTool,
-  inspectSymbolTool,
-  getImportsExportsTool,
-  findReferencesTool
+  codeSearchTool
 } from './tools/index';
 
 const require = createRequire(import.meta.url);
@@ -42,7 +38,7 @@ try {
 // Create and configure the registry
 const registry = new DefaultToolRegistry();
 
-// Register all tools (13 total)
+// Register all tools (9 total)
 // File operations (2)
 registry.register(readFileTool);
 registry.register(editFileTool);
@@ -55,12 +51,8 @@ registry.register(bashTool);
 registry.register(bashOutputTool);
 registry.register(killBashTool);
 
-// Rust engine tools (5)
-registry.register(searchCodeTool);
-registry.register(getCodebaseMapTool);
-registry.register(inspectSymbolTool);
-registry.register(getImportsExportsTool);
-registry.register(findReferencesTool);
+// Rust engine tools (1 - consolidated CodeSearch)
+registry.register(codeSearchTool);
 
 // Create executor
 const executor = new DefaultToolExecutor(registry);

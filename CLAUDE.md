@@ -30,9 +30,9 @@ This builds the Rust engine and copies the compiled `.node` addon to the project
 
 ### Testing
 ```bash
-npm test          # Run unit tests (527 tests, 100% pass rate, <1 min)
+npm test          # Run unit tests (450 tests, 100% pass rate, <1 min)
 npm run test:e2e  # Run E2E tests (20 tests, 100% pass rate, ~5 min)
-npm run test:all  # Run both unit and E2E tests (547 total)
+npm run test:all  # Run both unit and E2E tests (470 total)
 ```
 
 **Running Tests in Watch Mode:**
@@ -42,8 +42,8 @@ npx vitest
 
 **Running Evaluations:**
 ```bash
-npx tsx evals/run-all-evals.ts   # Tool evaluations (161/300 passing, 53.7%)
-npx tsx evals/run-llm-evals.ts   # LLM evaluations (47/72 passing, 65.3%)
+npx tsx evals/run-all-evals.ts   # Tool evaluations (71/135 passing, 52.6%)
+npx tsx evals/run-llm-evals.ts   # LLM evaluations (46/72 passing, 63.9%)
 ```
 
 **Test Configuration:**
@@ -90,36 +90,31 @@ The agent implements a ReAct-style loop:
 4. Results are sent back to Gemini
 5. Loop continues until Gemini produces a text response
 
-**Available Tools (17 total):**
+**Available Tools (9 total):**
 
-*File Operations:*
+*File Operations (2):*
 - `read_file(path, offset?, limit?)` - Reads file content (supports partial reads)
-- `write_file(path, content)` - Writes to file (shows diff and prompts for confirmation if file exists)
 - `edit_file(path, old_string, new_string)` - Efficient string replacement editing
-- `delete_file(path)` - Deletes a file with safety checks
 
-*Search & Discovery:*
+*Search & Discovery (2):*
 - `glob(pattern, path?)` - File pattern matching (e.g., `**/*.ts`)
 - `grep(pattern, path?, options?)` - Content search with regex
-- `list_directory(path)` - Browse directory structure
-- `get_codebase_map(path)` - Generates AST-based skeleton via Rust engine
-- `search_code(query, path?)` - Fuzzy searches symbols via Rust engine
 
-*AST-Based Tools (Rust Engine):*
-- `inspect_symbol(symbol, file, mode?)` - Inspect symbol: get info (default) or resolve definition (mode='resolve')
-- `get_imports_exports(file)` - Show what file imports/exports
-- `build_dependency_graph(path)` - Project-wide dependency graph
-- `find_references(symbol, path)` - Find all usages of a symbol
+*Code Intelligence (1 - Consolidated):*
+- `code_search(query, mode?, file?, path?)` - Unified AST-based code search
+  - `mode='search'` (default): Fuzzy symbol search across codebase
+  - `mode='definition'`: Get symbol type/signature (requires file parameter)
+  - `mode='references'`: Find all usages of a symbol
 
-*Execution & Process Management:*
+*Execution & Process Management (4):*
 - `bash(command, timeout?, run_in_background?)` - Execute bash commands (foreground or background)
 - `bash_output(bash_id)` - Read output from background process (incremental)
 - `kill_bash(bash_id)` - Terminate background process
 - `todo_write(todos)` - Tracks multi-step tasks (required for 3+ step tasks)
 
-### Confirmation Flow for File Writes
+### Confirmation Flow for File Edits
 
-When the agent calls `write_file` on an existing file:
+When the agent calls `edit_file` on an existing file:
 1. `executeTool()` generates a unified diff using the `diff` package
 2. The diff is passed to the `confirmChange` callback (defined in `index.ts`)
 3. User is prompted with inquirer
@@ -205,7 +200,7 @@ The agent uses three framework modules for intelligent behavior:
 
 CodeCraft uses a **three-layer testing approach** to ensure both functional correctness and AI intelligence quality:
 
-### 1. Unit Tests (527 tests, 100% pass rate, <1 min)
+### 1. Unit Tests (450 tests, 100% pass rate, <1 min)
 **Purpose**: Verify functional correctness of individual components
 
 - Test pure functions and deterministic logic
@@ -221,7 +216,7 @@ CodeCraft uses a **three-layer testing approach** to ensure both functional corr
 - Test actual CLI with real LLM interactions
 - Verify tools are called correctly
 - Ensure system doesn't crash or hang
-- Cover 12/17 registered tools (71% coverage)
+- Cover 8/9 registered tools (89% coverage)
 
 **Philosophy**: We test that the LLM **responds normally**, not that it's **smart**.
 - ✅ Verify basic tool calling works
@@ -231,15 +226,15 @@ CodeCraft uses a **three-layer testing approach** to ensure both functional corr
 
 **Location**: `tests/e2e/` directory
 
-### 3. Evaluation System (161/300 tool evals, 47/72 LLM evals)
+### 3. Evaluation System (71/135 tool evals, 46/72 LLM evals)
 **Purpose**: Measure AI intelligence quality - "how well does it work?"
 
-**Tool Evaluations** (53.7% pass rate):
+**Tool Evaluations** (52.6% pass rate):
 - Verify tools produce correct/high-quality results
-- 15 test cases per tool (300 total)
+- 15 test cases per tool (135 total for 9 tools)
 - Validate data transformations and edge cases
 
-**LLM Evaluations** (65.3% pass rate):
+**LLM Evaluations** (63.9% pass rate):
 - Verify LLM makes smart decisions
 - Test tool selection intelligence
 - Measure reasoning quality
@@ -299,7 +294,7 @@ See `docs/testing/TESTING_STRATEGY.md` for comprehensive testing philosophy.
 - **Write tests BEFORE implementation** (RED → GREEN → REFACTOR)
 
 ### E2E Test Infrastructure:
-**Current Status**: 20 tests passing (100%), 12/17 tools covered (71%)
+**Current Status**: 20 tests passing (100%), 8/9 tools covered (89%)
 
 - **Location**: `tests/e2e/` directory
 - **Helper**: `tests/e2e/helper.ts` - utilities for CLI process management
@@ -307,8 +302,8 @@ See `docs/testing/TESTING_STRATEGY.md` for comprehensive testing philosophy.
   - `file-tools.test.ts` - Glob, Grep, ListDirectory
   - `file-read-operations.test.ts` - ReadFile, ListDirectory
   - `search-operations.test.ts` - Search workflows
-  - `code-analysis.test.ts` - InspectSymbol, GetImportsExports
-  - `advanced-code-analysis.test.ts` - GetCodebaseMap, SearchCode
+  - `code-analysis.test.ts` - CodeSearch (definition mode)
+  - `advanced-code-analysis.test.ts` - CodeSearch (search/references modes)
   - `multi-step-workflows.test.ts` - Complex workflows
   - `integration-scenarios.test.ts` - Real-world scenarios
 - **Run Command**: `npm run test:e2e`

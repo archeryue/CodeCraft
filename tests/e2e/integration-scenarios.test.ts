@@ -18,8 +18,8 @@ describe('E2E: Integration Scenarios', () => {
       'what is the Agent class and where is it defined?'
     );
 
-    // Should use multiple tools to answer
-    expect(result.output).toMatch(/Tool Call.*(SearchCode|InspectSymbol|Grep)/i);
+    // Should use CodeSearch or Grep to find information
+    expect(result.output).toMatch(/Tool Call.*(CodeSearch|Grep)/i);
     expect(result.output).toMatch(/Agent.*class|src\/agent\.ts/i);
   }, 90000);
 
@@ -28,7 +28,8 @@ describe('E2E: Integration Scenarios', () => {
       'I want to refactor the executor - show me where it is used'
     );
 
-    expect(result.output).toMatch(/Tool Call.*(FindReferences|Grep|SearchCode)/i);
+    // Should use CodeSearch (references mode) or Grep to find usages
+    expect(result.output).toMatch(/Tool Call.*(CodeSearch|Grep)/i);
     expect(result.output).toMatch(/executor|agent\.ts/i);
   }, 90000);
 

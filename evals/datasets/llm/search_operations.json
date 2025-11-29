@@ -17,7 +17,7 @@
         "query": "Where is the Agent class defined?"
       },
       "expected": {
-        "expectedTool": "SearchCode",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
@@ -42,7 +42,7 @@
         "query": "Find the executeTool function"
       },
       "expected": {
-        "expectedTool": "SearchCode",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
@@ -69,7 +69,7 @@
       "expected": {
         "expectedTool": "Grep",
         "acceptableTools": [
-          "SearchCode"
+          "CodeSearch"
         ],
         "expectedParams": {
           "pattern": {
@@ -180,7 +180,7 @@
         "query": "Show me the structure of the codebase"
       },
       "expected": {
-        "expectedTool": "GetCodebaseMap",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Bash",
           "Glob"
@@ -206,7 +206,7 @@
         "query": "Give me an AST-based skeleton of the src directory"
       },
       "expected": {
-        "expectedTool": "GetCodebaseMap",
+        "expectedTool": "CodeSearch",
         "expectedParams": {
           "path": {
             "contains": "src"
@@ -229,7 +229,7 @@
         "query": "Find all async functions in the code"
       },
       "expected": {
-        "expectedTool": "SearchCode",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
@@ -302,7 +302,7 @@
         "query": "Where is the ToolResult interface?"
       },
       "expected": {
-        "expectedTool": "SearchCode",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
@@ -371,7 +371,7 @@
         "query": "Find where TOOLS constant is defined"
       },
       "expected": {
-        "expectedTool": "SearchCode",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep"
         ],
@@ -440,9 +440,9 @@
         "query": "Show me all the functions and classes"
       },
       "expected": {
-        "expectedTool": "GetCodebaseMap",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
-          "SearchCode"
+          "CodeSearch"
         ]
       }
     },
@@ -460,10 +460,10 @@
         "query": "Find 'Agent'"
       },
       "expected": {
-        "expectedTool": "SearchCode",
+        "expectedTool": "CodeSearch",
         "acceptableTools": [
           "Grep",
-          "GetCodebaseMap"
+          "CodeSearch"
         ],
         "expectedParams": {
           "query": {
@@ -510,8 +510,8 @@
       "expected": {
         "expectedTool": "Grep",
         "acceptableTools": [
-          "SearchCode",
-          "FindReferences"
+          "CodeSearch",
+          "CodeSearch"
         ],
         "expectedParams": {
           "pattern": {
