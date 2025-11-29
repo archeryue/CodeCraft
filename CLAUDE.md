@@ -327,6 +327,28 @@ See `docs/testing/TESTING_STRATEGY.md` for comprehensive testing philosophy.
 
 See `docs/testing/E2E_TESTING_GUIDE.md` and `docs/testing/E2E_TEST_COVERAGE_PLAN.md` for details.
 
+### Troubleshooting E2E Test Failures:
+**When E2E tests fail or timeout, follow this systematic approach:**
+
+1. **Never accept test failures** - We have zero tolerance for failing tests
+2. **Test one by one** - Run individual failing tests to isolate the issue:
+   ```bash
+   npx vitest run tests/e2e/specific-test.test.ts --config vitest.e2e.config.ts
+   ```
+3. **Analyze the problem** - Check for:
+   - Timeout issues (API latency)
+   - Tool selection errors (LLM choosing wrong tool)
+   - Response format issues
+   - Missing tool calls
+4. **Find root cause** - Don't just retry hoping it passes; understand WHY it failed
+5. **Fix issues one by one** - Address each failure systematically before moving to the next
+
+**Common E2E Issues and Solutions:**
+- **Timeout**: Increase test timeout or optimize prompts/tool descriptions
+- **Wrong tool selected**: Improve tool description clarity or add "When NOT to use" guidance
+- **Flaky responses**: Add retry logic or make test assertions more flexible
+- **API rate limiting**: Add delays between tests or reduce parallel execution
+
 ### End-to-End Testing:
 **MANDATORY:** After implementing or modifying features, you MUST test the interactive CLI exactly as a user would:
 
