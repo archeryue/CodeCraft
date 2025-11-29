@@ -722,23 +722,87 @@ The 3 analysis tools (`detect_project_type`, `extract_conventions`, `get_project
 
 ## 8. Future Directions
 
-### Short-Term
+### Short-Term: Product Quality
 
-- [ ] **Expand language support** - Python, Go, Java in Rust engine
-- [ ] **Streaming responses** - Show partial responses during generation
-- [ ] **Better context pruning** - Semantic similarity for context ranking
+Our immediate focus is making CodeCraft work excellently in its current scope.
 
-### Medium-Term
+#### 1. Tool Improvements
 
-- [ ] **Multi-model support** - Claude, GPT-4, local models
-- [ ] **Project memory** - Persistent conversation history per project
-- [ ] **Custom tool plugins** - User-defined tools via config
+**Bash Category:**
+- Improve background process management (bash, bash_output, kill_bash)
+- Better timeout handling and error recovery
+- Streaming output for long-running commands
+- Process group management for cleanup
 
-### Long-Term
+**Code Intelligence Category:**
+- Enhance `inspect_symbol` with better resolution accuracy
+- Improve `get_imports_exports` to handle complex module systems
+- Make `build_dependency_graph` more comprehensive
+- Add cross-file reference tracking in `find_references`
 
-- [ ] **Collaborative mode** - Multiple agents working together
-- [ ] **IDE integration** - VS Code extension using same backend
-- [ ] **Self-improvement** - Agent learns from evaluation results
+#### 2. System Prompt & Evaluation
+
+**System Prompt Optimization:**
+- Fine-tune tool selection guidance
+- Improve context utilization instructions
+- Add better examples for edge cases
+- Optimize for evaluation performance
+
+**Evaluation System:**
+- Review and improve evaluation datasets continuously
+- Add more edge cases and real-world scenarios
+- Track evaluation scores over time
+- Use evaluation results to guide system prompt improvements
+- Target: Achieve 80%+ on both tool evals and LLM evals
+
+#### 3. Agent Intelligence
+
+**Context Manager Enhancements:**
+- Context compaction (summarize old context to save tokens)
+- History manager (prioritize recent and relevant history)
+- Smarter token budgeting based on task complexity
+- Semantic relevance scoring for context items
+
+**Memory System:**
+- Extend CRAFT.md with richer project understanding
+- Session summaries that persist across conversations
+- User preference learning
+- Project-specific patterns and conventions memory
+
+### Long-Term: Production-Grade Coding
+
+Our ultimate goal is enabling CodeCraft to perform effective coding in **real production-level codebases** - large, complex, multi-language projects.
+
+#### Production Codebase Support
+
+- Handle repositories with 100K+ lines of code
+- Navigate complex directory structures efficiently
+- Understand monorepo architectures
+- Work with real build systems (webpack, cargo, make, etc.)
+- Integrate with CI/CD workflows
+
+#### Multi-Language Support
+
+Expand Rust engine to parse and understand:
+
+| Language | Parser | Priority |
+|----------|--------|----------|
+| JavaScript/TypeScript | tree-sitter-javascript/typescript | ✅ Done |
+| Rust | tree-sitter-rust | ✅ Done |
+| Python | tree-sitter-python | High |
+| Go | tree-sitter-go | High |
+| C/C++ | tree-sitter-c/cpp | Medium |
+| Java | tree-sitter-java | Medium |
+| Ruby | tree-sitter-ruby | Low |
+| PHP | tree-sitter-php | Low |
+
+#### Advanced Code Understanding
+
+- Cross-language dependency tracking
+- API boundary detection
+- Test coverage awareness
+- Performance hotspot identification
+- Security vulnerability scanning
 
 ---
 
