@@ -45,16 +45,23 @@ export const todoWriteTool: Tool = {
       return { valid: false, errors };
     }
 
+    let inProgressCount = 0;
     for (const todo of p.todos) {
       if (!todo.content || typeof todo.content !== 'string') {
         errors.push('Each todo must have a content string');
       }
       if (!todo.status || !['pending', 'in_progress', 'completed'].includes(todo.status)) {
         errors.push('Each todo must have a valid status: pending, in_progress, or completed');
+      } else if (todo.status === 'in_progress') {
+        inProgressCount++;
       }
       if (!todo.activeForm || typeof todo.activeForm !== 'string') {
         errors.push('Each todo must have an activeForm string');
       }
+    }
+
+    if (inProgressCount > 1) {
+      errors.push('Only one todo can be in_progress at a time');
     }
 
     return { valid: errors.length === 0, errors };

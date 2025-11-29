@@ -35,6 +35,9 @@ export const editFileTool: Tool = {
     if (!p.path || typeof p.path !== 'string') errors.push('path required');
     if (!p.old_string || typeof p.old_string !== 'string') errors.push('old_string required');
     if (p.new_string === undefined || typeof p.new_string !== 'string') errors.push('new_string required');
+    if (p.old_string && p.new_string !== undefined && p.old_string === p.new_string) {
+      errors.push('old_string and new_string must be different');
+    }
 
     return { valid: errors.length === 0, errors };
   },

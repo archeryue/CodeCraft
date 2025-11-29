@@ -244,7 +244,7 @@
       },
       "expected": {
         "success": false,
-        "errorCode": "INVALID_PARAMS"
+        "errorCode": "VALIDATION_ERROR"
       },
       "fixtures": {
         "type": "inline",

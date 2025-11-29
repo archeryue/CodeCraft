@@ -190,7 +190,7 @@
       },
       "expected": {
         "success": false,
-        "errorCode": "INVALID_PARAMS"
+        "errorCode": "VALIDATION_ERROR"
       },
       "fixtures": {
         "type": "inline",
@@ -221,7 +221,7 @@
       },
       "expected": {
         "success": false,
-        "errorCode": "INVALID_PARAMS"
+        "errorCode": "VALIDATION_ERROR"
       },
       "fixtures": {
         "type": "inline",
@@ -251,7 +251,7 @@
       },
       "expected": {
         "success": false,
-        "errorCode": "INVALID_PARAMS"
+        "errorCode": "VALIDATION_ERROR"
       },
       "fixtures": {
         "type": "inline",
@@ -281,7 +281,7 @@
       },
       "expected": {
         "success": false,
-        "errorCode": "INVALID_PARAMS"
+        "errorCode": "VALIDATION_ERROR"
       },
       "fixtures": {
         "type": "inline",
@@ -312,7 +312,7 @@
       },
       "expected": {
         "success": false,
-        "errorCode": "INVALID_PARAMS"
+        "errorCode": "VALIDATION_ERROR"
       },
       "fixtures": {
         "type": "inline",
@@ -347,7 +347,7 @@
       },
       "expected": {
         "success": false,
-        "errorCode": "INVALID_STATE"
+        "errorCode": "VALIDATION_ERROR"
       },
       "fixtures": {
         "type": "inline",
