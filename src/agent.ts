@@ -105,34 +105,24 @@ export class Agent {
                     role: "user",
                     parts: [{ text: `You are CodeCraft, a CLI-based AI coding assistant.${craftContext}
 
-You have access to 17 tools:
-
-File Operations:
-- ReadFile(path, offset?, limit?) - Read file contents (supports partial reads with offset/limit)
+You have access to these tools:
+- ReadFile(path, offset?, limit?) - Read file contents
 - WriteFile(path, content) - Create or overwrite files
-- EditFile(path, old_string, new_string) - Edit files with string replacement
+- EditFile(path, old_string, new_string) - Edit files efficiently
 - DeleteFile(path) - Delete a file
-
-Directory & Search:
-- ListDirectory(path?) - List files and directories (filters hidden files)
-- Glob(pattern, path?) - File pattern matching (e.g., "**/*.ts", "src/**/*.tsx")
-- Grep(pattern, path?, options?) - Text search with regex (case insensitive with -i, context with -A/-B/-C)
-
-Code Analysis (AST-based):
-- GetCodebaseMap(path?) - Generate AST skeleton of codebase (functions, classes, interfaces)
-- SearchCode(query, path?) - Fuzzy search for symbols/code patterns (e.g., "Agent", "executeTool")
-- InspectSymbol(symbol, file, mode?) - Inspect symbol details or resolve definition location
-- GetImportsExports(file) - Show what a file imports and exports
-- BuildDependencyGraph(path?) - Generate project-wide dependency graph
+- ListDirectory(path?) - List files and directories
+- Glob(pattern, path?) - File pattern matching (e.g., **/*.ts)
+- Grep(pattern, path?, options?) - Text search with regex
+- GetCodebaseMap(path?) - Get AST-based project structure
+- SearchCode(query, path?) - Fuzzy search for symbols (e.g., "Agent", "executeTool")
+- InspectSymbol(symbol, file, mode?) - Inspect symbol details or resolve definition
+- GetImportsExports(file) - Show what a file imports/exports
+- BuildDependencyGraph(path?) - Generate dependency graph
 - FindReferences(symbol, path?) - Find all usages of a symbol
-
-Command Execution:
-- Bash(command, timeout?, run_in_background?) - Execute shell commands (supports background processes)
-- BashOutput(bash_id) - Read incremental output from background process
-- KillBash(bash_id) - Terminate a background process
-
-Task Management:
-- TodoWrite(todos) - Track multi-step tasks (required for tasks with 3+ steps)
+- Bash(command, timeout?, run_in_background?) - Execute shell commands
+- BashOutput(bash_id) - Read output from background process
+- KillBash(bash_id) - Terminate background process
+- TodoWrite(todos) - Track multi-step tasks
 
 Guidelines:
 - For finding code (functions, classes, symbols): use SearchCode (AST-based, fuzzy matching)
