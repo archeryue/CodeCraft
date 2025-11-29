@@ -1,377 +1,301 @@
-# Comprehensive Failure Analysis - 139 Failed Tests
+# Evaluation Failure Analysis
 
-## Summary
+> **Last Updated**: 2024-11-28 (Post-CodeSearch Consolidation)
 
-Out of 300 tests, 139 are failing (46.3%). The failures fall into several distinct categories with different root causes.
+## Current Status
+
+| Category | Passed | Total | Rate |
+|----------|--------|-------|------|
+| **Tool Evals** | 71 | 135 | 52.6% |
+| **LLM Evals** | 46 | 72 | 63.9% |
+| **Combined** | 117 | 207 | 56.5% |
 
 ---
 
-## Category 1: Path Resolution Issues (27 failures)
+## Tool Evals Breakdown by Category
 
-### Tools Affected:
-- **glob**: 12/15 failures
-- **grep**: 10/15 failures
-- **extract_conventions**: 15/15 failures (all!)
+| Category | Passed | Total | Rate |
+|----------|--------|-------|------|
+| Code Intelligence | 15 | 15 | **100%** |
+| File Operations | 21 | 30 | 70% |
+| Execution & Process | 27 | 60 | 45% |
+| Search & Discovery | 8 | 30 | **26.7%** |
 
-### Root Cause:
-These tools use external libraries (fast-glob, ripgrep) that don't respect `context.cwd` because they pass relative paths like "." directly to the library.
+---
 
-### Example: glob-001
-```javascript
-// Current code (WRONG):
+## Root Cause Analysis
+
+### Issue 1: Path Resolution in Glob/Grep (Critical)
+
+**Affected Tools**: glob (3/15), grep (5/15)
+
+**Problem**: Tools pass relative paths directly to external libraries without resolving against `context.cwd`. Fixtures create files in temp directories like `/tmp/eval-xxx/`, but tools search in the current working directory (project root).
+
+```typescript
+// glob.ts line 40 - CURRENT (WRONG)
 const files = await fg(p.pattern, {
-  cwd: searchPath,  // searchPath = "."
-  // fast-glob resolves "." relative to process.cwd(), not context.cwd!
+  cwd: searchPath,  // searchPath = "." = process.cwd()
 });
 
-// Should be:
-const absolutePath = searchPath.startsWith('/')
+// SHOULD BE:
+const absolutePath = path.isAbsolute(searchPath)
   ? searchPath
-  : `${context.cwd}/${searchPath}`.replace(/\/\.$/, '');
-const files = await fg(p.pattern, {
-  cwd: absolutePath  // Now uses absolute path
-});
+  : path.join(context.cwd, searchPath);
+const files = await fg(p.pattern, { cwd: absolutePath });
 ```
 
-**Impact**: Tool searches wrong directory (CodeCraft root instead of fixture temp dir)
+**Failed Test Examples**:
+- `glob-001`: Expects `test.txt` from fixture, finds nothing (wrong directory)
+- `grep-001`: Returns empty array, searching wrong location
 
-**Test Evidence**:
-- glob-001: Finds "demo.txt" (from codebase) instead of "test.txt" (from fixture)
-- grep-001: Returns empty array because it's searching wrong directory
-- conv-001: Error "ENOENT: no such file or directory" trying to open files that don't exist in codebase
+**Fix**: Resolve all paths relative to `context.cwd` before passing to fast-glob/ripgrep.
 
-### Fix Required:
-Modify these tools to resolve `searchPath`/`path` relative to `context.cwd` before passing to external libraries:
-- `src/tools/glob.ts` (line 40-45)
-- `src/tools/grep.ts` (similar pattern)
-- `src/tools/extract_conventions.ts` (line 71-75, fast-glob usage)
+**Impact**: +~20 tests
 
 ---
 
-## Category 2: Background Process Dependencies (27 failures)
+### Issue 2: Background Process State Dependencies (Critical)
 
-### Tools Affected:
-- **bash_output**: 13/15 failures
-- **kill_bash**: 12/15 failures
-- **bash**: 2/15 failures (background-specific tests)
+**Affected Tools**: bash_output (2/15), kill_bash (3/15)
 
-### Root Cause:
-These tests require background bash processes to exist BEFORE the test runs. Current fixture system doesn't support creating background processes as part of setup.
+**Problem**: Tests expect background processes (e.g., `bashId: "test-bash-001"`) to exist before the test runs. The `backgroundProcesses` Map is empty when tests execute.
 
-### Example: bashout-001
 ```json
+// bash_output.json - expects non-existent process
 {
   "id": "bashout-001",
-  "input": {
-    "params": {
-      "bashId": "test-bash-001"  // Expects this process to exist!
-    }
-  }
+  "input": { "params": { "bashId": "test-bash-001" } },
+  "expected": { "success": true, "contains": "output" }
 }
 ```
 
-**Problem**: There's no background process with ID "test-bash-001" because fixtures can't start bash processes.
+**Root Cause**: The eval fixture system doesn't support starting background processes as part of setup. These tests need actual running processes.
 
-### Fix Required:
-1. **Option A**: Enhance fixture system with lifecycle hooks
-   ```typescript
-   {
-     "type": "inline",
-     "files": {...},
-     "setup": async (context) => {
-       // Start background bash process
-       const result = await bashTool.execute({
-         command: "sleep 10",
-         run_in_background: true
-       }, context);
-       return { bashId: result.data.bash_id };
-     }
-   }
-   ```
+**Fix Options**:
+1. **Mock the registry**: Pre-populate `backgroundProcesses` Map before tests
+2. **Sequence fixtures**: Add setup hooks to start processes before test
+3. **Integration tests**: Move these to E2E tests where processes can be managed
 
-2. **Option B**: Create integration tests that manage process lifecycle separately
-3. **Option C**: Mock the backgroundProcesses registry for testing
-
-**Recommendation**: Option C is easiest - mock the global registry in tests.
+**Impact**: +~25 tests
 
 ---
 
-## Category 3: Validation/Edge Case Issues (31 failures)
+### Issue 3: Error Code Mismatches (Medium)
 
-### Tools Affected:
-- **read_file**: 4 failures
-- **write_file**: 3 failures
-- **edit_file**: 5 failures
-- **delete_file**: 5 failures
-- **list_directory**: 5 failures
-- **todo_write**: 6 failures
-- **Various missing parameter tests**: 3 failures
+**Affected Tools**: edit_file (5 failures), todo_write (6 failures), read_file (4 failures)
 
-### Root Cause:
-Tools don't properly validate edge cases or return incorrect error codes.
+**Problem**: Tools return `VALIDATION_ERROR`, tests expect `INVALID_PARAMS`.
 
-### Examples:
+| Test Case | Tool Returns | Expected |
+|-----------|-------------|----------|
+| edit-011 (missing old_string) | `VALIDATION_ERROR` | `INVALID_PARAMS` |
+| edit-012 (missing new_string) | `VALIDATION_ERROR` | `INVALID_PARAMS` |
+| todo-006 (missing todos) | `VALIDATION_ERROR` | `INVALID_PARAMS` |
+| todo-007 (invalid status) | `VALIDATION_ERROR` | `INVALID_PARAMS` |
 
-#### read-011: Read directory instead of file
-**Expected**: Error with code 'DIR_NOT_FILE' or similar
-**Actual**: Probably crashes or returns wrong error
+**Fix**: Standardize error codes across all tools OR update test expectations.
 
-#### read-012: Invalid offset (negative)
-**Expected**: Error code 'INVALID_PARAMS'
-**Actual**: Tool probably doesn't validate offset < 0
-
-#### delete-009: Delete directory instead of file
-**Expected**: Error code 'IS_DIRECTORY'
-**Actual**: Tool might succeed or return wrong error
-
-#### todo-011: Multiple in_progress tasks
-**Expected**: Error code 'INVALID_STATE' or validation error
-**Actual**: Tool allows it (violates single in_progress constraint)
-
-### Fix Required:
-Add proper validation to each tool:
-```typescript
-// Example for read_file
-if (offset !== undefined && offset < 0) {
-  return {
-    success: false,
-    error: { code: 'INVALID_PARAMS', message: 'Offset cannot be negative' }
-  };
-}
-
-if (limit !== undefined && limit <= 0) {
-  return {
-    success: false,
-    error: { code: 'INVALID_PARAMS', message: 'Limit must be positive' }
-  };
-}
-```
+**Impact**: +~15 tests
 
 ---
 
-## Category 4: Scorer Logic Issues (15+ failures)
-
-### Root Cause:
-The scorer's `objectContainsString()` doesn't handle boolean/number values that should match string expectations.
-
-### Example: detect-001
-```json
-{
-  "expected": {
-    "success": true,
-    "contains": "typescript"  // Looking for string "typescript"
-  },
-  "actual": {
-    "data": {
-      "typescript": true  // Boolean value!
-    }
-  }
-}
-```
-
-**Problem**: Scorer looks for string "typescript" but the value is `true` (boolean). The recursive search doesn't convert booleans/numbers to strings or check property names.
-
-### Fix Required:
-Enhance `objectContainsString()` to also check property names:
-```typescript
-private objectContainsString(obj: unknown, expected: string): boolean {
-  if (typeof obj === 'string') {
-    return obj.includes(expected);
-  }
-
-  // NEW: Check if expected matches a property name
-  if (typeof obj === 'object' && obj !== null) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (key.toLowerCase().includes(expected.toLowerCase())) {
-        return true;  // Found in property name!
-      }
-      if (this.objectContainsString(value, expected)) {
-        return true;
-      }
-    }
-  }
-
-  // ... rest of existing logic
-}
-```
+### Issue 4: Missing Validation Logic (Medium)
 
 **Affected Tests**:
-- detect_project_type: Many tests fail because data has `typescript: true` but test expects string "typescript"
-- get_project_overview: Similar issues with property names vs values
+- `edit-013`: Edit identical strings (old == new) should fail, but succeeds
+- `todo-011`: Multiple in_progress tasks should fail, but succeeds
+- `read-012`: Negative offset should fail with validation error
+- `read-013`: Zero limit should fail with validation error
 
----
+**Fix**: Add proper validation to tool implementations:
 
-## Category 5: AST Tool Edge Cases (18 failures)
-
-### Tools Affected:
-- **inspect_symbol**: 6 failures
-- **find_references**: 4 failures
-- **get_imports_exports**: 5 failures
-- **build_dependency_graph**: 3 failures
-
-### Root Cause:
-Missing parameter validation and null/not-found handling.
-
-### Examples:
-
-#### inspect-007: Missing symbol parameter
-**Expected**: Error code 'INVALID_PARAMS'
-**Actual**: Probably crashes or passes undefined to Rust engine
-
-#### inspect-006: File not found
-**Expected**: Error code 'FILE_NOT_FOUND'
-**Actual**: Rust engine might return null/undefined, tool might not handle gracefully
-
-#### build_dependency_graph depgraph-010: Missing path parameter
-**Expected**: Should use default "." path
-**Actual**: Might fail validation
-
-### Fix Required:
-Add validation at start of execute():
 ```typescript
-async execute(params: unknown, context: ToolContext): Promise<ToolResult> {
-  const p = params as { symbol?: string; file?: string };
+// edit_file validation
+if (old_string === new_string) {
+  return { success: false, error: { code: 'INVALID_PARAMS', message: 'old_string and new_string cannot be identical' }};
+}
 
-  // Validate required parameters
-  if (!p.symbol || typeof p.symbol !== 'string') {
-    return {
-      success: false,
-      error: { code: 'INVALID_PARAMS', message: 'symbol is required and must be a string' }
-    };
-  }
-
-  if (!p.file || typeof p.file !== 'string') {
-    return {
-      success: false,
-      error: { code: 'INVALID_PARAMS', message: 'file is required and must be a string' }
-    };
-  }
-
-  // ... rest of execution
+// todo_write validation
+const inProgressCount = todos.filter(t => t.status === 'in_progress').length;
+if (inProgressCount > 1) {
+  return { success: false, error: { code: 'INVALID_STATE', message: 'Only one task can be in_progress at a time' }};
 }
 ```
 
+**Impact**: +~10 tests
+
 ---
 
-## Category 6: Project Analysis Tools (26 failures)
+## LLM Evals Breakdown
 
-### Tools Affected:
-- **detect_project_type**: 11 failures
-- **get_project_overview**: 12 failures
-- **extract_conventions**: All failures overlap with Category 1
+| Dataset | Passed | Total | Rate |
+|---------|--------|-------|------|
+| search_operations | 18 | 22 | **81.8%** |
+| code_analysis | 12 | 16 | 75% |
+| command_execution | 6 | 12 | 50% |
+| file_operations | 10 | 22 | **45.5%** |
 
-### Root Cause:
-Two issues:
-1. **Path resolution** (same as Category 1)
-2. **Scorer property name matching** (same as Category 4)
+---
 
-### Additional Issue: Missing Fixture Files
-Some tests expect specific project files that aren't set up in fixtures:
+## LLM Eval Root Causes
 
-#### detect-001: Node.js TypeScript project
+### Issue 5: Overly Strict Tool Expectations
+
+**Affected Datasets**: file_operations (12 failures), code_analysis (4 failures)
+
+**Problem**: Tests accept only one "correct" tool when multiple tools are valid for the query.
+
+| Case | Query | Expected | LLM Selected | Valid? |
+|------|-------|----------|--------------|--------|
+| llm-file-005 | "Create config.json" | Bash | EditFile | Both valid |
+| llm-file-012 | "List files in tests" | Bash | Glob | Glob is better |
+| llm-file-020 | "Create src/utils/helper.ts" | Bash | EditFile | Both valid |
+| llm-analysis-005 | "Show dependencies" | ReadFile | Bash | Both valid |
+| llm-analysis-013 | "Codebase structure" | Glob | Bash | Both valid |
+
+**Fix**: Add `acceptableTools` arrays to allow valid alternatives:
+
 ```json
 {
-  "fixtures": {
-    "type": "inline",
-    "files": {
-      "package.json": "{\"name\":\"test\",\"devDependencies\":{\"typescript\":\"^5.0.0\"}}"
-    }
-  }
+  "expectedTool": "Bash",
+  "acceptableTools": ["EditFile", "WriteFile", "Glob"]
 }
 ```
 
-**Problem**: Fixture likely doesn't create package.json correctly, or tool doesn't find it.
-
-### Fix Required:
-1. Fix path resolution (Category 1 fix)
-2. Fix scorer property name matching (Category 4 fix)
-3. Verify fixture JSON strings are valid and properly parsed
+**Impact**: +~8 tests
 
 ---
 
-## Category 7: Rust-Specific Features (3 failures)
+### Issue 6: Parameter Name Mismatches
 
-### Examples:
-- **findref-007**: Rust symbol references
-- **imports-011**: Rust use statements
-- **imports-012**: Rust pub exports
+**Affected Dataset**: command_execution (3 failures)
 
-### Root Cause:
-Fixtures create TypeScript files but tests expect Rust files. Rust engine may not be processing Rust syntax correctly in test fixtures.
+**Problem**: Tests expect camelCase params, tools use snake_case.
 
-### Fix Required:
-1. Verify Rust test fixtures actually create `.rs` files:
-   ```json
-   {
-     "files": {
-       "lib.rs": "pub fn hello() { println!(\"world\"); }"
-     }
-   }
-   ```
+| Test | Expected Param | Actual Tool Param |
+|------|---------------|-------------------|
+| llm-cmd-006 | `bashId` | `bash_id` |
+| llm-cmd-007 | `bashId` | `bash_id` |
 
-2. Check if Rust engine supports all Rust syntax features being tested
+**Fix**: Update test expectations to use actual tool parameter names.
+
+**Impact**: +~3 tests
 
 ---
 
-## Detailed Failure Breakdown by Tool
+### Issue 7: "No Tool Called" Cases
 
-| Tool | Failures | Primary Cause | Fix Complexity |
-|------|----------|---------------|----------------|
-| extract_conventions | 15/15 | Path resolution (Category 1) | Medium |
-| bash_output | 13/15 | Background process deps (Category 2) | High |
-| kill_bash | 12/15 | Background process deps (Category 2) | High |
-| glob | 12/15 | Path resolution (Category 1) | Low |
-| detect_project_type | 11/15 | Path + Scorer (Cat 1+4) | Medium |
-| get_project_overview | 12/15 | Path + Scorer (Cat 1+4) | Medium |
-| grep | 10/15 | Path resolution (Category 1) | Low |
-| inspect_symbol | 6/15 | Validation (Category 3) | Low |
-| todo_write | 6/15 | Validation (Category 3) | Low |
-| delete_file | 5/15 | Validation (Category 3) | Low |
-| edit_file | 5/15 | Validation (Category 3) | Low |
-| list_directory | 5/15 | Validation (Category 3) | Low |
-| get_imports_exports | 5/15 | Validation (Category 3) | Low |
-| find_references | 4/15 | Validation (Category 3) | Low |
-| read_file | 4/15 | Validation (Category 3) | Low |
-| build_dependency_graph | 3/15 | Validation (Category 3) | Low |
-| write_file | 3/15 | Validation (Category 3) | Low |
-| search_code | 3/15 | Validation (Category 3) | Low |
-| bash | 2/15 | Background tests (Category 2) | Medium |
+**Affected**: 5 cases (6.9% of LLM evals)
+
+| Case | Query | Issue |
+|------|-------|-------|
+| llm-file-003 | "Show me src/agent.ts" | Ambiguous - LLM might explain instead |
+| llm-file-017 | "Update the title in README" | Vague - no specific content given |
+| llm-file-021 | "Show me this file" | No context about which file |
+| llm-cmd-003 | "Show me git status" | Might respond conversationally |
+| llm-cmd-012 | "Kill the hanging process" | No process ID provided |
+
+**Fix Options**:
+1. Make queries more explicit
+2. Accept that ambiguous queries may not trigger tools
+3. Add `allowNoTool: true` option for genuinely ambiguous cases
+
+**Impact**: +~3 tests (if queries made explicit)
+
+---
+
+### Issue 8: Missing Optional Parameters
+
+**Affected**: command_execution background tests
+
+**Problem**: LLM correctly selects tool but doesn't include optional parameters like `run_in_background`.
+
+| Case | Query | Selected | Missing Param |
+|------|-------|----------|---------------|
+| llm-cmd-005 | "Start dev server in background" | Bash | `run_in_background` |
+| llm-cmd-011 | "Start build in background" | Bash | `run_in_background` |
+
+**Fix**: Either:
+1. Remove strict parameter expectations for optional params
+2. Make test queries more explicit ("use run_in_background=true")
+
+**Impact**: +~2 tests
 
 ---
 
 ## Priority Fix Recommendations
 
-### Priority 1: Quick Wins (Low Complexity, High Impact)
-1. **Fix glob path resolution** → +12 tests (glob.ts line 40)
-2. **Fix grep path resolution** → +10 tests (grep.ts similar to glob)
-3. **Add parameter validation to all tools** → +20 tests (standardized pattern)
+### Priority 1: High Impact, Low Effort
 
-**Estimated effort**: 2-3 hours
-**Expected improvement**: 22.3% → 67.7% (+42 tests)
+| Fix | Effort | Impact |
+|-----|--------|--------|
+| Fix glob/grep path resolution | 1 hour | +20 tests |
+| Add acceptableTools to LLM datasets | 1 hour | +8 tests |
+| Fix parameter name mismatches | 30 min | +3 tests |
 
-### Priority 2: Medium Complexity
-4. **Fix extract_conventions path resolution** → +15 tests
-5. **Enhance scorer to match property names** → +15 tests (detect/overview tools)
+**Expected improvement**: 52.6% → ~75% (tool), 63.9% → ~78% (LLM)
 
-**Estimated effort**: 3-4 hours
-**Expected improvement**: 67.7% → 77.7% (+30 tests)
+### Priority 2: Medium Effort
 
-### Priority 3: Complex Fixes
-6. **Mock background processes for bash_output/kill_bash** → +25 tests
-7. **Add Rust fixture support** → +3 tests
+| Fix | Effort | Impact |
+|-----|--------|--------|
+| Standardize error codes | 2 hours | +15 tests |
+| Add missing validation | 2 hours | +10 tests |
+| Make ambiguous LLM queries explicit | 1 hour | +5 tests |
 
-**Estimated effort**: 4-6 hours
-**Expected improvement**: 77.7% → 87.0% (+28 tests)
+**Expected improvement**: ~75% → ~90% (tool), ~78% → ~85% (LLM)
+
+### Priority 3: High Effort
+
+| Fix | Effort | Impact |
+|-----|--------|--------|
+| Mock/redesign background process tests | 4 hours | +25 tests |
+
+**Expected improvement**: ~90% → ~95%+ (tool)
+
+---
+
+## Detailed Failure List
+
+### Tool Evals (64 failures)
+
+| Tool | Pass | Fail | Primary Cause |
+|------|------|------|---------------|
+| glob | 3 | 12 | Path resolution |
+| grep | 5 | 10 | Path resolution |
+| bash_output | 2 | 13 | Process state |
+| kill_bash | 3 | 12 | Process state |
+| todo_write | 9 | 6 | Error codes + validation |
+| edit_file | 10 | 5 | Error codes + validation |
+| read_file | 11 | 4 | Validation |
+| bash | 13 | 2 | Background tests |
+| code_search | 15 | 0 | None |
+
+### LLM Evals (26 failures)
+
+| Dataset | Pass | Fail | Primary Causes |
+|---------|------|------|----------------|
+| file_operations | 10 | 12 | Strict expectations, no tool called |
+| command_execution | 6 | 6 | Missing params, no tool called |
+| code_analysis | 12 | 4 | Strict expectations |
+| search_operations | 18 | 4 | Minor selection issues |
 
 ---
 
 ## Conclusion
 
-The 139 failures have clear patterns:
-- **27 failures**: Path resolution (fixable in <2 hours)
-- **27 failures**: Background process architecture (needs design)
-- **31 failures**: Missing validation (tedious but straightforward)
-- **15+ failures**: Scorer enhancement needed
-- **Rest**: Mix of edge cases and Rust-specific issues
+The 90 total failures (64 tool + 26 LLM) have clear patterns:
 
-**With Priority 1 & 2 fixes, we could reach 77.7% pass rate (233/300 tests passing).**
+1. **Path resolution** (22 failures): Glob/grep don't use `context.cwd`
+2. **Background processes** (25 failures): Tests need process state
+3. **Error codes** (15 failures): VALIDATION_ERROR vs INVALID_PARAMS
+4. **Validation** (10 failures): Missing edge case validation
+5. **LLM strictness** (18 failures): Need acceptableTools + explicit queries
+
+**With Priority 1 fixes alone**, we could reach:
+- Tool Evals: 52.6% → **~75%**
+- LLM Evals: 63.9% → **~78%**
+
+**With all priority fixes**, targets are:
+- Tool Evals: **~95%**
+- LLM Evals: **~85%**
