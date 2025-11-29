@@ -722,9 +722,46 @@ The 3 analysis tools (`detect_project_type`, `extract_conventions`, `get_project
 
 ## 8. Future Directions
 
-### Short-Term: Product Quality
+### Immediate Priority: Code Intelligence Consolidation
 
-Our immediate focus is making CodeCraft work excellently in its current scope.
+**Problem:** 6 AST-based tools exposed to LLM → LLM often picks wrong tool
+
+**Current Tools (to consolidate):**
+- `SearchCode` - Fuzzy symbol search
+- `InspectSymbol` - Symbol info/resolution
+- `GetCodebaseMap` - Structural overview
+- `GetImportsExports` - File dependencies
+- `FindReferences` - Symbol usages
+- `BuildDependencyGraph` - Project dependencies
+
+**Solution:** Single `CodeSearch` tool + automatic background indexing
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     Code Intelligence Service                            │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │  Background Indexer (auto on startup, file watcher)             │   │
+│  └──────────────────────────────┬──────────────────────────────────┘   │
+│                                 ▼                                       │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │  Code Knowledge Base (symbols, graphs, mappings)                │   │
+│  └──────────────────────────────┬──────────────────────────────────┘   │
+│                                 ▼                                       │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │  Single Tool: CodeSearch(query) → intelligent results          │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Benefits:**
+- LLM can't pick wrong tool (only 1 option)
+- Pre-indexed = instant responses
+- Simpler system prompt
+- More reliable E2E tests
+
+See `docs/architecture/CODE_INTELLIGENCE_CONSOLIDATION.md` for full plan.
+
+### Short-Term: Product Quality
 
 #### 1. Tool Improvements
 
@@ -732,82 +769,27 @@ Our immediate focus is making CodeCraft work excellently in its current scope.
 - Improve background process management (bash, bash_output, kill_bash)
 - Better timeout handling and error recovery
 - Streaming output for long-running commands
-- Process group management for cleanup
 
-**Code Intelligence Category:**
+**After Code Intelligence Consolidation:**
+- Tool count: 17 → ~12 (remove 6 AST tools, add 1 CodeSearch)
+- System prompt: Remove tool selection guidance
+- Tests: More reliable (no wrong tool selection)
 
-Current tools parse AST on-demand, but we need a **code knowledge base** for deep understanding:
+#### 2. Evaluation System
 
-*What to Store:*
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Code Knowledge Base                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Symbols                                                         │
-│  ├── Functions (name, params, return type, location)            │
-│  ├── Classes (name, methods, properties, inheritance)           │
-│  ├── Interfaces/Types (shape, generics)                         │
-│  └── Variables/Constants (type, scope)                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Relationships                                                   │
-│  ├── Call Graph (function A calls function B)                   │
-│  ├── Import Graph (module A imports from module B)              │
-│  ├── Inheritance Chain (class A extends class B)                │
-│  └── Type Dependencies (function A uses type B)                 │
-├─────────────────────────────────────────────────────────────────┤
-│  Context                                                         │
-│  ├── File → Symbols mapping                                     │
-│  ├── Symbol → Usages mapping (where is X used?)                 │
-│  └── Symbol → Definition mapping (where is X defined?)          │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-*How to Store:*
-- Incremental indexing (only re-parse changed files)
-- In-memory graph structure for fast traversal
-- Persistent cache (SQLite or custom binary format)
-- File watcher for live updates
-
-*How to Retrieve/Search:*
-- Fuzzy symbol search (current: SkimMatcherV2)
-- Semantic search (find similar functions by behavior)
-- Graph queries (find all callers of X, find all dependencies of Y)
-- Scope-aware search (search within module, class, or project)
-
-*Improvements to Current Tools:*
-- `inspect_symbol`: Use indexed data for instant resolution
-- `get_imports_exports`: Build from cached import graph
-- `build_dependency_graph`: Generate from pre-built relationships
-- `find_references`: Query symbol → usages mapping directly
-
-#### 2. System Prompt & Evaluation
-
-**System Prompt Optimization:**
-- Fine-tune tool selection guidance
-- Improve context utilization instructions
-- Add better examples for edge cases
-- Optimize for evaluation performance
-
-**Evaluation System:**
-- Review and improve evaluation datasets continuously
-- Add more edge cases and real-world scenarios
 - Track evaluation scores over time
-- Use evaluation results to guide system prompt improvements
-- Target: Achieve 80%+ on both tool evals and LLM evals
+- Use evaluation results to guide improvements
+- Target: 80%+ on both tool evals and LLM evals
 
 #### 3. Agent Intelligence
 
 **Context Manager Enhancements:**
 - Context compaction (summarize old context to save tokens)
-- History manager (prioritize recent and relevant history)
 - Smarter token budgeting based on task complexity
-- Semantic relevance scoring for context items
 
 **Memory System:**
 - Extend CRAFT.md with richer project understanding
 - Session summaries that persist across conversations
-- User preference learning
-- Project-specific patterns and conventions memory
 
 ### Long-Term: Production-Grade Coding
 
