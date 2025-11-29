@@ -3,7 +3,7 @@
  */
 
 import { GoogleGenerativeAI, GenerativeModel, ChatSession } from '@google/generative-ai';
-import { generateSystemPrompt, type ToolInfo } from './system-prompt-template.js';
+import { generateSystemPrompt } from './system-prompt-template.js';
 import type { Tool } from './types/tool.js';
 
 /**
@@ -93,13 +93,8 @@ export function createAgentLLM(
   toolDeclarations: any[],
   craftContext: string = ''
 ): LLM {
-  // Generate system prompt from tools
-  const toolInfo: ToolInfo[] = tools.map(tool => ({
-    name: tool.name,
-    description: tool.description
-  }));
-
-  const systemPrompt = generateSystemPrompt(toolInfo, craftContext);
+  // Generate system prompt (tools are already provided via function calling)
+  const systemPrompt = generateSystemPrompt(craftContext);
 
   return new LLM({
     apiKey,
@@ -118,13 +113,8 @@ export function createEvalLLM(
   tools: Tool[],
   toolDeclarations: any[]
 ): LLM {
-  // Generate system prompt from tools
-  const toolInfo: ToolInfo[] = tools.map(tool => ({
-    name: tool.name,
-    description: tool.description
-  }));
-
-  const systemPrompt = generateSystemPrompt(toolInfo);
+  // Generate system prompt (tools are already provided via function calling)
+  const systemPrompt = generateSystemPrompt();
 
   return new LLM({
     apiKey,
