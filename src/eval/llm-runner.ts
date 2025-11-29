@@ -4,7 +4,7 @@
  * Tests whether the LLM selects the correct tool and parameters when given natural language queries.
  */
 
-import { createEvalLLM } from '../llm';
+import { createEvalLLM, LLM } from '../llm';
 import type { Tool } from '../types/tool';
 import type { DefaultToolRegistry } from '../tool-registry';
 import type { EvalScorer } from './scorer';
@@ -38,7 +38,7 @@ export interface LLMEvalRunnerOptions {
 }
 
 export class LLMEvalRunner {
-  private llmClient: any;
+  private llm: LLM;
   private registry: DefaultToolRegistry;
   private scorer: EvalScorer;
   private rateLimitDelayMs: number;
@@ -48,14 +48,16 @@ export class LLMEvalRunner {
     this.scorer = options.scorer;
     this.rateLimitDelayMs = options.rateLimitDelayMs || 1000;
 
-    // Create LLM client with tools from registry
-    const toolDeclarations = this.registry.getAll().map(tool => ({
+    // Get all tools from registry
+    const tools = this.registry.getAll();
+    const toolDeclarations = tools.map(tool => ({
       name: tool.name,
       description: tool.description,
       parameters: tool.parameters
     }));
 
-    this.llmClient = createEvalLLM(options.apiKey, [{
+    // Create LLM with system prompt based on tools
+    this.llm = createEvalLLM(options.apiKey, tools, [{
       functionDeclarations: toolDeclarations
     }]);
   }
@@ -71,7 +73,7 @@ export class LLMEvalRunner {
       const prompt = this.buildPrompt(evalCase);
 
       // Send to LLM
-      const response = await this.llmClient.generateContent(prompt);
+      const response = await this.llm.getModel().generateContent(prompt);
 
       // Extract function call from response
       const functionCall = this.extractFunctionCall(response);

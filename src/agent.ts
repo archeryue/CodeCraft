@@ -1,11 +1,12 @@
-import { GoogleGenerativeAI, GenerativeModel, ChatSession } from '@google/generative-ai';
-import { TOOLS, executor, createToolContext } from './tool-setup.js';
+import { ChatSession } from '@google/generative-ai';
+import { TOOLS, executor, createToolContext, registry } from './tool-setup.js';
 import { classifyIntent, Intent } from './intent-classifier.js';
 import { ContextManager } from './context-manager.js';
 import { PlanningEngine } from './planning-engine.js';
 import { ErrorRecovery, ErrorType } from './error-recovery.js';
 import type { ToolResult } from './types/tool.js';
 import { ToolResultFormatter } from './tool-result-formatter.js';
+import { createAgentLLM, LLM } from './llm.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -35,8 +36,8 @@ const DEFAULT_ITERATION_CONFIG: IterationConfig = {
 };
 
 export class Agent {
-    private genAI: GoogleGenerativeAI;
-    private model: GenerativeModel;
+    private apiKey: string;
+    private llm: LLM | null = null;
     private chatSession: ChatSession | null = null;
     private currentIntent: Intent | null = null;
 
@@ -53,11 +54,7 @@ export class Agent {
     private toolResultFormatter: ToolResultFormatter;
 
     constructor(apiKey: string, config?: Partial<IterationConfig>) {
-        this.genAI = new GoogleGenerativeAI(apiKey);
-        this.model = this.genAI.getGenerativeModel({
-            model: 'gemini-2.5-flash',
-            tools: TOOLS as any
-        });
+        this.apiKey = apiKey;
 
         // Initialize iteration configuration
         this.iterationConfig = {
@@ -99,65 +96,14 @@ export class Agent {
             }
         }
 
-        this.chatSession = this.model.startChat({
-            history: [
-                {
-                    role: "user",
-                    parts: [{ text: `You are CodeCraft, a CLI-based AI coding assistant.${craftContext}
+        // Get all tools from registry
+        const tools = registry.getAll();
 
-You have access to these tools:
-- ReadFile(path, offset?, limit?) - Read file contents
-- WriteFile(path, content) - Create or overwrite files
-- EditFile(path, old_string, new_string) - Edit files efficiently
-- DeleteFile(path) - Delete a file
-- ListDirectory(path?) - List files and directories
-- Glob(pattern, path?) - File pattern matching (e.g., **/*.ts)
-- Grep(pattern, path?, options?) - Text search with regex
-- GetCodebaseMap(path?) - Get AST-based project structure
-- SearchCode(query, path?) - Fuzzy search for symbols (e.g., "Agent", "executeTool")
-- InspectSymbol(symbol, file, mode?) - Inspect symbol details or resolve definition
-- GetImportsExports(file) - Show what a file imports/exports
-- BuildDependencyGraph(path?) - Generate dependency graph
-- FindReferences(symbol, path?) - Find all usages of a symbol
-- Bash(command, timeout?, run_in_background?) - Execute shell commands
-- BashOutput(bash_id) - Read output from background process
-- KillBash(bash_id) - Terminate background process
-- TodoWrite(todos) - Track multi-step tasks
+        // Create LLM with all tools and system prompt
+        this.llm = createAgentLLM(this.apiKey, tools, TOOLS as any, craftContext);
 
-Guidelines:
-- For finding code (functions, classes, symbols): use SearchCode (AST-based, fuzzy matching)
-- For finding text (strings, comments, error messages): use Grep (text-based, regex)
-- For file discovery: use Glob for patterns, ListDirectory for browsing
-- For understanding code: GetCodebaseMap for structure, InspectSymbol for details
-- Use tools proactively to answer questions about code/files
-- Be concise but helpful - aim for clear, direct responses
-- For multi-step tasks (3+ steps), use TodoWrite to track progress
-- After making code changes, run tests with Bash
-- Follow existing code conventions - read files first to understand style
-- Never add comments unless asked
-- IMPORTANT: Always respond with either tool calls OR text. Never return empty responses.
-- When user confirms an action, proceed immediately with the task using tools
-
-When working on tasks:
-1. Use tools to gather information
-2. Create todos for multi-step work (TodoWrite)
-3. Make changes using EditFile or WriteFile
-4. Verify with tests (Bash)
-5. Mark todos complete
-
-Example workflow for "run function with params X and Y":
-1. Use WriteFile to create temp test file with the function call
-2. Run it with Bash (npx tsx temp_file.ts)
-3. Delete the temp file with DeleteFile
-4. Show the user the result
-` }]
-                },
-                {
-                    role: "model",
-                    parts: [{ text: "Understood. I am CodeCraft, ready to assist. I will always respond with either tool calls or explanatory text, and proceed immediately when user confirms actions." }]
-                }
-            ],
-        });
+        // Start chat with empty history
+        this.chatSession = this.llm.startChat([]);
     }
 
     async chat(message: string, confirm?: (diff: string) => Promise<boolean>): Promise<string> {
