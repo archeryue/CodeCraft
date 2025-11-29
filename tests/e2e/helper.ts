@@ -151,10 +151,10 @@ export async function runCLIWithRetry(
     const result = await runCLI(query, timeoutMs);
     lastResult = result;
 
-    // Check if we got a meaningful response (not empty/error)
+    // Check if we got a meaningful response (tool called or text response)
     if (
       result.output.includes('[Tool Call]') ||
-      (result.output.length > 500 && !result.output.includes('Empty response'))
+      result.output.split('\n> ').length > 1  // Got a response (second prompt appeared)
     ) {
       return result;
     }

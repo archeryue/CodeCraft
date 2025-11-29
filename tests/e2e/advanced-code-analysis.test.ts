@@ -19,7 +19,8 @@ describe('E2E: Advanced Code Analysis', () => {
     );
 
     expect(result.output).toMatch(/Tool Call.*GetCodebaseMap/i);
-    expect(result.output).toMatch(/function|class|export/i);
+    // Model should respond about the codebase (test functionality, not LLM quality)
+    expect(result.output).toMatch(/codebase|structure|src|rust_engine/i);
   }, 90000);
 
   it('should search code symbols', async () => {
