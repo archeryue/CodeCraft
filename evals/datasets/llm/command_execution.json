@@ -132,7 +132,7 @@
       "expected": {
         "expectedTool": "BashOutput",
         "expectedParams": {
-          "bashId": {
+          "bash_id": {
             "type": "string"
           }
         }
@@ -154,7 +154,7 @@
       "expected": {
         "expectedTool": "KillBash",
         "expectedParams": {
-          "bashId": {
+          "bash_id": {
             "contains": "bash"
           }
         }
@@ -262,7 +262,7 @@
       ],
       "difficulty": 2,
       "input": {
-        "query": "Kill the hanging process"
+        "query": "Kill the background process bash-789"
       },
       "expected": {
         "expectedTool": "KillBash",
@@ -270,7 +270,7 @@
           "Bash"
         ],
         "expectedParams": {
-          "bashId": {
+          "bash_id": {
             "type": "string"
           }
         }

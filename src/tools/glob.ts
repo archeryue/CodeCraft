@@ -3,6 +3,7 @@
 import { Tool, ToolContext, ToolResult } from '../types/tool';
 import { SchemaType } from '@google/generative-ai';
 import fg from 'fast-glob';
+import * as path from 'path';
 
 export const globTool: Tool = {
   name: 'Glob',
@@ -30,11 +31,16 @@ export const globTool: Tool = {
   async execute(params: unknown, context: ToolContext): Promise<ToolResult> {
     const startTime = Date.now();
     const p = params as { pattern: string; path?: string };
-    const searchPath = p.path || '.';
+    const relativePath = p.path || '.';
+
+    // Resolve path relative to context.cwd for fixture support
+    const searchPath = path.isAbsolute(relativePath)
+      ? relativePath
+      : path.join(context.cwd, relativePath);
 
     try {
       if (!context.fs.existsSync(searchPath)) {
-        return { success: false, error: { code: 'DIR_NOT_FOUND', message: `Directory not found: ${searchPath}` } };
+        return { success: false, error: { code: 'DIR_NOT_FOUND', message: `Directory not found: ${relativePath}` } };
       }
 
       const files = await fg(p.pattern, {

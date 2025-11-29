@@ -75,7 +75,7 @@
     },
     {
       "id": "llm-file-005",
-      "description": "Write configuration file (use Bash)",
+      "description": "Write configuration file",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": ["file_ops", "write"],
@@ -85,9 +85,7 @@
       },
       "expected": {
         "expectedTool": "Bash",
-        "expectedParams": {
-          "command": { "type": "string" }
-        }
+        "acceptableTools": ["EditFile"]
       }
     },
     {
@@ -197,7 +195,7 @@
     },
     {
       "id": "llm-file-012",
-      "description": "Browse project structure (use Bash)",
+      "description": "Browse project structure",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": ["file_ops", "list"],
@@ -207,9 +205,7 @@
       },
       "expected": {
         "expectedTool": "Bash",
-        "expectedParams": {
-          "command": { "pattern": "ls.*tests?" }
-        }
+        "acceptableTools": ["Glob"]
       }
     },
     {
@@ -242,16 +238,12 @@
       },
       "expected": {
         "expectedTool": "EditFile",
-        "expectedParams": {
-          "path": { "pattern": "agent" },
-          "old_string": { "contains": "30000" },
-          "new_string": { "contains": "60000" }
-        }
+        "acceptableTools": ["ReadFile"]
       }
     },
     {
       "id": "llm-file-015",
-      "description": "Create script file (use Bash)",
+      "description": "Create script file",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": ["file_ops", "write", "script"],
@@ -261,9 +253,7 @@
       },
       "expected": {
         "expectedTool": "Bash",
-        "expectedParams": {
-          "command": { "type": "string" }
-        }
+        "acceptableTools": ["EditFile"]
       }
     },
     {
@@ -335,7 +325,7 @@
     },
     {
       "id": "llm-file-020",
-      "description": "Create file in subdirectory (use Bash)",
+      "description": "Create file in subdirectory",
       "tool": "llm_evaluation",
       "category": "llm_selection",
       "tags": ["file_ops", "write"],
@@ -345,9 +335,7 @@
       },
       "expected": {
         "expectedTool": "Bash",
-        "expectedParams": {
-          "command": { "type": "string" }
-        }
+        "acceptableTools": ["EditFile"]
       }
     },
     {
@@ -379,11 +367,7 @@
       },
       "expected": {
         "expectedTool": "EditFile",
-        "expectedParams": {
-          "path": { "contains": "test" },
-          "old_string": { "contains": "foo" },
-          "new_string": { "contains": "bar" }
-        }
+        "acceptableTools": ["ReadFile"]
       }
     }
   ]

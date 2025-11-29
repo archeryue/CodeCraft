@@ -3,6 +3,7 @@
 import { Tool, ToolContext, ToolResult } from '../types/tool';
 import { SchemaType } from '@google/generative-ai';
 import fg from 'fast-glob';
+import * as path from 'path';
 
 export const grepTool: Tool = {
   name: 'Grep',
@@ -43,13 +44,18 @@ export const grepTool: Tool = {
       beforeContext?: number;
       afterContext?: number;
     };
-    const searchPath = p.path || '.';
+    const relativePath = p.path || '.';
+
+    // Resolve path relative to context.cwd for fixture support
+    const searchPath = path.isAbsolute(relativePath)
+      ? relativePath
+      : path.join(context.cwd, relativePath);
 
     // Validate path exists
     if (!context.fs.existsSync(searchPath)) {
       return {
         success: false,
-        error: { code: 'PATH_NOT_FOUND', message: `Path not found: ${searchPath}` },
+        error: { code: 'PATH_NOT_FOUND', message: `Path not found: ${relativePath}` },
         metadata: { executionTimeMs: Date.now() - startTime }
       };
     }
@@ -80,7 +86,7 @@ export const grepTool: Tool = {
 
       for (const file of files) {
         try {
-          const fullPath = searchPath === '.' ? file : `${searchPath}/${file}`;
+          const fullPath = path.join(searchPath, file);
           const content = context.fs.readFileSync(fullPath, 'utf-8');
           const lines = content.split('\n');
 

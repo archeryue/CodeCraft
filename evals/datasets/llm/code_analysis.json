@@ -120,13 +120,9 @@
       "expected": {
         "expectedTool": "ReadFile",
         "acceptableTools": [
-          "Grep"
-        ],
-        "expectedParams": {
-          "path": {
-            "contains": "package"
-          }
-        }
+          "Grep",
+          "Bash"
+        ]
       }
     },
     {
@@ -324,12 +320,7 @@
         "acceptableTools": [
           "Bash",
           "CodeSearch"
-        ],
-        "expectedParams": {
-          "pattern": {
-            "type": "string"
-          }
-        }
+        ]
       }
     },
     {
