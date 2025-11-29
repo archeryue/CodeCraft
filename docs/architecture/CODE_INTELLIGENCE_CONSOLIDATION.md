@@ -1,17 +1,16 @@
 # Code Intelligence Consolidation Plan
 
-> Consolidate 6 AST-based tools into 1 intelligent CodeSearch with automatic background indexing.
+> Consolidate 5 AST-based tools into 1 unified CodeSearch (symbol/definition/references only).
 
 ## Problem Statement
 
 **Current State:**
-- 6 AST-based tools exposed to LLM:
+- 5 AST-based tools exposed to LLM:
   - `SearchCode` - Fuzzy symbol search
   - `InspectSymbol` - Symbol info/resolution
   - `GetCodebaseMap` - Structural overview
   - `GetImportsExports` - File dependencies
   - `FindReferences` - Symbol usages
-  - `BuildDependencyGraph` - Project-wide dependencies
 
 **Issues:**
 1. LLM must choose between similar tools → often picks wrong one (Grep vs SearchCode)
@@ -19,203 +18,92 @@
 3. Complex system prompt needed to guide tool selection
 4. Tests fail when LLM picks "wrong" but valid tool
 
-## Solution: Unified Code Intelligence
+## Key Insight
 
-### Architecture
+**We don't need all these tools.** The LLM already has:
+- `ReadFile` - If you know the file, just read it
+- `Grep` - For text/pattern search
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         Code Intelligence Service                        │
-│                                                                          │
-│  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │                      Background Indexer                            │  │
-│  │  • Runs on agent startup                                           │  │
-│  │  • Watches for file changes                                        │  │
-│  │  • Incremental updates                                             │  │
-│  └───────────────────────────────────────────────────────────────────┘  │
-│                                    │                                     │
-│                                    ▼                                     │
-│  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │                      Code Knowledge Base                           │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────────┐│  │
-│  │  │   Symbols   │  │   Graphs    │  │         Mappings            ││  │
-│  │  │ • Functions │  │ • Call      │  │ • File → Symbols            ││  │
-│  │  │ • Classes   │  │ • Import    │  │ • Symbol → Definition       ││  │
-│  │  │ • Types     │  │ • Inherit   │  │ • Symbol → References       ││  │
-│  │  └─────────────┘  └─────────────┘  └─────────────────────────────┘│  │
-│  └───────────────────────────────────────────────────────────────────┘  │
-│                                    │                                     │
-│                                    ▼                                     │
-│  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │                     Single Tool: CodeSearch                        │  │
-│  │  CodeSearch(query, options?) → results                             │  │
-│  └───────────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+What's actually useful from AST analysis:
+- **Symbol search** - Find where something is defined
+- **Definition info** - Get signature/type info for a symbol
+- **References** - Find all usages of a symbol
+
+Everything else (codebase structure, imports/exports, dependency graphs) can be done by just reading files.
+
+## Solution: Simplified CodeSearch
+
+### Tools to Remove
+| Tool | Why Remove |
+|------|------------|
+| `GetCodebaseMap` | Just read files - LLM can understand structure |
+| `GetImportsExports` | Just read the file - imports are at the top |
+| `BuildDependencyGraph` | Not exposed to LLM anyway |
+
+### Tools to Keep (Consolidated)
+| Current Tool | → CodeSearch Mode |
+|--------------|-------------------|
+| `SearchCode` | `mode: 'search'` (default) |
+| `InspectSymbol` | `mode: 'definition'` |
+| `FindReferences` | `mode: 'references'` |
 
 ### Single Tool API
 
 ```typescript
 interface CodeSearchParams {
-  query: string;           // "Agent class", "handleError function", "imports in agent.ts"
-  type?: 'symbol' | 'definition' | 'references' | 'structure' | 'dependencies';
-  scope?: string;          // File or directory to search in
-  limit?: number;          // Max results (default: 20)
-}
-
-interface CodeSearchResult {
-  type: 'symbol' | 'definition' | 'reference' | 'structure' | 'dependency';
-  name: string;
-  file: string;
-  line: number;
-  snippet: string;
-  metadata?: {
-    kind: 'function' | 'class' | 'interface' | 'type' | 'variable';
-    signature?: string;
-    imports?: string[];
-    exports?: string[];
-  };
+  query: string;        // Symbol name to search
+  mode?: 'search' | 'definition' | 'references';  // Default: 'search'
+  file?: string;        // Required for 'definition' mode
+  path?: string;        // Search directory (default: ".")
 }
 ```
 
-### Query Examples
+### Usage Examples
 
-| User Query | Type Detection | What It Does |
-|------------|----------------|--------------|
-| "Agent class" | symbol | Fuzzy search for symbols matching "Agent" |
-| "where is handleError defined" | definition | Find definition of handleError |
-| "who uses the Agent class" | references | Find all references to Agent |
-| "structure of src/" | structure | Return codebase map for src/ |
-| "what does agent.ts import" | dependencies | Return imports/exports of file |
+| Query | Mode | What It Does |
+|-------|------|--------------|
+| `CodeSearch("Agent")` | search | Fuzzy find symbols matching "Agent" |
+| `CodeSearch("Agent", mode="definition", file="src/agent.ts")` | definition | Get Agent class signature/info |
+| `CodeSearch("Agent", mode="references")` | references | Find all files using Agent |
 
-### Background Indexer
+## Tool Count Impact
 
-```typescript
-class CodeIntelligenceService {
-  private index: CodeIndex;
-  private watcher: FSWatcher;
+| Before | After |
+|--------|-------|
+| 13 tools | 9 tools |
+| 5 AST tools | 1 CodeSearch |
 
-  async initialize(projectRoot: string): Promise<void> {
-    // 1. Build initial index (using Rust engine)
-    this.index = await this.buildIndex(projectRoot);
-
-    // 2. Start file watcher for incremental updates
-    this.watcher = watch(projectRoot, {
-      ignored: /node_modules|\.git|target|dist/,
-      persistent: true
-    });
-
-    this.watcher.on('change', (path) => this.updateFile(path));
-    this.watcher.on('add', (path) => this.addFile(path));
-    this.watcher.on('unlink', (path) => this.removeFile(path));
-  }
-
-  search(params: CodeSearchParams): CodeSearchResult[] {
-    // Query pre-built index - instant response
-    return this.index.query(params);
-  }
-}
-```
-
-## Tool Consolidation
-
-### Before (6 tools)
-
-| Tool | Lines of Code | Purpose |
-|------|--------------|---------|
-| SearchCode | 57 | Fuzzy symbol search |
-| InspectSymbol | 100+ | Symbol info/resolution |
-| GetCodebaseMap | 47 | Structural overview |
-| GetImportsExports | 80+ | File dependencies |
-| FindReferences | 70+ | Symbol usages |
-| BuildDependencyGraph | 60+ | Project dependencies |
-| **Total** | **~400+ lines** | 6 tools to maintain |
-
-### After (1 tool)
-
-| Tool | Purpose |
-|------|---------|
-| CodeSearch | All code intelligence queries |
-
-**Benefits:**
-- LLM can't pick wrong tool
-- Single description to understand
-- Shared index = faster responses
-- Simpler system prompt
-- Easier to test
+**Removed:** SearchCode, InspectSymbol, GetCodebaseMap, GetImportsExports, FindReferences
+**Added:** CodeSearch (unified)
 
 ## Implementation Plan
 
-### Phase 1: Background Indexer
-1. Create `CodeIntelligenceService` class
-2. Initialize on agent startup
-3. Build index using existing Rust engine
-4. Add file watcher for updates
+### Phase 1: Create CodeSearch Tool
+1. Create `src/tools/code-search.ts`
+2. Combine logic from SearchCode, InspectSymbol, FindReferences
+3. Single tool with mode parameter
 
-### Phase 2: Unified CodeSearch Tool
-1. Create new `CodeSearch` tool
-2. Implement query type detection
-3. Route to appropriate index queries
-4. Return unified result format
+### Phase 2: Remove Old Tools
+1. Delete: `search-code.ts`, `inspect-symbol.ts`, `get-codebase-map.ts`, `get-imports-exports.ts`, `find-references.ts`
+2. Update `tools/index.ts`
+3. Update `tool-setup.ts`
 
-### Phase 3: Remove Old Tools
-1. Remove 6 individual AST tools
-2. Update system prompt (simpler!)
-3. Update tests
-4. Update documentation
+### Phase 3: Update Tests
+1. Remove old tool tests
+2. Create CodeSearch tests
+3. Update E2E tests to expect CodeSearch
 
-### Phase 4: Enhancements
-1. Incremental indexing (only changed files)
-2. Persistent cache (survive restarts)
-3. Relevance ranking improvements
-4. Cross-file relationship tracking
-
-## System Prompt Impact
-
-### Before
-```
-Tool Selection Strategy:
-- Code structure questions → AST-based tools (SearchCode, InspectSymbol, GetCodebaseMap)
-- Text/string search → Pattern matching (Grep)
-...
-```
-
-### After
-```
-Code Search:
-- Use CodeSearch for any code-related queries (symbols, definitions, references, structure)
-- Use Grep for literal text search
-```
-
-**Simpler = fewer wrong choices**
-
-## Migration Path
-
-1. **Build new system alongside old** - CodeSearch coexists with old tools
-2. **Test thoroughly** - Ensure CodeSearch covers all use cases
-3. **Switch over** - Update system prompt to prefer CodeSearch
-4. **Remove old tools** - Clean up deprecated tools
-5. **Update tests** - E2E tests use CodeSearch
+### Phase 4: Simplify System Prompt
+Remove tool selection guidance - tool descriptions should be self-explanatory.
 
 ## Success Metrics
 
 | Metric | Current | Target |
 |--------|---------|--------|
-| AST tools exposed to LLM | 6 | 1 |
-| Tool selection errors | ~20% | ~0% |
-| Average query time | 100-500ms | <50ms (indexed) |
-| System prompt complexity | High | Low |
-| E2E test reliability | Variable | Stable |
-
-## Risks and Mitigations
-
-| Risk | Mitigation |
-|------|------------|
-| Index memory usage | Lazy loading, limit index size |
-| Startup time | Async indexing, show progress |
-| Stale index | File watcher, periodic refresh |
-| Query complexity | Smart defaults, simple API |
+| AST tools exposed to LLM | 5 | 1 |
+| Total tools | 13 | 9 |
+| Tool selection confusion | Common | Rare |
 
 ---
 
-*This consolidation aligns with the philosophy: **simple tools + smart agent = complex capabilities**.*
+*Philosophy: If the LLM knows the file, just read it. Only use AST tools for symbol discovery.*
