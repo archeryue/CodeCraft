@@ -735,10 +735,50 @@ Our immediate focus is making CodeCraft work excellently in its current scope.
 - Process group management for cleanup
 
 **Code Intelligence Category:**
-- Enhance `inspect_symbol` with better resolution accuracy
-- Improve `get_imports_exports` to handle complex module systems
-- Make `build_dependency_graph` more comprehensive
-- Add cross-file reference tracking in `find_references`
+
+Current tools parse AST on-demand, but we need a **code knowledge base** for deep understanding:
+
+*What to Store:*
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Code Knowledge Base                          │
+├─────────────────────────────────────────────────────────────────┤
+│  Symbols                                                         │
+│  ├── Functions (name, params, return type, location)            │
+│  ├── Classes (name, methods, properties, inheritance)           │
+│  ├── Interfaces/Types (shape, generics)                         │
+│  └── Variables/Constants (type, scope)                          │
+├─────────────────────────────────────────────────────────────────┤
+│  Relationships                                                   │
+│  ├── Call Graph (function A calls function B)                   │
+│  ├── Import Graph (module A imports from module B)              │
+│  ├── Inheritance Chain (class A extends class B)                │
+│  └── Type Dependencies (function A uses type B)                 │
+├─────────────────────────────────────────────────────────────────┤
+│  Context                                                         │
+│  ├── File → Symbols mapping                                     │
+│  ├── Symbol → Usages mapping (where is X used?)                 │
+│  └── Symbol → Definition mapping (where is X defined?)          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+*How to Store:*
+- Incremental indexing (only re-parse changed files)
+- In-memory graph structure for fast traversal
+- Persistent cache (SQLite or custom binary format)
+- File watcher for live updates
+
+*How to Retrieve/Search:*
+- Fuzzy symbol search (current: SkimMatcherV2)
+- Semantic search (find similar functions by behavior)
+- Graph queries (find all callers of X, find all dependencies of Y)
+- Scope-aware search (search within module, class, or project)
+
+*Improvements to Current Tools:*
+- `inspect_symbol`: Use indexed data for instant resolution
+- `get_imports_exports`: Build from cached import graph
+- `build_dependency_graph`: Generate from pre-built relationships
+- `find_references`: Query symbol → usages mapping directly
 
 #### 2. System Prompt & Evaluation
 
