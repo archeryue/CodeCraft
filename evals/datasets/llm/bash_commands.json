@@ -1,0 +1,1227 @@
+{
+  "tool": "llm_evaluation",
+  "version": "1.0",
+  "description": "Bash command correctness evaluation - tests if the agent generates correct bash commands with proper syntax, flags, and parameters",
+  "categories": {
+    "git": "Git version control operations",
+    "python": "Python script execution and pip",
+    "node": "Node.js, npm, and npx operations",
+    "file_ops": "File and directory operations (touch, mkdir, cp, mv, rm)",
+    "network": "Network operations (curl, wget, ssh)",
+    "process": "Process management (ps, kill, background)",
+    "text": "Text processing (sed, awk, sort)",
+    "docker": "Docker container operations",
+    "build": "Build tools (make, cargo, go)",
+    "system": "System info and utilities"
+  },
+  "cases": [
+    {
+      "id": "bash-git-001",
+      "description": "Git commit with message",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "commit"],
+      "difficulty": 1,
+      "input": {
+        "query": "Commit the staged changes with message 'fix: resolve login bug'"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+commit\\s+(-m|--message)\\s+['\"]fix:\\s*resolve login bug['\"]"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-git-002",
+      "description": "Git push to specific branch",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "push"],
+      "difficulty": 2,
+      "input": {
+        "query": "Push the current branch to origin remote"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+push(\\s+origin)?(\\s+HEAD|\\s+\\w+)?"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-git-003",
+      "description": "Git checkout new branch",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "branch"],
+      "difficulty": 2,
+      "input": {
+        "query": "Create and switch to a new branch called feature/user-auth"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+(checkout\\s+-b|switch\\s+-c|branch\\s+.*&&.*checkout)\\s+feature/user-auth"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-git-004",
+      "description": "Git diff staged changes",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "diff"],
+      "difficulty": 2,
+      "input": {
+        "query": "Show me the diff of staged changes"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+diff\\s+--staged|git\\s+diff\\s+--cached"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-git-005",
+      "description": "Git log with format",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "log"],
+      "difficulty": 2,
+      "input": {
+        "query": "Show the last 5 commits in oneline format"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+log\\s+.*(-n\\s*5|--oneline|-5).*(-n\\s*5|--oneline|-5)"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-git-006",
+      "description": "Git stash changes",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "stash"],
+      "difficulty": 2,
+      "input": {
+        "query": "Stash my current changes with message 'WIP: refactoring'"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+stash\\s+(push\\s+)?(-m|--message|save)\\s+['\"]?WIP.*refactoring['\"]?"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-git-007",
+      "description": "Git reset soft",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "reset"],
+      "difficulty": 3,
+      "input": {
+        "query": "Undo the last commit but keep the changes staged"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+reset\\s+--soft\\s+HEAD~1|git\\s+reset\\s+--soft\\s+HEAD\\^"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-git-008",
+      "description": "Git clone with depth",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["git", "clone"],
+      "difficulty": 2,
+      "input": {
+        "query": "Clone the repository https://github.com/user/repo.git with shallow depth of 1"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "git\\s+clone\\s+--depth\\s+1\\s+https://github.com/user/repo.git|git\\s+clone\\s+https://github.com/user/repo.git\\s+--depth\\s+1"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-python-001",
+      "description": "Run Python script",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["python", "execute"],
+      "difficulty": 1,
+      "input": {
+        "query": "Run the Python script located at scripts/process_data.py"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "python3?\\s+scripts/process_data.py"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-python-002",
+      "description": "Run Python with arguments",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["python", "args"],
+      "difficulty": 2,
+      "input": {
+        "query": "Run main.py with arguments --input data.csv --output result.json"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "python3?\\s+main.py\\s+--input\\s+data.csv\\s+--output\\s+result.json"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-python-003",
+      "description": "Pip install package",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["python", "pip"],
+      "difficulty": 1,
+      "input": {
+        "query": "Install the requests library using pip"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "pip3?\\s+install\\s+requests|python3?\\s+-m\\s+pip\\s+install\\s+requests"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-python-004",
+      "description": "Pip install from requirements",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["python", "pip", "requirements"],
+      "difficulty": 2,
+      "input": {
+        "query": "Install all dependencies from requirements.txt"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "pip3?\\s+install\\s+-r\\s+requirements.txt|python3?\\s+-m\\s+pip\\s+install\\s+-r\\s+requirements.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-python-005",
+      "description": "Run Python module",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["python", "module"],
+      "difficulty": 2,
+      "input": {
+        "query": "Run pytest on the tests directory"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "(python3?\\s+-m\\s+)?pytest\\s+tests?"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-python-006",
+      "description": "Create Python virtual environment",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["python", "venv"],
+      "difficulty": 2,
+      "input": {
+        "query": "Create a Python virtual environment named .venv"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "python3?\\s+-m\\s+venv\\s+\\.venv"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-node-001",
+      "description": "npm install dependencies",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["node", "npm"],
+      "difficulty": 1,
+      "input": {
+        "query": "Install npm dependencies"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "npm\\s+install|npm\\s+i"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-node-002",
+      "description": "npm install specific package",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["node", "npm"],
+      "difficulty": 1,
+      "input": {
+        "query": "Install lodash as a dev dependency"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "npm\\s+install\\s+(-D|--save-dev)\\s+lodash|npm\\s+install\\s+lodash\\s+(-D|--save-dev)|npm\\s+i\\s+(-D|--save-dev)\\s+lodash"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-node-003",
+      "description": "npm run script",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["node", "npm", "script"],
+      "difficulty": 1,
+      "input": {
+        "query": "Run the build script defined in package.json"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "npm\\s+run\\s+build"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-node-004",
+      "description": "npx execute package",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["node", "npx"],
+      "difficulty": 2,
+      "input": {
+        "query": "Run TypeScript compiler using npx"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "npx\\s+tsc"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-node-005",
+      "description": "Run node script",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["node", "execute"],
+      "difficulty": 1,
+      "input": {
+        "query": "Execute the server.js file with node"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "node\\s+server.js"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-node-006",
+      "description": "npm test",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["node", "npm", "test"],
+      "difficulty": 1,
+      "input": {
+        "query": "Run the npm test command"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "npm\\s+test|npm\\s+t"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-001",
+      "description": "Create file with touch",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "touch"],
+      "difficulty": 1,
+      "input": {
+        "query": "Create an empty file called config.yaml"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "touch\\s+config.yaml"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-002",
+      "description": "Create directory",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "mkdir"],
+      "difficulty": 1,
+      "input": {
+        "query": "Create a directory called src/components/ui"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "mkdir\\s+(-p\\s+)?src/components/ui"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-003",
+      "description": "Copy file",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "cp"],
+      "difficulty": 1,
+      "input": {
+        "query": "Copy config.json to config.backup.json"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "cp\\s+config.json\\s+config.backup.json"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-004",
+      "description": "Copy directory recursively",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "cp", "recursive"],
+      "difficulty": 2,
+      "input": {
+        "query": "Copy the entire src directory to src_backup"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "cp\\s+-r\\s+src\\s+src_backup|cp\\s+--recursive\\s+src\\s+src_backup"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-005",
+      "description": "Move/rename file",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "mv"],
+      "difficulty": 1,
+      "input": {
+        "query": "Rename old_name.ts to new_name.ts"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "mv\\s+old_name.ts\\s+new_name.ts"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-006",
+      "description": "Remove file",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "rm"],
+      "difficulty": 1,
+      "input": {
+        "query": "Delete the file temp.log"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "rm\\s+temp.log"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-007",
+      "description": "Remove directory recursively",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "rm", "recursive"],
+      "difficulty": 2,
+      "input": {
+        "query": "Remove the node_modules directory completely"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "rm\\s+-rf?\\s+node_modules|rm\\s+-fr?\\s+node_modules"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-file-008",
+      "description": "Change file permissions",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["file", "chmod"],
+      "difficulty": 2,
+      "input": {
+        "query": "Make the script.sh file executable"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "chmod\\s+\\+x\\s+script.sh|chmod\\s+755\\s+script.sh|chmod\\s+u\\+x\\s+script.sh"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-network-001",
+      "description": "Curl GET request",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["network", "curl"],
+      "difficulty": 1,
+      "input": {
+        "query": "Fetch the content from https://api.example.com/data"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "curl\\s+(https://api.example.com/data|-X\\s+GET\\s+https://api.example.com/data)"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-network-002",
+      "description": "Curl POST with JSON",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["network", "curl", "post"],
+      "difficulty": 3,
+      "input": {
+        "query": "Send a POST request to https://api.example.com/users with JSON body {\"name\": \"John\"}"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "curl\\s+.*-X\\s+POST.*-d.*name.*John|curl\\s+.*--data.*name.*John.*-X\\s+POST"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-network-003",
+      "description": "Curl with headers",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["network", "curl", "headers"],
+      "difficulty": 2,
+      "input": {
+        "query": "Make a GET request to https://api.example.com with Authorization header 'Bearer token123'"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "curl\\s+.*-H\\s+['\"]Authorization:\\s*Bearer\\s+token123['\"].*https://api.example.com|curl\\s+.*--header\\s+['\"]Authorization:\\s*Bearer\\s+token123['\"]"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-network-004",
+      "description": "Curl download file",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["network", "curl", "download"],
+      "difficulty": 2,
+      "input": {
+        "query": "Download the file from https://example.com/file.zip and save it as download.zip"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "curl\\s+(-o|--output)\\s+download.zip\\s+https://example.com/file.zip|curl\\s+https://example.com/file.zip\\s+(-o|--output)\\s+download.zip|wget\\s+(-O|--output-document=?)\\s*download.zip\\s+https://example.com/file.zip|wget\\s+https://example.com/file.zip\\s+(-O|--output-document=?)\\s*download.zip"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-network-005",
+      "description": "Wget download",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["network", "wget"],
+      "difficulty": 1,
+      "input": {
+        "query": "Use wget to download https://example.com/data.tar.gz"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "wget\\s+https://example.com/data.tar.gz"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-process-001",
+      "description": "List processes",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["process", "ps"],
+      "difficulty": 1,
+      "input": {
+        "query": "Show all running processes"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "ps\\s+(aux|ef|-ef|-aux)"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-process-002",
+      "description": "Kill process by PID",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["process", "kill"],
+      "difficulty": 2,
+      "input": {
+        "query": "Kill the process with PID 1234"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "kill\\s+(-9\\s+)?1234|kill\\s+1234"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-process-003",
+      "description": "Kill process by name",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["process", "pkill"],
+      "difficulty": 2,
+      "input": {
+        "query": "Kill all processes named 'node'"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "pkill\\s+(-9\\s+)?node|killall\\s+(-9\\s+)?node"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-process-004",
+      "description": "Find process by port",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["process", "port"],
+      "difficulty": 3,
+      "input": {
+        "query": "Find what process is using port 3000"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "lsof\\s+-i\\s*:?3000|netstat\\s+.*3000|ss\\s+.*3000|fuser\\s+3000/tcp"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-text-001",
+      "description": "Sort file contents",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["text", "sort"],
+      "difficulty": 2,
+      "input": {
+        "query": "Sort the lines in data.txt and save to sorted.txt"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "sort\\s+data.txt\\s*>\\s*sorted.txt|sort\\s+-o\\s+sorted.txt\\s+data.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-text-002",
+      "description": "Count lines in file",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["text", "wc"],
+      "difficulty": 1,
+      "input": {
+        "query": "Count the number of lines in README.md"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "wc\\s+-l\\s+README.md"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-text-003",
+      "description": "Find unique lines",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["text", "uniq"],
+      "difficulty": 2,
+      "input": {
+        "query": "Get unique lines from sorted.txt"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "uniq\\s+sorted.txt|sort\\s+-u\\s+sorted.txt|cat\\s+sorted.txt\\s*\\|\\s*uniq"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-text-004",
+      "description": "Sed replacement",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["text", "sed"],
+      "difficulty": 3,
+      "input": {
+        "query": "Replace all occurrences of 'foo' with 'bar' in config.txt"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "sed\\s+(-i\\s+)?['\"]?s/foo/bar/g['\"]?\\s+config.txt|sed\\s+-i\\s+['\"]s/foo/bar/g['\"]\\s+config.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-docker-001",
+      "description": "Docker run container",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["docker", "run"],
+      "difficulty": 2,
+      "input": {
+        "query": "Run an nginx container exposing port 80 to host port 8080"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "docker\\s+run\\s+.*-p\\s+8080:80.*nginx|docker\\s+run\\s+.*--publish\\s+8080:80.*nginx"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-docker-002",
+      "description": "Docker build image",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["docker", "build"],
+      "difficulty": 2,
+      "input": {
+        "query": "Build a Docker image with tag myapp:latest from current directory"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "docker\\s+build\\s+(-t|--tag)\\s+myapp:latest\\s+\\.|docker\\s+build\\s+\\.\\s+(-t|--tag)\\s+myapp:latest"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-docker-003",
+      "description": "Docker exec into container",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["docker", "exec"],
+      "difficulty": 2,
+      "input": {
+        "query": "Open a bash shell inside the container named mycontainer"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "docker\\s+exec\\s+-it\\s+mycontainer\\s+(bash|sh|/bin/bash|/bin/sh)"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-docker-004",
+      "description": "Docker compose up",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["docker", "compose"],
+      "difficulty": 2,
+      "input": {
+        "query": "Start all services defined in docker-compose.yml in detached mode"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "docker(-|\\s+)compose\\s+up\\s+-d|docker(-|\\s+)compose\\s+up\\s+--detach"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-docker-005",
+      "description": "Docker list containers",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["docker", "ps"],
+      "difficulty": 1,
+      "input": {
+        "query": "List all running Docker containers"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "docker\\s+ps|docker\\s+container\\s+ls"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-build-001",
+      "description": "Make build",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["build", "make"],
+      "difficulty": 1,
+      "input": {
+        "query": "Build the project using make"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "make(\\s+all)?|make\\s+build"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-build-002",
+      "description": "Cargo build Rust",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["build", "cargo", "rust"],
+      "difficulty": 1,
+      "input": {
+        "query": "Build the Rust project in release mode"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "cargo\\s+build\\s+--release"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-build-003",
+      "description": "Go build",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["build", "go"],
+      "difficulty": 2,
+      "input": {
+        "query": "Build the Go application and output binary as myapp"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "go\\s+build\\s+-o\\s+myapp"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-build-004",
+      "description": "Cargo test",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["build", "cargo", "test"],
+      "difficulty": 1,
+      "input": {
+        "query": "Run Rust tests with cargo"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "cargo\\s+test"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-system-001",
+      "description": "Disk usage",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["system", "disk"],
+      "difficulty": 1,
+      "input": {
+        "query": "Check disk space usage"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "df\\s+-h|df\\s+--human-readable"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-system-002",
+      "description": "Directory size",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["system", "du"],
+      "difficulty": 2,
+      "input": {
+        "query": "Show the size of the node_modules directory"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "du\\s+(-sh?|--summarize\\s+--human-readable)\\s+node_modules|du\\s+-h\\s+--max-depth=0\\s+node_modules"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-system-003",
+      "description": "Memory usage",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["system", "memory"],
+      "difficulty": 1,
+      "input": {
+        "query": "Show memory usage"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "free\\s+-h|free\\s+--human"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-system-004",
+      "description": "Current directory",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["system", "pwd"],
+      "difficulty": 1,
+      "input": {
+        "query": "Show the current working directory"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "pwd"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-system-005",
+      "description": "Environment variable",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["system", "env"],
+      "difficulty": 2,
+      "input": {
+        "query": "Print the value of the PATH environment variable"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "echo\\s+\\$PATH|printenv\\s+PATH|env\\s*\\|\\s*grep\\s+PATH"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-advanced-001",
+      "description": "Chained commands with &&",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["advanced", "chain"],
+      "difficulty": 3,
+      "input": {
+        "query": "Install dependencies and then run the build script"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "npm\\s+(install|i)\\s*(&&|;)\\s*npm\\s+run\\s+build"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-advanced-002",
+      "description": "Pipe output",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["advanced", "pipe"],
+      "difficulty": 2,
+      "input": {
+        "query": "List all TypeScript files and count them"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "acceptableTools": ["Glob"],
+        "expectedParams": {
+          "command": {
+            "pattern": "find\\s+.*\\.ts.*\\|\\s*wc\\s+-l|ls\\s+.*\\.ts.*\\|\\s*wc\\s+-l"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-advanced-003",
+      "description": "Output redirection",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["advanced", "redirect"],
+      "difficulty": 2,
+      "input": {
+        "query": "Run npm test and save output to test-results.log"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "npm\\s+test\\s*>\\s*test-results.log|npm\\s+test\\s*2>&1\\s*>\\s*test-results.log|npm\\s+test\\s*&>\\s*test-results.log|npm\\s+test\\s*\\|\\s*tee\\s+test-results.log"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-advanced-004",
+      "description": "Background with nohup",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["advanced", "background"],
+      "difficulty": 3,
+      "input": {
+        "query": "Start the server in the background using the bash tool's background feature"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "type": "string"
+          },
+          "run_in_background": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-advanced-005",
+      "description": "Tar archive",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["advanced", "tar"],
+      "difficulty": 2,
+      "input": {
+        "query": "Create a gzipped tar archive of the src directory named src.tar.gz"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "tar\\s+(-czvf|cvzf|-czf|czf|-cvzf)\\s+src.tar.gz\\s+src|tar\\s+(-czvf|cvzf|-czf|czf|-cvzf)\\s+src\\s+.*src.tar.gz|tar\\s+-cf\\s+-\\s+src\\s*\\|\\s*gzip\\s*>\\s*src.tar.gz"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-advanced-006",
+      "description": "Extract tar archive",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["advanced", "tar", "extract"],
+      "difficulty": 2,
+      "input": {
+        "query": "Extract the contents of archive.tar.gz"
+      },
+      "expected": {
+        "expectedTool": "Bash",
+        "expectedParams": {
+          "command": {
+            "pattern": "tar\\s+(-xzvf|xvzf|-xzf|xzf|-xf)\\s+archive.tar.gz"
+          }
+        }
+      }
+    },
+    {
+      "id": "bash-negative-001",
+      "description": "Should use ReadFile instead of cat",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["negative", "readfile"],
+      "difficulty": 2,
+      "input": {
+        "query": "Show me the contents of package.json"
+      },
+      "expected": {
+        "expectedTool": "ReadFile",
+        "forbiddenTools": ["Bash"]
+      }
+    },
+    {
+      "id": "bash-negative-002",
+      "description": "Should use Grep instead of grep command",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["negative", "grep"],
+      "difficulty": 2,
+      "input": {
+        "query": "Search for 'TODO' in all TypeScript files"
+      },
+      "expected": {
+        "expectedTool": "Grep",
+        "forbiddenTools": ["Bash"]
+      }
+    },
+    {
+      "id": "bash-negative-003",
+      "description": "Should use Glob instead of find command",
+      "tool": "llm_evaluation",
+      "category": "llm_selection",
+      "tags": ["negative", "glob"],
+      "difficulty": 2,
+      "input": {
+        "query": "Find all .json files in the project"
+      },
+      "expected": {
+        "expectedTool": "Glob",
+        "forbiddenTools": ["Bash"]
+      }
+    }
+  ]
+}

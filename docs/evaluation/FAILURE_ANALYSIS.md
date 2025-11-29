@@ -1,6 +1,6 @@
 # Evaluation Failure Analysis
 
-> **Last Updated**: 2024-11-28 (Post Error Code Standardization)
+> **Last Updated**: 2024-11-29 (Added Bash Command Evals)
 
 ## Current Status
 
@@ -8,17 +8,106 @@
 |----------|--------|-------|------|--------|
 | **Tool Evals** | 92 | 135 | 68.1% | +15.5% |
 | **LLM Evals** | 60 | 72 | 83.3% | +19.4% |
-| **Combined** | 152 | 207 | 73.4% | +16.9% |
+| **Bash Command Evals** | 55 | 64 | 85.9% | NEW |
+| **Combined** | 207 | 271 | 76.4% | +3.0% |
 
 ### Progress Summary
 
-| Fix Applied | Tool Impact | LLM Impact |
-|-------------|-------------|------------|
-| Path resolution (glob/grep) | +9 tests | - |
-| Error code standardization | +6 tests | - |
-| Missing validation logic | +2 tests | - |
-| LLM acceptableTools updates | - | +10 tests |
-| EditFile description clarification | - | +4 tests |
+| Fix Applied | Tool Impact | LLM Impact | Bash Cmd Impact |
+|-------------|-------------|------------|-----------------|
+| Path resolution (glob/grep) | +9 tests | - | - |
+| Error code standardization | +6 tests | - | - |
+| Missing validation logic | +2 tests | - | - |
+| LLM acceptableTools updates | - | +10 tests | - |
+| EditFile description clarification | - | +4 tests | - |
+| **New: Bash Command Eval System** | - | - | +55 tests |
+
+---
+
+## NEW: Bash Command Evaluation System
+
+> **Added**: 2024-11-29
+
+### Overview
+
+A dedicated evaluation system for testing whether the agent generates **correct bash commands** with proper syntax, flags, and parameters. This is separate from the general LLM tool selection evals - it focuses specifically on **command correctness**.
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `evals/datasets/llm/bash_commands.json` | 64 test cases across 10 categories |
+| `evals/run-bash-evals.ts` | Dedicated runner with command quality scoring |
+
+### Usage
+
+```bash
+npx tsx evals/run-bash-evals.ts
+```
+
+### Results Summary (First Run)
+
+| Metric | Value |
+|--------|-------|
+| **Total Cases** | 64 |
+| **Passed** | 55 (85.9%) |
+| **Exact Command Match** | 53 (82.8%) |
+| **Partial Match** | 0 (0.0%) |
+| **Wrong Command** | 7 (10.9%) |
+| **Wrong Tool** | 2 (3.1%) |
+| **No Tool** | 2 (3.1%) |
+
+### Results by Category
+
+| Category | Pass | Total | Rate | Description |
+|----------|------|-------|------|-------------|
+| python | 6 | 6 | **100%** | Script execution, pip, venv |
+| docker | 5 | 5 | **100%** | run, build, exec, compose |
+| system | 5 | 5 | **100%** | df, du, free, pwd, env |
+| process | 4 | 4 | **100%** | ps, kill, pkill, lsof |
+| build | 4 | 4 | **100%** | make, cargo, go |
+| git | 7 | 8 | 87.5% | commit, push, checkout, stash |
+| node | 5 | 6 | 83.3% | npm, npx, node |
+| network | 4 | 5 | 80.0% | curl, wget |
+| text | 3 | 4 | 75.0% | sort, wc, uniq, sed |
+| advanced | 4 | 6 | 66.7% | Chaining, pipes, tar |
+| negative | 2 | 3 | 66.7% | Should NOT use Bash |
+
+### Command Quality Metrics
+
+The eval system tracks not just pass/fail, but **command quality**:
+
+- **Exact Match** 🎯 - Command perfectly matches expected regex pattern
+- **Partial Match** 🔶 - Command is functional but not optimal
+- **Wrong Command** ⚠️ - Correct tool selected, wrong command syntax
+- **Wrong Tool** 🚫 - Selected wrong tool entirely (e.g., ReadFile instead of Bash)
+- **No Tool** - Did not call any tool
+
+### Failed Cases Analysis (9 failures)
+
+| Case ID | Category | Issue |
+|---------|----------|-------|
+| bash-git-007 | git | Used `git reset HEAD~1` without `--soft` flag |
+| bash-node-003 | node | Selected ReadFile instead of Bash for build script |
+| bash-text-002 | text | Selected ReadFile to count lines instead of `wc -l` |
+| bash-advanced-001 | advanced | Chained command format mismatch |
+| bash-advanced-002 | advanced | Selected Glob instead of Bash for counting files |
+| bash-advanced-004 | advanced | Did not call any tool for background process |
+| bash-advanced-005 | advanced | Tar command format mismatch |
+| bash-negative-001 | negative | Did not call any tool (edge case) |
+
+### Key Findings
+
+1. **Strong Performance on Core Commands**: 100% on Python, Docker, System, Process, and Build categories
+2. **Git Commands**: Generally good (87.5%), but some edge cases with specific flags (`--soft`)
+3. **Tool Selection Confusion**: Some cases where LLM chose ReadFile instead of Bash (e.g., `wc -l`)
+4. **Advanced Commands**: Lower pass rate (66.7%) for complex operations (piping, chaining, tar)
+
+### Recommendations
+
+1. **Improve system prompt**: Clarify when to use Bash vs ReadFile for utility operations
+2. **Add more examples**: For advanced command patterns (chaining, piping)
+3. **Flexible patterns**: Continue refining regex patterns to accept valid command variations
 
 ---
 
@@ -219,14 +308,25 @@ We've made significant progress:
 |--------|--------|-------|-------------|
 | Tool Evals | 52.6% | 68.1% | **+15.5%** |
 | LLM Evals | 63.9% | 83.3% | **+19.4%** |
+| Bash Command Evals | - | 85.9% | **NEW** |
+| **Combined** | 56.5% | 76.4% | **+19.9%** |
 
 **Key Learnings**:
 1. Tool descriptions should explicitly state limitations (what tool CAN'T do)
 2. Error codes should be standardized across the codebase
 3. Path resolution must respect `context.cwd` for fixture isolation
 4. LLM evals need `acceptableTools` for valid alternatives
+5. Bash command quality is strong (85.9%) with 100% on Python/Docker/System/Process/Build
 
 **Remaining Work**:
 - Background process mocking for bash_output/kill_bash (+30 tests)
 - Edge case fixes (+16 tests)
-- Potential ceiling: **~95%** tool, **~87%** LLM
+- Bash command edge cases: advanced chaining, piping, tar formats (+9 tests)
+- Potential ceiling: **~95%** tool, **~87%** LLM, **~92%** Bash commands
+
+**Evaluation Commands**:
+```bash
+npx tsx evals/run-all-evals.ts      # Tool evals (135 tests)
+npx tsx evals/run-llm-evals.ts      # LLM selection evals (72 tests)
+npx tsx evals/run-bash-evals.ts     # Bash command evals (64 tests)
+```
